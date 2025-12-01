@@ -1,0 +1,80 @@
+{{ block title }}
+
+{{ endblock }}
+
+{% block content %}
+    <link rel="stylesheet" href="{{static 'css/css.css'}}">
+    <link rel="stylesheet" href="{{static 'css/modal.css'}}">
+    
+    <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="section-box box-neutral">
+    <h3 class="section-title" style="font-size: 1.6em; text-align: center;">
+        TITLE <span style= "font-size: 0.5em; text-align: right; margin: 0;">(Page 1/10)</span></h3>
+    </h3>
+    <div class="section-divider"></div>
+
+    <p>
+        TEXT
+    </p>
+
+    {% for field in form %}
+    {% if field.name not in hidden_fields %}
+        {{ formfield field.name }}
+    {% endif %}
+{% endfor %}
+
+<div style="display:none">
+    {% for field in form %}
+        {% if field.name in hidden_fields %}
+            {{ formfield field.name }}
+        {% endif %}
+    {% endfor %}
+</div>
+
+<br><br>
+
+
+
+    <div class="buttons-container">
+        <div class="Instructions">
+            <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Open Instructions</a>
+            <a id="myBtn" onclick="open_modal(2)" class="btn btn-info">Open Instructions</a>
+        </div>
+            <button id="NextButton" class="btn btn-primary">Next</button>
+    </div>
+
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Instructions</h2>
+                <span class="close" onclick="span_click(2)">&times;</span>
+            </div>
+            <p style="padding: 0px">
+                {{ include C.Instructions_general_path}}
+            </p>
+        </div>
+    </div>
+    
+    <div id="myModal1" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span class="icon">📘</span>Instructions</h2>
+                <span class="close" onclick="span_click(1)">&times;</span>
+            </div>
+            <p style="padding: 0px">
+                {{ include C.Instructions_general_path}}
+            </p>
+        </div>
+    </div>
+
+    
+</div>
+
+   
+
+
+
+
+    <br><br>
+{% endblock %}
