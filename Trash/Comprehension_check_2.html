@@ -12,24 +12,27 @@
 
     <div class="section-box box-calm">
         <div class="section-header">
-            <div class="icon">✅</div>
-            <h3>Before you proceed</h3>
+            <div class="icon">🔁</div>
+            <h3>Second Attempt</h3>
         </div>
         <p>
-            Please answer the following <strong>3 questions</strong> to confirm your understanding of the instructions.
+            Some of your previous answers were incorrect. Please try again below.
         </p>
         <p>
-            You can review the instructions anytime by clicking the <strong>"Open Instructions"</strong> button below.
+            You answered the following question(s) incorrectly: <strong>{{ Comprehension_wrong_answers }}</strong>.
+        </p>
+        <p>
+            You can review the instructions again by clicking the <strong>"Introductory Instructions"</strong> button below.
         </p>
     </div>
 
-    <!-- Comprehension form fields -->
+    <!-- Comprehension form fields wrapped in a visual box -->
     <div class="section-box box-info">
         <div class="section-header">
             <div class="icon">🧪</div>
             <h3>Comprehension Questions</h3>
         </div>
-    
+
         {% for field in form %}
             {% if field.name not in hidden_fields %}
                 {{ formfield field.name }}
@@ -48,7 +51,7 @@
 
 
     <div class="buttons-container">
-        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Open Instructions </a>
+        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Introductory Instructions </a>
         <button id="submit-btn" class="otree-btn-next btn btn-primary">Next</button>
     </div>
 
@@ -64,7 +67,5 @@
             </p>
         </div>
     </div>
-
-
 
 {{ endblock }}

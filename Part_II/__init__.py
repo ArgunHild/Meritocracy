@@ -34,7 +34,7 @@ class Player(BasePlayer):
             
     # Player answers
     ## Survey
-    Survey_1 = models.IntegerField(choices=[1,2,3,4], label='choose your Integer',
+    Survey_1 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
                                    widget=widgets.RadioSelectHorizontal)
     
     # data quality
@@ -61,16 +61,15 @@ class MyPage(MyBasePage):
         return variables
 
 
-class Attention_check_2(MyBasePage):         
-    extra_fields = ['Attention_2']
-    form_fields = MyBasePage.form_fields + extra_fields
+# class Attention_check_2(MyBasePage):         
+#     extra_fields = ['Attention_2']
+#     form_fields = MyBasePage.form_fields + extra_fields
     
-    def before_next_page(player: Player, timeout_happened=False):
-        if (not player.Attention_2 and not player.participant.vars['Attention_1']):
-            player.participant.vars['Allowed'] = False
-            player.participant.vars['Attention_passed'] = False
+#     def before_next_page(player: Player, timeout_happened=False):
+#         if (not player.Attention_2 and not player.participant.vars['Attention_1']):
+#             player.participant.vars['Allowed'] = False
+#             player.participant.vars['Attention_passed'] = False
   
 page_sequence = [
     MyPage,
-    Attention_check_2,
     ]

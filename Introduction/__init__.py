@@ -9,7 +9,6 @@ This is the first app - the Introduction app. It contains
 3. Comprehension checks 
 4. and the first attention checks
 Following are saved to the participant level
-- Allowed: if they didnt fail the comprehension checks
 - Comprehension_passed: whether they passed the comprehension checks
 - Attention_1: whether they passed the first attention check
 - Treatment: which treatment they are assigned to
@@ -54,7 +53,6 @@ def creating_session(subsession):
     subsession.session.Female_quotas = C.Female_quotas.copy()
     
     for player in subsession.get_players():
-        player.participant.Allowed = True
         player.participant.Comprehension_passed = False 
         player.participant.Attention_passed= True
         player.participant.Blur_count= 0
@@ -188,7 +186,7 @@ class Demographics(MyBasePage):
         variables['hidden_fields'].append('browser') 
         return variables
     
-class Instructions(MyBasePage):
+class Introduction(MyBasePage):
     pass        
 
             
@@ -242,14 +240,11 @@ class Comprehension_check_2(MyBasePage):
         player_passed_comprehension = (player.Comprehension_question_1 and
                                        player.Comprehension_question_2 and player.Comprehension_question_3)
         #failing two compr. checks player is not allowed to continue
-        player.participant.Allowed = player_passed_comprehension
         player.Comprehension_2 = player_passed_comprehension
         # save at the participant level if they passed
         if player_passed_comprehension:
             player.participant.vars['Comprehension_passed'] = True
-            player.participant.vars['Allowed']=True
         else:
-            player.participant.vars['Allowed']=False
             player.participant.vars['Comprehension_passed'] = False
 
 class Comprehension_check_3(MyBasePage):
@@ -273,14 +268,11 @@ class Comprehension_check_3(MyBasePage):
         player_passed_comprehension = (player.Comprehension_question_1 and
                                        player.Comprehension_question_2 and player.Comprehension_question_3)
         #failing two compr. checks player is not allowed to continue
-        player.participant.Allowed = player_passed_comprehension
         player.Comprehension_2 = player_passed_comprehension
         # save at the participant level if they passed
         if player_passed_comprehension:
             player.participant.vars['Comprehension_passed'] = True
-            player.participant.vars['Allowed']=True
         else:
-            player.participant.vars['Allowed']=True # we wont kick anyone
             player.participant.vars['Comprehension_passed'] = False
             
             
@@ -292,7 +284,6 @@ class Attention_check_1(MyBasePage):
     def before_next_page(player: Player, timeout_happened=False):
         player.participant.vars['Attention_1'] = player.Attention_1
 
-
-page_sequence = [Consent, Demographics, Instructions,
-                 Comprehension_check_1, Comprehension_check_2, Comprehension_check_3,
-                 Attention_check_1]
+# TODO: move demographics t othe end.
+page_sequence = [Consent, Introduction,
+                 ]

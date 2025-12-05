@@ -46,7 +46,7 @@ from common import MyBasePage
 class Results(Page):
     @staticmethod
     def is_displayed(player: Player):
-        return player.participant.Allowed and player.participant.Comprehension_passed and player.participant.Attention_passed
+        return player.participant.Comprehension_passed and player.participant.Attention_passed
 
 
 class Failed_screening(MyBasePage):

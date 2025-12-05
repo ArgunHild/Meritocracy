@@ -7,30 +7,38 @@
       <h3>What to Expect</h3>
   </div>
       <p>
-          Thank you for participating in this study. In the following, you will complete a series of short Tasks and make choices between sets of Tasks. Your performance and choices will determine your final payment.
-          Below, you find more information on what to expect in this experiment.
+          In this experiment, you will perform at a real intelligence test.
+          
+          The experiment has three parts:
+          
+          <ol>
+            <li>First, you will play two <strong> practice rounds</strong>.</li>
+            <li>Then, you will be grouped with 2 other participants. Here, you will perform the <strong>intelligence task</strong> separately and make some choices (More on this later).</li>
+            <li>Finally, you will play simple economic games and answer some questions about yourself and your group.  </li>
+          </ol>
+
+          Each part will be explained in detail before it begins.
+          
       </p>
   </div>
 
-  <!-- Learning Stage -->
+  <!-- Learning Stage
   <div class="section-box box-calm">
     <div class="section-header">
       <div class="icon">🧪</div>
       <h3>Learning stage</h3>
   </div>
       <ul>
-          <li>You will try <strong>each Task twice</strong> for <strong>2 minutes</strong> per attempt to familiarize yourself.</li>
+          <li>You will play two practice rounds to familiarize yourself with the <strong>Intelligence task</strong> </li>
           <li>Your performance during this stage will earn you a <strong>real bonus</strong>. <br>
-            <span style="font-size:1.2em;">&#8594;</span> <strong>One</strong> of the performances will be randomly chosen to determine a bonus.</li>
-          <li>After this stage, you will see your scores.</li>
       </ul>
-  </div>
+  </div> -->
 
   <!-- Main Stage -->
-  <div class="section-box box-contrast">
+  <!-- <div class="section-box box-contrast">
     <div class="section-header">
       <div class="icon">🎯</div>
-      <h3>Main stage</h3>
+      <h3>Part I</h3>
   </div>
       <ul>
           <li>In each round, you will choose from a selection of Task combinations.</li>
@@ -40,7 +48,7 @@
       <p>
           More details about how these choices work will be explained before the main stage begins.
       </p>
-  </div>
+  </div> -->
 
   <!-- Payment -->
   <div class="section-box box-warn">
@@ -49,12 +57,44 @@
       <h3>Payment</h3>
   </div>
       <ul>
-          <li>A fixed <strong>participation payment</strong> of <strong>{{C.Completion_fee}} EUR</strong>.</li>
-          <li>A <strong>bonus</strong> based on your performance in the learning stage of up to <strong>{{C.Bonus_max_practice}}0 EUR</strong>.</li>
-          <li>A <strong>bonus</strong> based on the Task bundle selected in the main part of up to <strong>{{C.Bonus_max}} EUR</strong>.</li>
-      </ul>
-      <p>
-          Only <strong>one round</strong> from the main stage will be selected for payment. You will complete the Tasks in the bundle chosen for that round.
-      </p>
+        <li>Your payment comes from two sources:</li>
+        <ol>
+          <li>Completion payment of {{ C.Completion_fee }} EUR.</li>
+          <li><strong>Bonus payment</strong> of up to {{ C.Bonus_max }} EUR.</li>
+        </ol>
   </div>
 
+
+  <div class="section-box box-warn">
+    <div class="section-header">
+      <div class="icon">💰</div>
+      <h3>How to earn bonus</h3>
+  </div>
+      <ul>
+        <li>    Throughout the experiment, you will be earning <strong>ECs</strong> (Experiment Currency).</li>
+        <li>    At the end of the experiment, your accumulated ECs will be converted to Euros 
+                at the following <strong>exchange rate: 1 EUR = {{ C.EC_exchange_rate }}</strong>.</li> 
+        <ul>
+          <!-- TODO: adjust the example ot the exchange rate -->
+            <li>For instance, if you earned 1500 ECs, you will be paid 15 EUR as bonus.</li>
+        </ul>   
+        
+        <li> Different parts of the study have different rules for earning ECs. 
+          <strong>Before each part</strong>, we will explain the relevant rules.  </li>
+          
+      </ul>
+  </div>
+
+
+    <!-- Instruction buttons -->
+  <div class="section-box box-calm">
+    <div class="section-header">
+      <div class="icon">📋</div>
+      <h3>Instruction buttons</h3>
+    </div>
+      <ul>
+        <li>Before each part, we will present the relevant instructions.</li>
+        <li>These instructions will be available to you at the bottom left of the screen.</li>
+        <li>For instance, "Introductory Instructions" button will always be available.</li>
+      </ul>
+    </div>

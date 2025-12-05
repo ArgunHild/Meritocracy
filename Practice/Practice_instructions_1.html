@@ -1,0 +1,67 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-info">
+    <h2 class="section-title">Practice round instructions</h2>
+    <hr class="section-divider">
+
+    {{ include C.Instructions_practice_1 }}
+
+    {% for field in form %}
+        {% if field.name not in hidden_fields %}
+            {{ formfield field.name }}
+        {% endif %}
+    {% endfor %}
+
+    <div style="display:none">
+        {% for field in form %}
+            {% if field.name in hidden_fields %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div>
+  </div>
+
+    <div class="buttons-container">
+      <div class="Instructions">
+        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Introductory Instructions</a>
+        <a id="myBtn" onclick="open_modal(2)" class="btn btn-info">Practice Instructions</a>
+      </div>
+        <button id="NextButton" class="btn btn-primary">Start practice round</button>
+    </div>
+</div>
+
+<!-- Modal popup -->
+<div id="myModal1" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+        <h2><span class="icon">📘</span>Instructions</h2>
+        <span class="close" onclick="span_click(1)">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>
+          {{ include C.Instructions_general_path }}
+        </p>
+      </div>
+  </div>
+</div>
+
+<div id="myModal2" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+        <h2><span class="icon">📘</span>Practice Instructions</h2>
+        <span class="close" onclick="span_click(2)">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>
+          {{ include C.Instructions_practice_1 }}
+        </p>
+      </div>
+  </div>
+</div>
+{{ endblock }}

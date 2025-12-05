@@ -10,13 +10,11 @@
 
 <div class="section-box box-neutral">
     <h3 class="section-title" style="font-size: 1.6em; text-align: center;">
-        TITLE <span style= "font-size: 0.5em; text-align: right; margin: 0;">(Page 1/10)</span></h3>
+        HERE WILL LIVE THE PRACTICE ROUND 2
     </h3>
     <div class="section-divider"></div>
 
-    <p>
-        TEXT
-    </p>
+
 
     {% for field in form %}
     {% if field.name not in hidden_fields %}
@@ -30,6 +28,7 @@
             {{ formfield field.name }}
         {% endif %}
     {% endfor %}
+</div>
 </div>
 
 <br><br>

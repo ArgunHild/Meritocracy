@@ -9,7 +9,7 @@ This is the main survey app. It contains
 '''
 
 class C(CommonConstants):
-    NAME_IN_URL = 'Part_I'
+    NAME_IN_URL = 'Practice'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
     
@@ -26,21 +26,20 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):   
     # Attention check 2, 1 was in introduction 
-    Attention_2 = models.BooleanField(choices=[
-            [True, 'I disagree.'],
-            [False, 'I think both are possible.'],
-            [False, 'I agree.'],], 
-        label= 'A 20 year old man can eat 500kg meat and 2 tons of vegetables in one meal.', widget=widgets.RadioSelect)
+    # Attention_2 = models.BooleanField(choices=[
+    #         [True, 'I disagree.'],
+    #         [False, 'I think both are possible.'],
+    #         [False, 'I agree.'],], 
+    #     label= 'A 20 year old man can eat 500kg meat and 2 tons of vegetables in one meal.', widget=widgets.RadioSelect)
             
     # Player answers
     ## Survey
-    Survey_1 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
+    Practice_1 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
+                                   widget=widgets.RadioSelectHorizontal)
+    Practice_2 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
                                    widget=widgets.RadioSelectHorizontal)
     
-    # data quality
-    blur_log = models.LongStringField(blank=True)
-    blur_count = models.IntegerField(initial=0)
-    blur_warned = models.IntegerField(initial=0)
+
     
 
  #%% Base Pages
@@ -49,7 +48,7 @@ from common import MyBasePage
   
 # Pages
 class MyPage(MyBasePage):
-    extra_fields = ['Survey_1'] 
+    extra_fields = [] 
     form_fields = MyBasePage.form_fields + extra_fields
     
     @staticmethod
@@ -63,15 +62,30 @@ class MyPage(MyBasePage):
         return variables
 
 
-# class Attention_check_2(MyBasePage):         
-#     extra_fields = ['Attention_2']
-#     form_fields = MyBasePage.form_fields + extra_fields
+class Practice_instructions_1(MyBasePage):
+    pass
+class Practice_instructions_2(MyBasePage):
+    pass
+
+class Practice_WaitPage(WaitPage):
+    pass
+
+class Practice_round_1(MyPage):
+    extra_fields = ['Practice_1'] 
+    form_fields = MyBasePage.form_fields + extra_fields
     
-#     def before_next_page(player: Player, timeout_happened=False):
-#         if (not player.Attention_2 and not player.participant.vars['Attention_1']):
-#             player.participant.vars['Allowed'] = False
-#             player.participant.vars['Attention_passed'] = False
+class Practice_round_2(MyPage):
+    extra_fields = ['Practice_2'] 
+    form_fields = MyBasePage.form_fields + extra_fields
+
+
+
+
   
 page_sequence = [
-    
+    Practice_instructions_1,
+    Practice_WaitPage,
+    Practice_round_1,
+    Practice_instructions_2,
+    Practice_round_2,
     ]

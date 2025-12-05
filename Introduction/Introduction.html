@@ -7,7 +7,7 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-info">
-    <h2 class="section-title">Instructions</h2>
+    <h2 class="section-title">Introductory Instructions</h2>
     <hr class="section-divider">
 
     {{ include C.Instructions_general_path }}
@@ -25,9 +25,10 @@
             {% endif %}
         {% endfor %}
     </div>
+  </div>
 
     <div class="buttons-container">
-        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Open Instructions</a>
+        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Introductory Instructions</a>
         <button id="NextButton" class="btn btn-primary">Next</button>
     </div>
 </div>

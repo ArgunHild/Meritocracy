@@ -11,9 +11,16 @@ class CommonConstants(BaseConstants):
     # Prolific links:
     
     Instructions_general_path = "_templates/global/Instructions.html"
-    Completion_fee = 0.50  # TODO: adjust completion fee
-    Bonus_max = 1.00  # TODO: adjust maximum bonus
+    Instructions_practice_1 = "_templates/global/Instructions_Practice_1.html"
+    
+    
+    Completion_fee = 10  # TODO: adjust completion fee
+    Bonus_max = 20  # TODO: adjust maximum bonus
     Bonus_max_practice = 1.00  # TODO: adjust maximum bonus
+    Practice_ECs = 5  # TODO: adjust practice bonus
+    
+    
+    EC_exchange_rate = 100  # 100 EC = 1 EUR
 
 # %% Player
 # DOESNT WORK WITH PLAYER
@@ -22,10 +29,6 @@ class CommonConstants(BaseConstants):
 class MyBasePage(Page):
     form_model = 'player'
     form_fields = []
-
-    @staticmethod
-    def is_displayed(player):
-        return player.participant.Allowed
 
     @staticmethod
     def vars_for_template(player):
