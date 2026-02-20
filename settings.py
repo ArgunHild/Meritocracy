@@ -1,10 +1,10 @@
 from os import environ
 
 SESSION_CONFIGS = [
-    dict(name='Study', app_sequence=['Introduction','Practice','Part_I','Part_II',  'Exit_Survey', 'Results'], num_demo_participants=1,),
+    dict(name='Study', app_sequence=['Introduction','Practice','Part_I_Economy',  'Exit_Survey', 'Results'], num_demo_participants=2,),
     dict(name='Practice', app_sequence=['Practice', ], num_demo_participants=1,),
-    dict(name='Part_I', app_sequence=['Part_I', ], num_demo_participants=1,),
-    dict(name='Part_II', app_sequence=['Part_II', ], num_demo_participants=1,),
+    dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=1,),
+    # dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=1,),
     dict(name='Exit_n_Pilot', app_sequence=['Exit_Survey', ], num_demo_participants=1,),
     
 

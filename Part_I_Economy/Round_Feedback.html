@@ -1,0 +1,127 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<!-- Chart.js for pie charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">
+        Round {{ round_number }} of 4 — Results &amp; Feedback
+    </h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center;">
+        Below you can see how your <strong>effort</strong> and <strong>earnings</strong>
+        compare to the other members of your group this round.
+    </p>
+
+    <!-- Two pie charts side by side -->
+    <div style="display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-top: 30px;">
+
+        <!-- Effort chart -->
+        <div style="text-align: center; max-width: 280px;">
+            <h4 style="margin-bottom: 10px;">Effort Share <br> (Last round)</h4>
+            <canvas id="effortChart" width="260" height="260"></canvas>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                Your score vs. group total
+            </p>
+        </div>
+
+        <!-- Payoff chart -->
+        <div style="text-align: center; max-width: 280px;">
+            <h4 style="margin-bottom: 10px;">Accumulated Earnings <br> (All rounds)</h4>
+            <canvas id="payoffChart" width="260" height="260"></canvas>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                Your earnings vs. group total
+            </p>
+        </div>
+
+    </div>
+
+    {% for field in form %}
+        {% if field.name not in hidden_fields %}
+            {{ formfield field.name }}
+        {% endif %}
+    {% endfor %}
+
+    <div style="display:none">
+        {% for field in form %}
+            {% if field.name in hidden_fields %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="buttons-container" style="margin-top: 30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Next</button>
+    </div>
+</div>
+
+<!-- Modal: general instructions -->
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Instructions</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_general_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Values passed from Python via vars_for_template
+    const effortMe     = {{ effort_share }};
+    const effortOthers = {{ effort_others }};
+    const payoffMe     = {{ payoff_share }};
+    const payoffOthers = {{ payoff_others }};
+
+    const COLORS = {
+        me:     '#4CAF50',   // green  (--primary)
+        others: '#B0BEC5',   // grey
+    };
+
+    function makePie(canvasId, me, others, labelMe, labelOthers) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [labelMe, labelOthers],
+                datasets: [{
+                    data: [me, others],
+                    backgroundColor: [COLORS.me, COLORS.others],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct   = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        makePie('effortChart',  effortMe,  effortOthers,  'You', 'Others');
+        makePie('payoffChart',  payoffMe,  payoffOthers,  'You', 'Others');
+    });
+</script>
+
+{{ endblock }}

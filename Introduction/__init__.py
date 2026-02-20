@@ -55,9 +55,7 @@ def creating_session(subsession):
     for player in subsession.get_players():
         player.participant.Comprehension_passed = False 
         player.participant.Attention_passed= True
-        player.participant.Blur_count= 0
-        player.participant.Blur_log= {}
-        player.participant.Blur_warned = 0
+        player.participant.Treatment = 'Default'
         
             
 

@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="{{ static 'css/RavensQuiz.css' }}">
+
+<div id="RavensQuiz-container"
+     data-img-sentinel="{{ static 'puzzles/Set1/puzzle_000.png' }}">
+    <div id="puzzle-counter"></div>
+    <img id="puzzle-img" src="" alt="Raven's Matrix Puzzle">
+    <div id="choices"></div>
+    <button id="confirm-btn" disabled onclick="confirmAnswer()">Confirm</button>
+</div>
+
+<script>
+    // Build the correct Set URL from js_vars.puzzle_set, then load answer_key.js
+    (function () {
+        const set = js_vars.puzzle_set;
+
+        // Derive base URL from the sentinel (which always points to Set1)
+        // e.g. "https://host/_static/puzzles/Set1/puzzle_000.png"
+        // Replace "Set1" with the correct set number
+        const sentinel = document.getElementById('RavensQuiz-container').dataset.imgSentinel;
+        const setBase = sentinel.replace(/Set\d+\/puzzle_000\.png$/, 'Set' + set + '/');
+
+        // Update the sentinel so RavensQuiz.js picks up the right image folder
+        document.getElementById('RavensQuiz-container').dataset.imgSentinel = setBase + 'puzzle_000.png';
+
+        // Dynamically load answer_key.js for this set, then load RavensQuiz.js after
+        const keyScript = document.createElement('script');
+        keyScript.src = setBase + 'answer_key.js';
+        keyScript.onload = function () {
+            const quizScript = document.createElement('script');
+            quizScript.src = "{{ static 'js/RavensQuiz.js' }}";
+            document.head.appendChild(quizScript);
+        };
+        document.head.appendChild(keyScript);
+    })();
+</script>

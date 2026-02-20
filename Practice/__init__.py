@@ -12,9 +12,10 @@ class C(CommonConstants):
     NAME_IN_URL = 'Practice'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
+        
     
-    Instructions_general_path = "_templates/global/Instructions.html"
 
+    
 
     
 class Subsession(BaseSubsession):
@@ -34,10 +35,13 @@ class Player(BasePlayer):
             
     # Player answers
     ## Survey
-    Practice_1 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
-                                   widget=widgets.RadioSelectHorizontal)
-    Practice_2 = models.IntegerField(choices=[1,2,3,4], label='choose an Integer',
-                                   widget=widgets.RadioSelectHorizontal)
+   
+    Practice_score_1 = models.IntegerField(initial=0)   # number of correct answers
+    Practice_answers_1 = models.LongStringField(initial='{}')  # JSON dict mapping question index to chosen option
+
+    Practice_score_2 = models.IntegerField(initial=0)   # number of correct answers
+    Practice_answers_2 = models.LongStringField(initial='{}')  # JSON dict mapping question index to chosen option
+
     
 
     
@@ -65,20 +69,67 @@ class MyPage(MyBasePage):
 class Practice_instructions_1(MyBasePage):
     pass
 class Practice_instructions_2(MyBasePage):
-    pass
+    @staticmethod
+    def vars_for_template(player: Player):
+        variables = MyBasePage.vars_for_template(player)
+        
+        # Add or modify variables specific to ExtendedPage
+        last_round_ecs = player.Practice_score_1 * C.Practice_ECs
+        variables['last_round_ecs'] = last_round_ecs
+        return variables
 
 class Practice_WaitPage(WaitPage):
     pass
 
 class Practice_round_1(MyPage):
-    extra_fields = ['Practice_1'] 
+    extra_fields = ['Practice_score_1', 'Practice_answers_1']
     form_fields = MyBasePage.form_fields + extra_fields
     
+    timeout_seconds = C.Round_length
+    timer_text = C.Timer_text
+        
+    @staticmethod
+    def vars_for_template(player: Player):
+        variables = MyBasePage.vars_for_template(player)
+        
+        # Add or modify variables specific to ExtendedPage
+        for _ in ['Practice_score_1', 'Practice_answers_1']:
+            variables['hidden_fields'].append(_)
+        return variables
+    
+    @staticmethod
+    def js_vars(player: Player):
+        return {
+            'score_field': 'Practice_score_1',
+            'answers_field': 'Practice_answers_1',
+            'participant_code': player.participant.code,
+            'puzzle_set': 1,
+        }
+    
 class Practice_round_2(MyPage):
-    extra_fields = ['Practice_2'] 
+    extra_fields = ['Practice_score_2', 'Practice_answers_2']
     form_fields = MyBasePage.form_fields + extra_fields
-
-
+    
+    timeout_seconds = C.Round_length
+    timer_text = C.Timer_text
+        
+    @staticmethod
+    def vars_for_template(player: Player):
+        variables = MyBasePage.vars_for_template(player)
+        
+        # Add or modify variables specific to ExtendedPage
+        for _ in ['Practice_score_2', 'Practice_answers_2']:
+            variables['hidden_fields'].append(_)
+        return variables
+    
+    @staticmethod
+    def js_vars(player: Player):
+        return {
+            'score_field': 'Practice_score_2',
+            'answers_field': 'Practice_answers_2',
+            'participant_code': player.participant.code,
+            'puzzle_set': 2,
+        }
 
 
   

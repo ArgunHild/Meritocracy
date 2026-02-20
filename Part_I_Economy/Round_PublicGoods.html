@@ -1,0 +1,243 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<style>
+    /* ── Slider styling ────────────────────────────────────── */
+    .pgg-slider-wrap {
+        margin: 24px 0 8px;
+    }
+
+    #pgg-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 10px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        cursor: pointer;
+    }
+
+    #pgg-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--primary, #4CAF50);
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    #pgg-slider::-moz-range-thumb {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--primary, #4CAF50);
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    .pgg-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85em;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .pgg-display {
+        text-align: center;
+        font-size: 2em;
+        font-weight: bold;
+        color: var(--primary, #4CAF50);
+        margin: 16px 0 4px;
+    }
+
+    .pgg-display-label {
+        text-align: center;
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 12px;
+    }
+
+    .pgg-marker {
+        text-align: center;
+        font-size: 0.85em;
+        color: #888;
+        margin-top: 6px;
+    }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">
+        Round {{ round_number }} of 4 — Common Pool Decision
+    </h2>
+    <hr class="section-divider">
+
+    <!-- Pie charts: effort & payoff shares (carried over from feedback page) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <div style="display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-bottom: 24px;">
+
+        <div style="text-align: center; max-width: 220px;">
+            <h4 style="margin-bottom: 10px;">Effort Share <br> (Last round)</h4>
+            <canvas id="pgg-effortChart" width="200" height="200"></canvas>
+            <p style="margin-top: 8px; font-size: 0.85em; color: #555;">Your score vs. group total</p>
+        </div>
+
+        <div style="text-align: center; max-width: 220px;">
+            <h4 style="margin-bottom: 10px;">Accumulated Earnings <br> (All rounds)</h4>
+            <canvas id="pgg-payoffChart" width="200" height="200"></canvas>
+            <p style="margin-top: 8px; font-size: 0.85em; color: #555;">Your accumulated earnings vs. group total</p>
+        </div>
+
+    </div>
+
+    <!-- Pool info -->
+    <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">🏦</div>
+            <h3>Common Pool</h3>
+        </div>
+        <p>
+            We have already invested <strong>{{ PGG_Commons }} tokens on your behalf</strong>, which you can take out if you want.
+        </p>
+        <p>
+            You earned <strong>{{ tokens_earned }} tokens</strong> from the intelligence task this round.
+            Together, that gives you a maximum of <strong>{{ pgg_max }} tokens</strong> you can place into the pool.
+        </p>
+        <p>
+            Use the slider to decide how many tokens to keep in the pool.
+            Move it <strong>left</strong> to take tokens out, <strong>right</strong> to put more in.
+        </p>
+    </div>
+
+    <!-- Slider decision -->
+    <div class="section-box box-calm">
+        <div class="section-header">
+            <div class="icon">🪙</div>
+            <h3>Your Decision</h3>
+        </div>
+
+        <div class="pgg-display" id="pgg-value-display">{{ pgg_default }}</div>
+        <div class="pgg-display-label">tokens in the pool</div>
+
+        <div class="pgg-slider-wrap">
+            <input
+                type="range"
+                id="pgg-slider"
+                min="0"
+                max="{{ pgg_max }}"
+                value="{{ pgg_default }}"
+                step="1"
+            >
+            <div class="pgg-labels">
+                <span>0</span>
+                <span>{{ pgg_max }}</span>
+            </div>
+        </div>
+
+
+        <!-- Hidden oTree field that gets submitted -->
+        <div style="display:none">
+            {% for field in form %}
+                {{ formfield field.name }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="buttons-container" style="margin-top: 20px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Confirm Decision</button>
+    </div>
+</div>
+
+<!-- Modal: general instructions -->
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Instructions</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_general_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Pie charts ────────────────────────────────────────────────────
+    const pgg_effortMe     = {{ effort_share }};
+    const pgg_effortOthers = {{ effort_others }};
+    const pgg_payoffMe     = {{ payoff_share }};
+    const pgg_payoffOthers = {{ payoff_others }};
+
+    const PIE_COLORS = { me: '#4CAF50', others: '#B0BEC5' };
+
+    function makePie(canvasId, me, others, labelMe, labelOthers) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [labelMe, labelOthers],
+                datasets: [{
+                    data: [me, others],
+                    backgroundColor: [PIE_COLORS.me, PIE_COLORS.others],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct   = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        makePie('pgg-effortChart', pgg_effortMe, pgg_effortOthers, 'You', 'Others');
+        makePie('pgg-payoffChart', pgg_payoffMe, pgg_payoffOthers, 'You', 'Others');
+    });
+</script>
+
+<script>
+    // ── Slider ────────────────────────────────────────────────────────
+    (function () {
+        const slider      = document.getElementById('pgg-slider');
+        const display     = document.getElementById('pgg-value-display');
+        // The hidden oTree input – find by name attribute ({{ contribution_field }})
+        const hiddenInput = document.querySelector('input[name="{{ contribution_field }}"]');
+
+        function sync(val) {
+            display.textContent = val;
+            if (hiddenInput) hiddenInput.value = val;
+        }
+
+        // Initialise on load
+        sync(slider.value);
+
+        slider.addEventListener('input', function () {
+            sync(this.value);
+        });
+    })();
+</script>
+
+{{ endblock }}

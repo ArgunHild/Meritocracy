@@ -1,0 +1,62 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-info">
+    <h2 class="section-title">
+        Round {{ round_number }} of 4
+    </h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-calm">
+        <div class="section-header">
+            <div class="icon">📋</div>
+            <h3>What happens in this round</h3>
+        </div>
+        <p>This round has three stages:</p>
+        <ol>
+            <li><strong>Intelligence task</strong> — complete as many matrix puzzles as you can before the timer runs out.</li>
+            <li><strong>Feedback</strong> — you will see how your effort and earnings compare to others in your group.</li>
+            <li><strong>Common pool decision</strong> — decide how many tokens to put in or take from the common pool.</li>
+        </ol>
+    </div>
+
+    {% for field in form %}
+        {% if field.name not in hidden_fields %}
+            {{ formfield field.name }}
+        {% endif %}
+    {% endfor %}
+
+    <div style="display:none">
+        {% for field in form %}
+            {% if field.name in hidden_fields %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="buttons-container">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Start Round {{ round_number }}</button>
+    </div>
+</div>
+
+<!-- Modal: general instructions -->
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Instructions</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_general_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

@@ -1,0 +1,2 @@
+- run the generator_5 py file to generate puzzles -> copy these into static/img/puzzles
+- run the generate_js py file to generate the true answers -> these are then stored in RavensQuiz.js 
