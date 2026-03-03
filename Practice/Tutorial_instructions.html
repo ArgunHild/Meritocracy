@@ -7,10 +7,54 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-info">
-    <h2 class="section-title">Practice round instructions</h2>
+    <h2 class="section-title">Intelligence test: Tutorial 🧠</h2>
     <hr class="section-divider">
 
-    {{ include C.Instructions_practice_1 }}
+    <!-- _templates/global/Instructions.html -->
+
+  <!-- What to Expect -->
+  <div class="section-box box-neutral">
+    <div class="section-header">
+  </div>
+
+  <ul>
+    <li>
+      In this experiment, you will perform at a real intelligence test in multiple rounds.
+    </li>
+    <li>
+      Each round of the intelligence test will last 3 minutes and will consist of three blocks:
+    </li>  
+
+    <ol>
+      <li><strong>Matrix reasoning:</strong> You will be shown a 3x3 matrix of shapes. Your task is to identify the missing shape in the bottom right corner.</li>
+      <li><strong>Analogies:</strong> You will be shown a pair of words with a certain relationship (e.g., "cat : kitten"). Then, you will be given a new word and asked to find the word that has the same relationship with it (e.g., "dog : puppy").</li>
+      <li><strong>Mathematics:</strong> You will be given a series of mathematical problems to solve. </li>
+    </li>
+  </ol>
+<br>
+  <li>
+    Each of these blocks will last 1 minute. 
+    After 1 minute, you will automatically move on to the next block. You can answer as many questions as you can within the time limit.
+  </li>
+  
+  
+  
+  <li>
+    On the next few pages, you will play a tutorial of the intelligence test.
+  </li>
+  
+  
+</ul>
+    
+
+
+
+
+  </div>
+
+
+
+  
 
     {% for field in form %}
         {% if field.name not in hidden_fields %}
@@ -29,10 +73,8 @@
 
     <div class="buttons-container">
       <div class="Instructions">
-        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Introductory Instructions</a>
-        <a id="myBtn" onclick="open_modal(2)" class="btn btn-info">Practice Instructions</a>
       </div>
-        <button id="NextButton" class="btn btn-primary">Start practice round</button>
+        <button id="NextButton" class="btn btn-primary">Start Tutorial</button>
     </div>
 </div>
 

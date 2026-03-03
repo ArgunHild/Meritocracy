@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="{{ static 'css/MathQuiz.css' }}">
+
+<div id="MathQuiz-container">
+    <div id="math-counter"></div>
+    <div id="math-grid"></div>
+    <button id="math-confirm-btn" disabled onclick="mConfirmAnswer()">Confirm</button>
+</div>
+
+<script>
+    // Dynamically load answer_key.js for the correct math set, then load MathQuiz.js
+    (function () {
+        var set = js_vars.math_set;
+        var staticBase = "{{ static 'math/Set1/answer_key.js' }}";
+        var keyUrl = staticBase.replace(/Set\d+\/answer_key\.js/, 'Set' + set + '/answer_key.js');
+
+        var keyScript = document.createElement('script');
+        keyScript.src = keyUrl;
+        keyScript.onload = function () {
+            var quizScript = document.createElement('script');
+            quizScript.src = "{{ static 'js/MathQuiz.js' }}";
+            document.head.appendChild(quizScript);
+        };
+        document.head.appendChild(keyScript);
+    })();
+</script>

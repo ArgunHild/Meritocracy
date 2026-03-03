@@ -1,11 +1,11 @@
 from os import environ
 
 SESSION_CONFIGS = [
-    dict(name='Study', app_sequence=['Introduction','Practice','Part_I_Economy',  'Exit_Survey', 'Results'], num_demo_participants=2,),
-    dict(name='Practice', app_sequence=['Practice', ], num_demo_participants=1,),
-    dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=1,),
-    # dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=1,),
-    dict(name='Exit_n_Pilot', app_sequence=['Exit_Survey', ], num_demo_participants=1,),
+    dict(name='Study', app_sequence=['Introduction','Practice','Part_I_Economy',  'Exit_Survey', 'Results'], num_demo_participants=3,),
+    dict(name='Practice', app_sequence=['Practice', ], num_demo_participants=3,),
+    dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=3,),
+    # dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=3,),
+    dict(name='Exit_n_Pilot', app_sequence=['Exit_Survey', ], num_demo_participants=3,),
     
 
 ]
@@ -25,8 +25,10 @@ SESSION_CONFIG_DEFAULTS = dict(
 #TODO: add the relevant participant fields if you wanna pass them thourgh apps
 PARTICIPANT_FIELDS = [
     'Comprehension_passed', 'Attention_passed',
-    'Treatment',
-    # These keep track of blur events.
+    'Treatment',    # str: 'Perfect_Meritocracy' | 'Excessive_Meritocracy' | 'Welfare_State' | 'Aristocracy'
+    'group_id',     # int: unique group index within this session (1 … n/3)
+    'role',         # str: 'high' | 'mid' | 'low'  (performance tier)
+    'multiplier',   # int: 7 | 5 | 3
 ]
 #TODO: add the treatments here
 SESSION_FIELDS = {

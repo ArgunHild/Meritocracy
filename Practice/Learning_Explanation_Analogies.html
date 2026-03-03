@@ -1,0 +1,85 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/AnalogyQuiz.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Learning Round — Block 2 of 3</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">📝</div>
+            <h3>Analogies</h3>
+        </div>
+        <p>
+            You will see word pairs in the format: <strong>Word A : Word B = Word C : ?</strong>
+        </p>
+        <p>
+            Your task is to identify the relationship between A and B, then choose which of the
+            <strong>5 options (A–E)</strong> has the same relationship to C.
+        </p>
+        <p>
+            In the real rounds you will have <strong>1 minute</strong> and can answer up to <strong>40 questions</strong>.
+            In this learning trial you will answer <strong>3 questions</strong> to get a feel for the task.
+        </p>
+    </div>
+
+    <!-- Example question -->
+    <div class="section-box box-calm" style="margin-top: 20px; padding: 24px;">
+        <p style="text-align: center; font-size: 1em; color: #333; margin-bottom: 16px;">
+            <strong>Example question</strong> — the correct answer here is <strong style="color:#0056b3;">C</strong>.
+        </p>
+
+        <div style="max-width:600px; margin:0 auto; pointer-events:none;">
+
+            <!-- Question stem -->
+            <div style="text-align:center; font-size:1.3em; font-weight:bold; margin-bottom:20px;
+                        padding:15px; background:#f8f9fa; border-radius:8px; color:#333;">
+                hot : cold = big : ?
+            </div>
+
+            <!-- Choices -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+
+                <button class="analogy-choice-btn">
+                    <span class="analogy-letter">A</span>
+                    <span class="analogy-text">warm</span>
+                </button>
+
+                <button class="analogy-choice-btn">
+                    <span class="analogy-letter">B</span>
+                    <span class="analogy-text">huge</span>
+                </button>
+
+                <!-- C — correct, shown as selected -->
+                <button class="analogy-choice-btn selected">
+                    <span class="analogy-letter" style="background:#0056b3;">C</span>
+                    <span class="analogy-text"><strong>small</strong> &nbsp;✅</span>
+                </button>
+
+                <button class="analogy-choice-btn">
+                    <span class="analogy-letter">D</span>
+                    <span class="analogy-text">tall</span>
+                </button>
+
+                <button class="analogy-choice-btn">
+                    <span class="analogy-letter">E</span>
+                    <span class="analogy-text">heavy</span>
+                </button>
+
+            </div>
+
+            <p style="font-size:0.88em; color:#666; text-align:center; margin-top:14px;">
+                "hot" is the opposite of "cold", so the answer is the opposite of "big" → <em>small</em>
+            </p>
+        </div>
+    </div>
+
+    <div class="buttons-container" style="text-align: center; margin-top: 20px;">
+        <button id="NextButton" class="btn btn-primary">Start — Analogies trial</button>
+    </div>
+</div>
+
+{{ endblock }}

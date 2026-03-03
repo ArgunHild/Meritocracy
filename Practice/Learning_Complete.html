@@ -1,0 +1,27 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral" style="text-align: center;">
+    <!-- <h2 class="section-title">Learning Round Complete</h2> -->
+    <!-- <hr class="section-divider"> -->
+
+    <div class="section-box box-calm" style="text-align: center; padding: 30px 40px;">
+        <div class="section-header" style="justify-content: center; margin-bottom: 16px;">
+            <div class="icon">🎓</div>
+            <h3 style="margin: 0; font-size: 1.3em;">
+                You have completed the <strong>learning round</strong>.
+            </h3>
+        </div>
+        <p style="font-size: 1.1em; color: #444; margin: 0;">
+            You are now familiar with all three types of tasks and start with the experiment.
+        </p>
+    </div>
+
+    <div class="buttons-container" style="text-align: center; margin-top: 30px;">
+        <button id="NextButton" class="btn btn-primary">Next</button>
+    </div>
+</div>
+
+{{ endblock }}

@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral" style="text-align: center;">
+    <h2 class="section-title">Block Complete</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-calm" style="text-align: center; padding: 30px 40px;">
+        <div class="section-header" style="justify-content: center; margin-bottom: 16px;">
+            <div class="icon">✅</div>
+            <h3 style="margin: 0; font-size: 1.3em;">
+                You have completed the <strong>{{ completed_part_name }}</strong> block.
+            </h3>
+        </div>
+        <p style="font-size: 1.1em; color: #444; margin: 0;">
+            The next block will start in
+            <strong><span id="countdown">{{ interstitial_seconds }}</span></strong> seconds.
+        </p>
+    </div>
+
+    <div style="width: 55px; height: 55px; margin: 24px auto 0; border: 4px solid #d0e8d0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+</div>
+
+<style>
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+    let secondsLeft = {{ interstitial_seconds }};
+    const countdownEle = document.getElementById('countdown');
+    const interval = setInterval(function () {
+        secondsLeft--;
+        if (countdownEle) countdownEle.textContent = secondsLeft;
+        if (secondsLeft <= 0) {
+            clearInterval(interval);
+            document.querySelector('form').submit();
+        }
+    }, 1000);
+</script>

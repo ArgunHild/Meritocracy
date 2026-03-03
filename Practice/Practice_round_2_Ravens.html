@@ -6,9 +6,7 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">
-        Round {{ round_number }} of 4 — Matrix Reasoning
-    </h2>
+    <h2 class="section-title">Practice Round 2 — Matrix Reasoning</h2>
     <hr class="section-divider">
 
     <div class="otree-timer_2" style="margin-top: 10px;">
@@ -24,7 +22,7 @@
         {{ include C.RavensQuiz_template_path }}
     </div>
 
-    <!-- Hidden form fields (score + answers written by JS) -->
+    <!-- Hidden form fields -->
     <div style="display:none">
         {% for field in form %}
             {% if field.name in hidden_fields %}
@@ -33,16 +31,13 @@
         {% endfor %}
     </div>
 
-    <div class="buttons-container" style="margin-top: 20px;">
-        <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
-            <a onclick="open_modal(2)" class="btn btn-info">Task Instructions</a>
-        </div>
+    <div class="buttons-container" style="text-align: center; margin-top: 30px;">
+        <!-- <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Open Instructions</a> -->
         <button id="NextButton" class="btn btn-primary">Continue (debug)</button>
     </div>
 </div>
 
-<!-- Modal: general instructions -->
+<!-- Modal popup for instructions -->
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -50,32 +45,16 @@
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">
-            {{ include C.Instructions_general_path }}
-        </div>
-    </div>
-</div>
-
-<!-- Modal: practice/task instructions -->
-<div id="myModal2" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><span class="icon">📘</span> Task Instructions</h2>
-            <span class="close" onclick="span_click(2)">&times;</span>
-        </div>
-        <div class="modal-body">
-            {{ include C.Instructions_practice_1 }}
         </div>
     </div>
 </div>
 
 <script>
     let customTimerEle = document.getElementById('time-left');
-
     document.addEventListener("DOMContentLoaded", function (event) {
         $('.otree-timer__time-left').on('update.countdown', function (event) {
             customTimerEle.innerText = event.offset.totalSeconds;
         });
     });
 </script>
-
 {{ endblock }}

@@ -1,0 +1,101 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+
+<link rel="stylesheet" href="{{static 'css/css.css'}}">
+<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Comprehension Check</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">⚠️</div>
+            <h3>Second Attempt Failed</h3>
+        </div>
+        <p>
+            You answered the following question(s) incorrectly:
+            <strong>{{ Comprehension_wrong_answers }}</strong>.
+        </p>
+        <p>
+            You have failed the comprehension questions twice. Please read below the correct answers carefully before proceeding to the next part of the experiment.
+        </p>
+    </div>
+
+    <div class=”section-box box-warn”>
+        <div class=”section-header”>
+            <h3><strong>✅ Correct answers:</strong></h3>
+        </div>
+        <ul>
+            <li>
+                <!-- TODO: replace with real Question 1 text -->
+                <strong>Question 1:</strong> [Competition stage] How does the competition over 500 ECs work?<br>
+                <strong>Correct answer:</strong> The higher is my score compared to the scores of the other two, the higher is my share of the pie.
+            </li><br>
+            <li>
+                <!-- TODO: replace with real Question 2 text -->
+                <strong>Question 2:</strong> [Cooperation stage] What maximizes the total ECs earned <strong>by the group</strong> in the cooperation stage?<br>
+                <strong>Correct answer:</strong> The total ECs earned by the group is maximized when all players contribute 100 ECs.
+            </li><br>
+            <li>
+                <!-- TODO: replace with real Question 3 text -->
+                <strong>Question 3:</strong> [Cooperation stage] What maximizes the total ECs earned <strong>by you</strong> in the cooperation stage?<br>
+                <strong>Correct answer:</strong> The total ECs earned by me is maximized when I contribute 0 ECs and others contribute 100.
+            </li>
+        </ul>
+    </div>
+    </div>
+
+
+
+
+
+    <!-- Comprehension form fields (readonly for review or fallback handling) -->
+    <!-- <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">🧪</div>
+            <h3>Comprehension Questions</h3>
+        </div>
+
+        {% for field in form %}
+            {% if field.name not in hidden_fields %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div> -->
+
+    <div style="display:none">
+        {% for field in form %}
+            {% if field.name in hidden_fields %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+
+    </div>
+
+
+
+    <div class="buttons-container">
+        <a id="myBtn" onclick="open_modal(1)" class="btn btn-info">Instructions </a>
+        <button id="submit-btn" class="otree-btn-next btn btn-primary">Next</button>
+    </div>
+
+    
+    <div id="myModal1" class="modal">
+        <div class="modal-content modal-content-wide">
+            <div class="modal-header">
+                <h2>Instructions</h2>
+                <span class="close" onclick="span_click(1)">&times;</span>
+            </div>
+            <p style="padding: 0px">
+                {{ include C.Part_II_Instructions_template }}
+            </p>
+        </div>
+    </div>
+
+
+{{ endblock }}

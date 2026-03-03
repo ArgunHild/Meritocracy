@@ -1,0 +1,39 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Learning Round — Block 2 of 3</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">📝</div>
+            <h3>Analogies</h3>
+        </div>
+        <p>
+            You will see word pairs in the format: <strong>Word A : Word B = Word C : ?</strong>
+        </p>
+        <p>
+            Your task is to identify the relationship between A and B, then choose which of the
+            <strong>5 options (A–E)</strong> has the same relationship to C.
+        </p>
+        <p>
+            <em>Example:</em> <strong>pen : write = knife : ?</strong> → <em>cut</em>
+            (a pen is used to write; a knife is used to cut).
+        </p>
+        <p>
+            In the real rounds you will have <strong>1 minute</strong> and can answer up to <strong>40 questions</strong>.
+            In this learning trial you will answer <strong>3 questions</strong> to get a feel for the task.
+        </p>
+    </div>
+
+    <div class="buttons-container" style="text-align: center; margin-top: 20px;">
+        <button id="NextButton" class="btn btn-primary">Start — Analogies trial</button>
+    </div>
+</div>
+
+{{ endblock }}

@@ -10,7 +10,7 @@ const DEBUG = true;   // set to false to suppress console logging
 
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
-const TOTAL = PUZZLES.length;
+const TOTAL = Math.min(PUZZLES.length, (window.js_vars && window.js_vars.max_questions) ? window.js_vars.max_questions : PUZZLES.length);
 
 // ---------------------------------------------------------------------------
 // State

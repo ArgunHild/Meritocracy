@@ -5,101 +5,13 @@
 <link rel="stylesheet" href="{{ static 'css/modal.css' }}">
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
-<div class="content-box box-info">
-    <h2 class="section-title">A Simulated Economy</h2>
-    <hr class="section-divider">
-
-    <div class="section-box box-calm">
-        <div class="section-header">
-            <div class="icon">📋</div>
-            <h3>Overview</h3>
-        </div>
-        <p>
-            This is the main part of the experiment. Your behavior in this part will have the largest effect on your bonus earnings.
-
-            <br><br>
-
-            You will now take part in <strong>4 rounds</strong> of the simulated economy. Each round consists of three stages:
-        </p>
-        <ol>
-            <li>
-                <strong>Production</strong> — You will perform the intelligence test to produce ECs.
-            </li>
-            <li>
-                <strong>Feedback</strong> — You will see how your performance and earnings compare to the others.
-            </li>
-            <li>
-                <strong>Cooperation game</strong> — use a slider to decide how many tokens to place in the common pool.
-            </li>
-        </ol>
-    </div>
-
-    <div class="section-box box-contrast">
-        <div class="section-header">
-            <div class="icon">👥</div>
-            <h3>Groups</h3>
-        </div>
-        <p>
-            You are grouped with 2 other participants. 
-
-            <strong>[placeholder for multiplier explanation]</strong>
-        </p>
-
-    </div>
-
-    <div class="section-box box-info">
-        <div class="section-header">
-            <div class="icon">⚙️</div>
-            <h3>Production</h3>
-        </div>
-        <p>
-            In the production stage, you will perform an intelligence test to earn ECs.
-            Each correct answer will earn you {{C.Practice_ECs}} ECs.
-            You can earn as many ECs as you want, but you only have 2 minutes to complete the test, so work quickly!
-        </p>
-
-    </div>
-    
-    <div class="section-box box-neutral">
-        <div class="section-header">
-            <div class="icon">⚙️</div>
-            <h3>Feedback</h3>
-        </div>
-        <p>
-            In the feedback stage, you will see how your performance and earnings compare to the others in your group.
-            This information is used to inform your decisions in the cooperation game.
-        </p>
-
-    </div>
-    
-    <div class="section-box box-warn">
-        <div class="section-header">
-            <div class="icon">⚙️</div>
-            <h3>Cooperation game</h3>
-        </div>
-        <p>
-            In the cooperation game, you will decide how many tokens to place in the common pool.
-            The more tokens you contribute, the more you may earn in total.
-        </p>
-
-    </div>
-    <div class="section-box box-neutral">
-        <div class="section-header">
-            <div class="icon">🪙</div>
-            <h3>Earnings</h3>
-        </div>
-        <p>
-            Your final bonus depends on the tokens you accumulate across all 4 rounds.
-            Tokens you keep out of the pool are yours; tokens left in the pool may be shared or multiplied
-            depending on group decisions.
-        </p>
-    </div>
+{{ include C.Part_II_Instructions_template }}
 
     <div class="buttons-container">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">Instructions</a>
         </div>
-        <button id="NextButton" class="btn btn-primary">Start Part II</button>
+        <button id="NextButton" class="btn btn-primary">Next</button>
     </div>
 </div>
 
@@ -111,7 +23,7 @@
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">
-            {{ include C.Instructions_general_path }}
+            {{ include C.Part_II_Instructions_template }}
         </div>
     </div>
 </div>

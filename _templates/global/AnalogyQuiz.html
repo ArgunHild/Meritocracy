@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="{{ static 'css/AnalogyQuiz.css' }}">
+
+<div id="AnalogyQuiz-container">
+    <div id="analogy-counter"></div>
+    <div id="analogy-question"></div>
+    <div id="analogy-choices"></div>
+    <button id="analogy-confirm-btn" disabled onclick="aConfirmAnswer()">Confirm</button>
+</div>
+
+<script>
+    // Dynamically load answer_key.js for the correct analogy set, then load AnalogyQuiz.js
+    (function () {
+        var set = js_vars.analogy_set;
+        var staticBase = "{{ static 'analogies/Set1/answer_key.js' }}";
+        var keyUrl = staticBase.replace(/Set\d+\/answer_key\.js/, 'Set' + set + '/answer_key.js');
+
+        var keyScript = document.createElement('script');
+        keyScript.src = keyUrl;
+        keyScript.onload = function () {
+            var quizScript = document.createElement('script');
+            quizScript.src = "{{ static 'js/AnalogyQuiz.js' }}";
+            document.head.appendChild(quizScript);
+        };
+        document.head.appendChild(keyScript);
+    })();
+</script>

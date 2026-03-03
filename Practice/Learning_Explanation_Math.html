@@ -1,0 +1,109 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/MathQuiz.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Learning Round — Block 3 of 3</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info">
+        <div class="section-header">
+            <div class="icon">🔢</div>
+            <h3>Mathematics</h3>
+        </div>
+        <p>
+            You will see a grid of numbers where each row and each column follows a
+            mathematical rule (addition, subtraction, multiplication, or division).
+            The result of each row is shown on the right; the result of each column is shown at the bottom.
+        </p>
+        <p>
+            Your task is to <strong>type in the missing numbers</strong> that make all rows and columns
+            satisfy their equations, then click <em>Confirm</em>.
+        </p>
+        <p>
+            In the real rounds you will have <strong>1 minute</strong> and can answer up to <strong>20 questions</strong>.
+            In this learning trial you will answer <strong>3 questions</strong> to get a feel for the task.
+        </p>
+    </div>
+
+    <!-- Example question -->
+    <div class="section-box box-calm" style="margin-top: 20px; padding: 24px;">
+        <p style="text-align: center; font-size: 1em; color: #333; margin-bottom: 16px;">
+            <strong>Example question</strong> — the correct answers here are
+            <strong style="color:#28a745;">8</strong> and <strong style="color:#28a745;">1</strong>
+            (shown in green).
+        </p>
+
+        <!--
+            Grid for:   11 + 19 = 30
+                         +    ×
+                        [8] : [1] = 8
+                         =    =
+                        19   19
+
+            visCols = 5, visRows = 5
+        -->
+        <div style="display:grid; grid-template-columns: repeat(5, auto);
+                    gap:4px; justify-content:center; align-items:center; justify-items:center;
+                    padding:20px; background:#f5f5f5; border-radius:10px;
+                    margin-bottom:15px; max-width:420px; margin-left:auto; margin-right:auto;">
+
+            <!-- Row 0: 11 + 19 = 30 -->
+            <div class="math-cell math-number">11</div>
+            <div class="math-cell math-op">+</div>
+            <div class="math-cell math-number">19</div>
+            <div class="math-cell math-op">=</div>
+            <div class="math-cell math-number">30</div>
+
+            <!-- Row 1: col operators  + [empty] × [empty] [empty] -->
+            <div class="math-cell math-op">+</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-op">&times;</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-empty"></div>
+
+            <!-- Row 2: [?] : [?] = 8  (blanks filled with correct answers in green) -->
+            <div class="math-cell math-blank-cell">
+                <input class="math-input" type="number" value="8" readonly
+                       style="border-color:#28a745; color:#28a745; pointer-events:none;">
+            </div>
+            <div class="math-cell math-op">:</div>
+            <div class="math-cell math-blank-cell">
+                <input class="math-input" type="number" value="1" readonly
+                       style="border-color:#28a745; color:#28a745; pointer-events:none;">
+            </div>
+            <div class="math-cell math-op">=</div>
+            <div class="math-cell math-number">8</div>
+
+            <!-- Row 3: = signs -->
+            <div class="math-cell math-op">=</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-op">=</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-empty"></div>
+
+            <!-- Row 4: col results -->
+            <div class="math-cell math-number">19</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-number">19</div>
+            <div class="math-cell math-empty"></div>
+            <div class="math-cell math-empty"></div>
+
+        </div>
+
+        <p style="font-size:0.88em; color:#666; text-align:center; margin-top:6px;">
+            Row 1: 11 + 19 = 30 &nbsp;|&nbsp;
+            Row 2: 8 ÷ 1 = 8 &nbsp;|&nbsp;
+            Col 1: 11 + 8 = 19 &nbsp;|&nbsp;
+            Col 2: 19 × 1 = 19
+        </p>
+    </div>
+
+    <div class="buttons-container" style="text-align: center; margin-top: 20px;">
+        <button id="NextButton" class="btn btn-primary">Start — Mathematics trial</button>
+    </div>
+</div>
+
+{{ endblock }}

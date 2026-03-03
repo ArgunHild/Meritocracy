@@ -282,6 +282,4 @@ class Attention_check_1(MyBasePage):
     def before_next_page(player: Player, timeout_happened=False):
         player.participant.vars['Attention_1'] = player.Attention_1
 
-# TODO: move demographics t othe end.
-page_sequence = [Consent, Introduction,
-                 ]
+page_sequence = [Consent, ]
