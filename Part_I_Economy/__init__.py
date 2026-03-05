@@ -90,6 +90,11 @@ class Player(BasePlayer):
     PGG_contribution_2 = models.IntegerField(initial=0)
     PGG_contribution_3 = models.IntegerField(initial=0)
     PGG_contribution_4 = models.IntegerField(initial=0)
+
+    # ── Final results (populated on round 4 only) ─────────────────
+    PGG_selected_round = models.IntegerField(initial=0)
+    PGG_earnings = models.FloatField(initial=0)
+    Total_bonus_ECs = models.FloatField(initial=0)
     
     
     'Comprehension and attention checks'
@@ -100,15 +105,15 @@ class Player(BasePlayer):
     Comprehension_2 = models.BooleanField(initial=True) 
     
     Comprehension_question_1 = models.BooleanField(choices=[
-        [True,'The higher is my score compared to the scores of the other two, the higher is my share of the pie.'], # Correct answer here
         [False, 'My share of 500 ECs is determined by my score alone, regardless of the scores of the other two.'],
+        [True,'The higher is my score compared to the scores of the other two, the higher is my share of the pie.'], # Correct answer here
         [False, 'My share of the 500 ECs is determined by the sum of everones\' scores.'],],
     label = '[Competition stage] How does the competition over 500 ECs work?',
     widget=widgets.RadioSelect)
     
     Comprehension_question_2 = models.BooleanField(choices=[
-            [True,'The total ECs earned by the group is maximized when all players contribute 100 ECs.'], # Correct answer here
             [False, 'The total ECs earned by the group is maximized when all players contribute 0 ECs.'],
+            [True,'The total ECs earned by the group is maximized when all players contribute 100 ECs.'], # Correct answer here
             [False, 'The total ECs earned by the group is maximized when all players contribute 50 ECs.'],],
         label = '[Cooperation stage] What maximizes the total ECs earned <strong>by the group</strong> in the cooperation stage?',
         widget=widgets.RadioSelect)
@@ -190,6 +195,51 @@ def _accumulated_payoff_shares(player, up_to_round):
         for p in group_members if p.id_in_group != player.id_in_group
     )
     return player_total, others_total
+
+
+def _per_player_data(player, round_number):
+    """Return (performances, accumulated, multipliers) as 3-element lists.
+    Index 0 = current player ("You"), indices 1 & 2 = the other two members.
+    - performances:  raw correct-answer count for this round only
+    - accumulated:   sum of competition-stage Pie_payoffs across rounds 1..round_number
+    - multipliers:   each player's score multiplier"""
+    group_members = player.group.get_players()
+    others  = [p for p in group_members if p.id_in_group != player.id_in_group]
+    ordered = [player] + others          # You always first
+
+    performances = [
+        int(getattr(p, _round_field('Round_score', round_number)))
+        for p in ordered
+    ]
+    accumulated = [
+        round(sum(getattr(p, _round_field('Pie_payoff', r))
+                  for r in range(1, round_number + 1)), 1)
+        for p in ordered
+    ]
+    multipliers_list = [p.participant.multiplier for p in ordered]
+
+    return performances, accumulated, multipliers_list
+
+
+def _multiplier_reminder(treatment):
+    """Return a short HTML reminder string shown below the multiplier table,
+    tailored to the treatment condition."""
+    if treatment == 'Perfect_Meritocracy':
+        return ('Remember that everyone has the <strong>same multiplier</strong>, '
+                'which means your earnings are a direct reflection of your relative performance.')
+    elif treatment == 'Excessive_Meritocracy':
+        return ('Remember that multipliers were assigned based on <strong>past performance</strong>: '
+                'the best performer received &times;7 and the worst performer &times;3.')
+    elif treatment == 'Aristocracy':
+        return ('Remember that these multipliers were assigned <strong>randomly</strong> '
+                'at the start of the experiment — they are therefore the result of '
+                '<strong>pure luck!</strong>')
+    elif treatment == 'Welfare_State':
+        return ('Remember that everyone has the <strong>same multiplier (&times;5)</strong>. '
+                'Additionally, a flat bonus of <strong>+50 points</strong> is added to each '
+                'member\'s weighted score before the pie shares are calculated — '
+                'this guarantees every member a meaningful base share of the pot.')
+    return ''
 
 
 def _instruction_vars(player):
@@ -429,27 +479,20 @@ class Round_Math(MyBasePage):
 
 # ── Stage 2: Visual Feedback ───────────────────────────────────────────────────────
 class Round_Feedback(MyBasePage):
-    """Two pie charts: current-round effort share, current-round payoff share."""
+    """Bar charts: per-player performance (this round) and accumulated earnings."""
 
     @staticmethod
     def vars_for_template(player: Player):
         variables = MyBasePage.vars_for_template(player)
         r = player.round_number
+        performances, accumulated, multipliers_list = _per_player_data(player, r)
 
-        effort_share, effort_others = _effort_shares(player, r)
-        payoff_share  = getattr(player, _round_field('Pie_payoff', r))
-        payoff_others = sum(
-            getattr(p, _round_field('Pie_payoff', r))
-            for p in player.group.get_players()
-            if p.id_in_group != player.id_in_group
-        )
-
-        variables['round_number']   = r
-        variables['effort_share']   = round(effort_share, 2)
-        variables['effort_others']  = round(effort_others, 2)
-        variables['payoff_share']   = round(payoff_share, 2)
-        variables['payoff_others']  = round(payoff_others, 2)
-        variables['Treatment']      = player.participant.Treatment
+        variables['round_number']         = r
+        variables['Treatment']            = player.participant.Treatment
+        variables['performances']         = performances       # [you, m2, m3]
+        variables['accumulated']          = accumulated        # [you, m2, m3]
+        variables['multipliers_list']     = multipliers_list  # [you, m2, m3]
+        variables['multiplier_reminder']  = _multiplier_reminder(player.participant.Treatment)
         return variables
 
 
@@ -467,29 +510,23 @@ class Round_PublicGoods(MyBasePage):
         variables = MyBasePage.vars_for_template(player)
         r = player.round_number
 
-        # Slider bounds: use the pie payoff (ECs earned this round) as the token budget
-        tokens_earned = round(getattr(player, _round_field('Pie_payoff', r)))
-        pgg_max       = tokens_earned + C.PGG_Commons
-        pgg_default   = C.PGG_Commons
+        performances, accumulated, multipliers_list = _per_player_data(player, r)
 
-        # Effort: current round
-        effort_share, effort_others = _effort_shares(player, r)
-
-        # Payoff: accumulated across all completed rounds (1..r)
-        payoff_share, payoff_others = _accumulated_payoff_shares(player, r)
+        pgg_max     = 100  # fixed pool size
+        pgg_default = C.PGG_Commons
 
         variables['round_number']       = r
+        variables['Treatment']          = player.participant.Treatment
         variables['PGG_Commons']        = C.PGG_Commons
         variables['pgg_max']            = pgg_max
         variables['pgg_default']        = pgg_default
-        variables['tokens_earned']      = tokens_earned
+        variables['tokens_earned']      = round(getattr(player, _round_field('Pie_payoff', r)))
         variables['contribution_field'] = _round_field('PGG_contribution', r)
         variables['hidden_fields']      = [_round_field('PGG_contribution', r)]
-        variables['Treatment']          = player.participant.Treatment
-        variables['effort_share']       = round(effort_share, 2)
-        variables['effort_others']      = round(effort_others, 2)
-        variables['payoff_share']       = round(payoff_share, 2)
-        variables['payoff_others']      = round(payoff_others, 2)
+        variables['performances']        = performances       # [you, m2, m3]
+        variables['accumulated']         = accumulated        # [you, m2, m3]
+        variables['multipliers_list']    = multipliers_list  # [you, m2, m3]
+        variables['multiplier_reminder'] = _multiplier_reminder(player.participant.Treatment)
         return variables
 
 
@@ -597,8 +634,92 @@ class Comprehension_check_3(MyBasePage):
 
     # No before_next_page needed: Comprehension_2 and Comprehension_passed were
     # already set correctly by Comprehension_check_2.before_next_page.
-            
 
+
+# ── Final WaitPage (round 4 only: sync PGG contributions, compute final earnings) ──
+class Final_WaitPage(WaitPage):
+    """After the last PGG decision, wait for all group members, then compute
+    final earnings from Practice + Competition + one randomly-selected PGG round."""
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 4
+
+    @staticmethod
+    def after_all_players_arrive(group: Group):
+        players = group.get_players()
+        selected_round = random.randint(1, 4)
+
+        # Gather each player's PGG contribution in the selected round
+        contributions = []
+        for p in players:
+            p_in_sel = p.in_round(selected_round)
+            contributions.append(getattr(p_in_sel, f'PGG_contribution_{selected_round}'))
+
+        total_pool   = sum(contributions)
+        pool_return  = (total_pool * 1.5) / 3
+
+        for i, p in enumerate(players):
+            p.PGG_selected_round = selected_round
+
+            # PGG earnings
+            tokens_kept   = C.PGG_Commons - contributions[i]
+            p.PGG_earnings = tokens_kept + pool_return
+
+            # Competition ECs (accumulated across all 4 rounds)
+            competition_ecs = sum(
+                getattr(p.in_round(r), f'Pie_payoff_{r}')
+                for r in range(1, 5)
+            )
+
+            # Practice ECs (stored on participant by Practice app)
+            practice_ecs = getattr(p.participant, 'Practice_ECs_total', 0)
+
+            p.Total_bonus_ECs = practice_ecs + competition_ecs + p.PGG_earnings
+
+
+# ── Final Results (round 4 only) ─────────────────────────────────────────────────────
+class Final_Results(MyBasePage):
+    """Summary page shown after the last round: breakdown of all earnings."""
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 4
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        variables = MyBasePage.vars_for_template(player)
+
+        practice_ecs    = getattr(player.participant, 'Practice_ECs_total', 0)
+        competition_ecs = sum(
+            getattr(player.in_round(r), f'Pie_payoff_{r}')
+            for r in range(1, 5)
+        )
+        pgg_earnings    = player.PGG_earnings
+        total_ecs       = player.Total_bonus_ECs
+        eur_amount      = total_ecs / C.EC_exchange_rate
+
+        # Group comparison: total ECs for [You, Member 2, Member 3]
+        group_members = player.group.get_players()
+        others  = [p for p in group_members if p.id_in_group != player.id_in_group]
+        ordered = [player] + others
+        group_totals = [round(p.Total_bonus_ECs, 1) for p in ordered]
+
+        # Multiplier table data (same as Round_Feedback)
+        multipliers_list = [p.participant.multiplier for p in ordered]
+
+        variables.update({
+            'practice_ecs':       round(practice_ecs, 1),
+            'competition_ecs':    round(competition_ecs, 1),
+            'pgg_earnings':       round(pgg_earnings, 1),
+            'pgg_selected_round': player.PGG_selected_round,
+            'total_ecs':          round(total_ecs, 1),
+            'eur_amount':         round(eur_amount, 2),
+            'group_totals':       group_totals,
+            'multipliers_list':   multipliers_list,
+            'multiplier_reminder': _multiplier_reminder(player.participant.Treatment),
+        })
+        return variables
 
 
 # ── Page sequence ────────────────────────────────────────────────────────────────────────────
@@ -619,4 +740,7 @@ page_sequence = [
     Round_WaitPage,         # sync: wait for all group members' scores before feedback
     Round_Feedback,
     Round_PublicGoods,
+    # Final results (round 4 only)
+    Final_WaitPage,
+    Final_Results,
 ]

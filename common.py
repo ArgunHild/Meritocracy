@@ -12,6 +12,7 @@ class CommonConstants(BaseConstants):
     Instructions_general_path = "_templates/global/Instructions.html"
     Instructions_practice_1 = "_templates/global/Instructions_Practice_1.html"
     Part_II_Instructions_template = "_templates/global/Part_II_Instructions_template.html"
+    Instructions_pgg = "_templates/global/Instructions_pgg.html"
 
     # TODO: set to 60
     Round_length = 6000          # 60 seconds per quiz part (oTree timeout_seconds is in seconds)
@@ -31,7 +32,7 @@ class CommonConstants(BaseConstants):
     # \u2500\u2500 Economy \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     Economy_pie   = 500   # fixed pie size (ECs) competed over each round
     Welfare_check = 50    # flat bonus added to weighted score in Welfare State
-    PGG_Commons   = 100   # starting tokens in the common pool each round
+    PGG_Commons   = 50   # starting tokens in the common pool each round
 
     # \u2500\u2500 Multipliers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     M_high   = 7   # high-performer   (Excessive Meritocracy / Aristocracy)
@@ -43,7 +44,7 @@ class CommonConstants(BaseConstants):
 
     # \u2500\u2500 Treatment explanation texts (shown on Part_II_Instructions) \u2500\u2500\u2500\u2500
     Explanation_Perfect_Meritocracy = (
-        '<p>You have been placed in a group of three participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share of the pot depends on how well you perform relative to the others in your group.</p>'
         '<p>All three members of your Economy have the <strong>same multiplier of &times;5</strong>. '
@@ -51,7 +52,7 @@ class CommonConstants(BaseConstants):
     )
 
     Explanation_Excessive_Meritocracy = (
-        '<p>You have been placed in a group of three participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your <strong>multiplier</strong>.</p>'
         '<p>Multipliers were assigned based on relative performance in the practice rounds: '
@@ -62,7 +63,7 @@ class CommonConstants(BaseConstants):
     )
 
     Explanation_Welfare_State = (
-        '<p>You have been placed in a group of three participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your multiplier.</p>'
         '<p>All three members have the <strong>same multiplier of &times;5</strong>. '
@@ -71,7 +72,7 @@ class CommonConstants(BaseConstants):
     )
 
     Explanation_Aristocracy = (
-        '<p>You have been placed in a group of three participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your <strong>multiplier</strong>.</p>'
         '<p>Multipliers were assigned <strong>randomly</strong> among the three members of your Economy: '

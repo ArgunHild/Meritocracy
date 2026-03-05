@@ -2,6 +2,7 @@
     <h2 class="section-title">A Simulated Economy</h2>
     <hr class="section-divider">
 
+    
     <!-- Overview -->
     <div class="section-box box-calm">
         <div class="section-header">
@@ -9,7 +10,7 @@
             <h3>Overview</h3>
         </div>
         <p>
-            This is the main part of the experiment — your earnings here will make up the largest share of your bonus payment.
+            Welcome to the main part of the experiment — your earnings here will make up the largest share of your bonus payment.
         </p>
         <p>
             You will take part in <strong>4 rounds</strong> of a simulated economy. Each round has three stages:
@@ -19,7 +20,111 @@
             <li><strong>Feedback</strong> — See how your score and earnings compare to the other members of your Economy.</li>
             <li><strong>Cooperation</strong> — Decide how much to contribute to a shared pool within your Economy.</li>
         </ol>
+
+
+            <!-- ── Pictogram: three stages at a glance ── -->
+    <div style="font-family:inherit; margin:20px 0 8px;">
+
+        <!-- "4 rounds" badge -->
+        <div style="text-align:center; margin-bottom:18px;">
+            <span style="
+                display:inline-flex; align-items:center; gap:7px;
+                background:#4a5568; color:white;
+                border-radius:24px; padding:7px 22px;
+                font-size:0.92em; font-weight:600;
+                letter-spacing:0.02em;
+            ">
+                <span style="font-size:1.1em;">🔄</span> 4 rounds
+            </span>
+        </div>
+
+        <!-- Stage boxes -->
+        <div style="
+            display:flex;
+            align-items:stretch;
+            justify-content:center;
+            gap:0;
+            flex-wrap:wrap;
+        ">
+            <!-- Stage I: Competition -->
+            <div style="
+                flex:1; min-width:185px; max-width:240px;
+                background:#e8f4fd;
+                border:2px solid #5B9BD5;
+                border-radius:12px;
+                padding:20px 16px;
+                text-align:center;
+            ">
+                <div style="font-size:2.4em; margin-bottom:6px; line-height:1;">🧠</div>
+                <div style="color:#2E75B6; font-weight:700; font-size:0.75em; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Stage I</div>
+                <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Competition</div>
+                <hr style="border:none; border-top:1px solid #bcd8f0; margin:10px 0;">
+                <ul style="text-align:left; font-size:0.83em; color:#333; padding-left:18px; margin:0; line-height:1.8;">
+                    <li>3 quiz blocks (1 min each)</li>
+                    <li>Score&nbsp;=&nbsp;answers&nbsp;&times;&nbsp;multiplier</li>
+                    <li>Win a share of the <strong>{{ C.Economy_pie }} EC</strong> pot</li>
+                </ul>
+            </div>
+
+            <!-- Arrow 1 -->
+            <div style="display:flex; align-items:center; justify-content:center; padding:0 6px; color:#bbb; font-size:2em; flex-shrink:0; min-width:32px;">▶</div>
+
+            <!-- Stage II: Feedback -->
+            <div style="
+                flex:1; min-width:185px; max-width:240px;
+                background:#f7f7f7;
+                border:2px solid #aaa;
+                border-radius:12px;
+                padding:20px 16px;
+                text-align:center;
+            ">
+                <div style="font-size:2.4em; margin-bottom:6px; line-height:1;">📊</div>
+                <div style="color:#666; font-weight:700; font-size:0.75em; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Stage II</div>
+                <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Feedback</div>
+                <hr style="border:none; border-top:1px solid #ddd; margin:10px 0;">
+                <ul style="text-align:left; font-size:0.83em; color:#333; padding-left:18px; margin:0; line-height:1.8;">
+                    <li>See your score vs. group</li>
+                    <li>See accumulated earnings vs. group</li>
+                    <li>Review multipliers in your Economy</li>
+                </ul>
+            </div>
+
+            <!-- Arrow 2 -->
+            <div style="display:flex; align-items:center; justify-content:center; padding:0 6px; color:#bbb; font-size:2em; flex-shrink:0; min-width:32px;">▶</div>
+
+            <!-- Stage III: Cooperation -->
+            <div style="
+                flex:1; min-width:185px; max-width:240px;
+                background:#f0faf0;
+                border:2px solid #4CAF50;
+                border-radius:12px;
+                padding:20px 16px;
+                text-align:center;
+            ">
+                <div style="font-size:2.4em; margin-bottom:6px; line-height:1;">🤝</div>
+                <div style="color:#388E3C; font-weight:700; font-size:0.75em; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Stage III</div>
+                <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Cooperation</div>
+                <hr style="border:none; border-top:1px solid #b8e6b8; margin:10px 0;">
+                <ul style="text-align:left; font-size:0.83em; color:#333; padding-left:18px; margin:0; line-height:1.8;">
+                    <li>Receive <strong>100 ECs</strong></li>
+                    <li>Decide how many to invest in the pool</li>
+                    <li>Pool &times; 1.5, shared equally among 3</li>
+                </ul>
+            </div>
+        </div><!-- /stage boxes -->
+
+        <!-- Repeat footer -->
+        <div style="display:flex; align-items:center; justify-content:center; margin-top:14px; gap:10px; color:#aaa; font-size:0.83em;">
+            <span style="flex:1; height:1px; background:#e0e0e0; max-width:120px; display:block;"></span>
+            <span>↩&nbsp; Then the next round begins</span>
+            <span style="flex:1; height:1px; background:#e0e0e0; max-width:120px; display:block;"></span>
+        </div>
     </div>
+    <!-- ── /Pictogram ── -->
+
+
+    </div>
+
 
     <!-- Treatment explanation box -->
     <div class="section-box box-contrast">
@@ -28,21 +133,29 @@
             <h3>Your Economy</h3>
         </div>
         {{ explanation|safe }}
+
+
+            <!-- Multiplier box: only shown when individually relevant (Excessive Meritocracy / Aristocracy) -->
+        {% if show_multiplier %}
+        <div class="section-box box-warn">
+            <div class="section-header">
+                <div class="icon">✖️</div>
+                <h3>Your Multiplier</h3>
+            </div>
+            <p>
+                Your multiplier for this experiment is <strong style="font-size:1.3em;">&times;{{ multiplier }}</strong>.
+                Each correct answer you give counts as <strong>{{ multiplier }} points</strong> toward your score. See below how this affects your earnings.
+            </p>
+        </div>
+        {% endif %}
     </div>
 
-    <!-- Multiplier box: only shown when individually relevant (Excessive Meritocracy / Aristocracy) -->
-    {% if show_multiplier %}
-    <div class="section-box box-warn">
-        <div class="section-header">
-            <div class="icon">✖️</div>
-            <h3>Your Multiplier</h3>
+
+<div class="section-box box-warn">
+    <div class="section-header">
+            <div class="icon">🌍</div>
+            <h3>Three stages of the Economy</h3>
         </div>
-        <p>
-            Your multiplier for this experiment is <strong style="font-size:1.3em;">&times;{{ multiplier }}</strong>.
-            Each correct answer you give counts as <strong>{{ multiplier }} points</strong> toward your score. See below how this affects your earnings.
-        </p>
-    </div>
-    {% endif %}
 
     <!-- Stage I: Competition -->
     <div class="section-box box-info">
@@ -54,7 +167,7 @@
             You will perform the full intelligence test — the same three blocks as before (Matrix Reasoning, Analogies, Mathematics), each lasting 1 minute.
         </p>
         <p>
-            Your <strong>score</strong> is calculated as:
+            Your <strong>round score</strong> is calculated as:
             <br>
             &emsp;<strong>correct answers &times; your multiplier</strong>{{ welfare_bonus_text|safe }}
         </p>
@@ -67,6 +180,12 @@
             <em>Example: if your score is 50 and the others score 100 each,
             your share is (50 &divide; 250) &times; {{ C.Economy_pie }} = <strong>100 ECs</strong>.</em>
         </p>
+        
+        {% if show_multiplier %}
+        <p style="color:#555; font-size:0.95em;">
+            <em>Remember that your score depends on your performance and your multiplier.</em>
+        </p>
+        {% endif %}
     </div>
 
     <!-- Stage II: Feedback -->
@@ -76,7 +195,7 @@
             <h3>Stage II: Feedback</h3>
         </div>
         <p>
-            After the competition, you will see how your performance compares to the others. You will see two bar charts showing:
+            After the competition, you will see how you compare to the other two members in your Economy. You will see two bar charts showing:
             <ul>
                 <li>Your correct answers compared to the correct answers of the other two.</li>
                 <li>Your earned ECs so far, compared to the earnings of the other two.</li>
@@ -84,13 +203,13 @@
     </div>
 
     <!-- Stage III: Cooperation -->
-    <div class="section-box box-warn">
+    <div class="section-box box-info">
         <div class="section-header">
             <div class="icon">🤝</div>
             <h3>Stage III: Cooperation</h3>
         </div>
         <p>
-            Each member of your Economy receives <strong>{{ C.PGG_Commons }} ECs</strong>. You decide how many to place in a <strong>shared pool</strong>:
+            Each member of your Economy receives <strong>100 ECs</strong>. You decide how many to place in a <strong>shared pool</strong>:
         </p>
         <ul>
             <li>ECs you <strong>keep</strong> are added directly to your earnings.</li>
@@ -105,17 +224,25 @@
             <em>Example 2: if you contribute nothing but the others contribute 100 ECs each, you earn 100 ECs from keeping. You and the others each earn (300 &times; 1.5) &divide; 3 = <strong>150 ECs</strong> from the pool.</em>
         </p>
     </div>
+</div>
 
     <!-- Earnings summary -->
-    <div class="section-box box-calm">
+    <div class="section-box box-warn">
         <div class="section-header">
             <div class="icon">🪙</div>
             <h3>Earnings</h3>
         </div>
         <p>
-            Your bonus from this part accumulates across all 4 rounds — both from the competition stage (your EC share of the pot) and from the cooperation stage (tokens kept and received from the pool).
+            <ul>
+                <li>Your earnings from the competition stage accumulate across all 4 rounds.</li>
+                <li>For the cooperation stage, only one of the 4 rounds will be randomly chosen at the end to determine your actual payoff from cooperation — the other three rounds' cooperation decisions will not affect your earnings.</li>
+            </ul>
         </p>
         <p>
-            All ECs are converted to Euros at the end of the experiment at the rate stated in the general instructions.
+            At the end of the experiment, all ECs are converted to EUR  at the rate exchange rate of {{ C.EC_exchange_rate }} EC = 1 EUR.
+        </p>
+        <p style="color:#555; font-size:0.95em;">
+            <!-- TODO: double check the exchange rate -->
+            <em>For example, if you earn 1500 ECs you will be paid 15 EUR.</em><br>
         </p>
     </div>

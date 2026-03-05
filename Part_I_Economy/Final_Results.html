@@ -8,12 +8,12 @@
 
 <div class="content-box box-neutral">
     <h2 class="section-title">
-        Round {{ round_number }} of 4 — Results &amp; Feedback
+        Economy Complete &mdash; Your Results
     </h2>
     <hr class="section-divider">
 
 
-     <!-- ── Multiplier table ──────────────────────────────────────────── -->
+        <!-- ── Multiplier table ──────────────────────────────────────────── -->
     <div class="section-box box-neutral" style="margin-top:32px;">
         <div class="section-header">
             <div class="icon">✖️</div>
@@ -64,41 +64,73 @@
         {% endif %}
     </div>
 
+
     <p style="text-align:center; color:#555;">
-        Below you can see how your <strong>performance</strong> and <strong>accumulated earnings</strong>
-        compare to the other members of your Economy.
+        Below is a summary of the <strong>ECs you earned</strong> across all parts of the experiment.
     </p>
 
     <!-- ── Two bar charts ────────────────────────────────────────────── -->
     <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:24px;">
 
-        <!-- Left: performance this round -->
-        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+        <!-- Left: your earnings breakdown -->
+        <div style="flex:1; min-width:260px; max-width:380px; text-align:center;">
             <h4 style="margin-bottom:6px;">
-                Performance
-                <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
+                Your Earnings Breakdown
             </h4>
-            <canvas id="performanceChart"></canvas>
+            <canvas id="breakdownChart"></canvas>
             <p style="margin-top:6px; font-size:0.82em; color:#777;">
-                Correctly solved questions in round {{ round_number }}
+                ECs earned from each part of the experiment
             </p>
         </div>
 
-        <!-- Right: accumulated competition earnings -->
-        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+        <!-- Right: group comparison -->
+        <div style="flex:1; min-width:260px; max-width:380px; text-align:center;">
             <h4 style="margin-bottom:6px;">
-                Accumulated Earnings
-                <span style="font-weight:normal; color:#777; font-size:0.9em;">(all rounds so far)</span>
+                Total Earnings
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(group comparison)</span>
             </h4>
-            <canvas id="earningsChart"></canvas>
+            <canvas id="groupChart"></canvas>
             <p style="margin-top:6px; font-size:0.82em; color:#777;">
-                ECs earned from the competition stage
+                Total ECs earned by each group member
             </p>
         </div>
 
     </div>
 
-   
+
+    <!-- ── Summary table ──────────────────────────────────────────── -->
+    <div class="section-box box-calm" style="margin-top:32px;">
+        <div class="section-header">
+            <div class="icon">🪙</div>
+            <h3>Earnings Summary</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; margin-top:8px;">
+            <tbody>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px;">Practice rounds</td>
+                    <td style="padding:10px 16px; text-align:right; font-weight:bold;">{{ practice_ecs }} ECs</td>
+                </tr>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px;">Competition stage (4 rounds)</td>
+                    <td style="padding:10px 16px; text-align:right; font-weight:bold;">{{ competition_ecs }} ECs</td>
+                </tr>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px;">Cooperation stage (round {{ pgg_selected_round }} selected)</td>
+                    <td style="padding:10px 16px; text-align:right; font-weight:bold;">{{ pgg_earnings }} ECs</td>
+                </tr>
+                <tr style="border-top:2px solid #333; background:#f8f9fa;">
+                    <td style="padding:12px 16px; font-weight:bold; font-size:1.05em;">Total bonus so far</td>
+                    <td style="padding:12px 16px; text-align:right; font-weight:bold; font-size:1.05em;">
+                        {{ total_ecs }} ECs 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin-top:12px; font-size:0.9em; color:#666;">
+            One of the four cooperation rounds was randomly selected for payment (round {{ pgg_selected_round }}).
+            Your bonus will be paid in addition to the completion fee.
+        </p>
+    </div>
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
@@ -122,24 +154,30 @@
 </div>
 
 <script>
-    // Colour scheme — matches the legend dots in the multiplier table
-    const BAR_BG     = ['rgba(76,175,80,0.8)', 'rgba(91,155,213,0.8)', 'rgba(255,179,71,0.8)'];
-    const BAR_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
-    const MEMBERS    = ['You', 'Group member 2', 'Group member 3'];
+    // ── Colour constants (matching Round_Feedback) ─────────────────────
+    const MEMBER_BG     = ['rgba(76,175,80,0.8)', 'rgba(91,155,213,0.8)', 'rgba(255,179,71,0.8)'];
+    const MEMBER_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
+    const MEMBERS       = ['You', 'Group member 2', 'Group member 3'];
 
-    const performances = {{ performances }};   // [you, m2, m3] — raw correct answers this round
-    const accumulated  = {{ accumulated }};    // [you, m2, m3] — cumulative competition ECs
+    // Breakdown colours (practice / competition / cooperation)
+    const BREAKDOWN_BG     = ['rgba(91,155,213,0.8)', 'rgba(76,175,80,0.8)', 'rgba(255,179,71,0.8)'];
+    const BREAKDOWN_BORDER = ['#2E75B6',               '#388E3C',               '#E8923A'];
+    const BREAKDOWN_LABELS = ['Practice', 'Competition', 'Cooperation'];
 
-    function makeBarChart(canvasId, data, yLabel) {
+    // Data from Python
+    const breakdownData = [{{ practice_ecs }}, {{ competition_ecs }}, {{ pgg_earnings }}];
+    const groupTotals   = {{ group_totals }};
+
+    function makeBarChart(canvasId, labels, data, bgColors, borderColors, yLabel) {
         const ctx = document.getElementById(canvasId).getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: MEMBERS,
+                labels: labels,
                 datasets: [{
                     data:            data,
-                    backgroundColor: BAR_BG,
-                    borderColor:     BAR_BORDER,
+                    backgroundColor: bgColors,
+                    borderColor:     borderColors,
                     borderWidth:     1.5,
                     borderRadius:    5,
                 }]
@@ -150,7 +188,7 @@
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: ctx => ` ${ctx.parsed.y} ${yLabel}`
+                            label: ctx => ` ${ctx.parsed.y.toFixed(1)} ${yLabel}`
                         }
                     }
                 },
@@ -165,8 +203,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        makeBarChart('performanceChart', performances, 'questions');
-        makeBarChart('earningsChart',    accumulated,  'ECs');
+        makeBarChart('breakdownChart', BREAKDOWN_LABELS, breakdownData,
+                     BREAKDOWN_BG, BREAKDOWN_BORDER, 'ECs');
+        makeBarChart('groupChart', MEMBERS, groupTotals,
+                     MEMBER_BG, MEMBER_BORDER, 'ECs');
     });
 </script>
 

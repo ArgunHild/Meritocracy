@@ -29,6 +29,7 @@ PARTICIPANT_FIELDS = [
     'group_id',     # int: unique group index within this session (1 … n/3)
     'role',         # str: 'high' | 'mid' | 'low'  (performance tier)
     'multiplier',   # int: 7 | 5 | 3
+    'Practice_ECs_total',  # float: total ECs earned in both practice rounds
 ]
 #TODO: add the treatments here
 SESSION_FIELDS = {

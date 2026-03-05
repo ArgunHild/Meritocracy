@@ -521,6 +521,11 @@ class Grouping_WaitPage(WaitPage):
                 player.participant.multiplier = mult
                 player.participant.Treatment  = treatment
 
+        # ── Store practice ECs for each player ────────────────────────
+        for player in players:
+            practice_ecs = (player.Practice_score_1 + player.Practice_score_2) * CC.Practice_ECs
+            player.participant.Practice_ECs_total = practice_ecs
+
 
 page_sequence = [
     Tutorial_instructions,

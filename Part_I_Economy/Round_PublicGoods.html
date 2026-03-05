@@ -4,12 +4,11 @@
 <link rel="stylesheet" href="{{ static 'css/css.css' }}">
 <link rel="stylesheet" href="{{ static 'css/modal.css' }}">
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <style>
-    /* ── Slider styling ────────────────────────────────────── */
-    .pgg-slider-wrap {
-        margin: 24px 0 8px;
-    }
+    /* ── Slider styling ─────────────────────────────────────── */
+    .pgg-slider-wrap { margin: 24px 0 8px; }
 
     #pgg-slider {
         -webkit-appearance: none;
@@ -21,29 +20,24 @@
         outline: none;
         cursor: pointer;
     }
-
     #pgg-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 26px;
-        height: 26px;
+        width: 26px; height: 26px;
         border-radius: 50%;
         background: var(--primary, #4CAF50);
         cursor: pointer;
         border: 2px solid #fff;
         box-shadow: 0 1px 4px rgba(0,0,0,0.25);
     }
-
     #pgg-slider::-moz-range-thumb {
-        width: 26px;
-        height: 26px;
+        width: 26px; height: 26px;
         border-radius: 50%;
         background: var(--primary, #4CAF50);
         cursor: pointer;
         border: 2px solid #fff;
         box-shadow: 0 1px 4px rgba(0,0,0,0.25);
     }
-
     .pgg-labels {
         display: flex;
         justify-content: space-between;
@@ -51,7 +45,6 @@
         color: #555;
         margin-top: 4px;
     }
-
     .pgg-display {
         text-align: center;
         font-size: 2em;
@@ -59,66 +52,120 @@
         color: var(--primary, #4CAF50);
         margin: 16px 0 4px;
     }
-
     .pgg-display-label {
         text-align: center;
         font-size: 0.9em;
         color: #666;
         margin-bottom: 12px;
     }
-
-    .pgg-marker {
-        text-align: center;
-        font-size: 0.85em;
-        color: #888;
-        margin-top: 6px;
-    }
 </style>
 
 <div class="content-box box-neutral">
     <h2 class="section-title">
-        Round {{ round_number }} of 4 — Common Pool Decision
+        Round {{ round_number }} of 4 — Cooperation
     </h2>
     <hr class="section-divider">
 
-    <!-- Pie charts: effort & payoff shares (carried over from feedback page) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <div style="display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-bottom: 24px;">
+    <!-- ── Two bar charts ────────────────────────────────────────────── -->
+    <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-bottom:24px;">
 
-        <div style="text-align: center; max-width: 220px;">
-            <h4 style="margin-bottom: 10px;">Effort Share <br> (Last round)</h4>
-            <canvas id="pgg-effortChart" width="200" height="200"></canvas>
-            <p style="margin-top: 8px; font-size: 0.85em; color: #555;">Your score vs. group total</p>
+        <!-- Left: performance this round -->
+        <div style="flex:1; min-width:240px; max-width:320px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Performance
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
+            </h4>
+            <canvas id="pgg-performanceChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                Correctly solved questions in round {{ round_number }}
+            </p>
         </div>
 
-        <div style="text-align: center; max-width: 220px;">
-            <h4 style="margin-bottom: 10px;">Accumulated Earnings <br> (All rounds)</h4>
-            <canvas id="pgg-payoffChart" width="200" height="200"></canvas>
-            <p style="margin-top: 8px; font-size: 0.85em; color: #555;">Your accumulated earnings vs. group total</p>
+        <!-- Right: accumulated competition earnings -->
+        <div style="flex:1; min-width:240px; max-width:320px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Accumulated Earnings
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(all rounds so far)</span>
+            </h4>
+            <canvas id="pgg-earningsChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                ECs earned from the competition stage
+            </p>
         </div>
 
     </div>
 
-    <!-- Pool info -->
+    <!-- ── Multiplier table ──────────────────────────────────────────── -->
+    <div class="section-box box-neutral" style="margin-bottom:24px;">
+        <div class="section-header">
+            <div class="icon">✖️</div>
+            <h3>Multipliers in your Economy</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; text-align:center; margin-top:8px;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd; text-align:left;">
+                        Group member
+                    </th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">
+                        Multiplier
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee; text-align:left;">
+                        <span style="color:#4CAF50; font-size:1.1em;">●</span>&nbsp;<strong>You</strong>
+                    </td>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee;">
+                        <strong>&times;{{ multipliers_list.0 }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee; text-align:left;">
+                        <span style="color:#5B9BD5; font-size:1.1em;">●</span>&nbsp;Group member 2
+                    </td>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee;">
+                        <strong>&times;{{ multipliers_list.1 }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 16px; text-align:left;">
+                        <span style="color:#FFB347; font-size:1.1em;">●</span>&nbsp;Group member 3
+                    </td>
+                    <td style="padding:10px 16px;">
+                        <strong>&times;{{ multipliers_list.2 }}</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% if multiplier_reminder %}
+        <p style="margin-top:14px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.92em; color:#333;">
+            ℹ️ {{ multiplier_reminder|safe }}
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- ── Pool info ─────────────────────────────────────────────────── -->
     <div class="section-box box-info">
         <div class="section-header">
             <div class="icon">🏦</div>
             <h3>Common Pool</h3>
         </div>
         <p>
-            We have already invested <strong>{{ PGG_Commons }} tokens on your behalf</strong>, which you can take out if you want.
+            You have received {{ pgg_max }} ECs that you can invest in the public pool.
+            We have already invested <strong>{{ PGG_Commons }} of these on your behalf</strong>, which you can take out if you want.
         </p>
         <p>
-            You earned <strong>{{ tokens_earned }} tokens</strong> from the intelligence task this round.
-            Together, that gives you a maximum of <strong>{{ pgg_max }} tokens</strong> you can place into the pool.
+            Use the slider to decide how many ECs to keep in the pool.
+            Move it <strong>left</strong> to take ECs out, <strong>right</strong> to put more in.
         </p>
-        <p>
-            Use the slider to decide how many tokens to keep in the pool.
-            Move it <strong>left</strong> to take tokens out, <strong>right</strong> to put more in.
+        <p style="color:#555; font-size:0.95em;">
+            <em>Click on the Instruction button below to re-read the instructions for this stage.</em>
         </p>
     </div>
 
-    <!-- Slider decision -->
+    <!-- ── Slider decision ───────────────────────────────────────────── -->
     <div class="section-box box-calm">
         <div class="section-header">
             <div class="icon">🪙</div>
@@ -126,7 +173,7 @@
         </div>
 
         <div class="pgg-display" id="pgg-value-display">{{ pgg_default }}</div>
-        <div class="pgg-display-label">tokens in the pool</div>
+        <div class="pgg-display-label">ECs invested in the pool</div>
 
         <div class="pgg-slider-wrap">
             <input
@@ -143,7 +190,6 @@
             </div>
         </div>
 
-
         <!-- Hidden oTree field that gets submitted -->
         <div style="display:none">
             {% for field in form %}
@@ -152,15 +198,15 @@
         </div>
     </div>
 
-    <div class="buttons-container" style="margin-top: 20px;">
+    <div class="buttons-container" style="margin-top:20px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">General Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">Cooperation instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary">Confirm Decision</button>
     </div>
 </div>
 
-<!-- Modal: general instructions -->
+<!-- Modal: cooperation instructions -->
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -168,44 +214,48 @@
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">
-            {{ include C.Instructions_general_path }}
+            {{ include C.Instructions_pgg }}
         </div>
     </div>
 </div>
 
 <script>
-    // ── Pie charts ────────────────────────────────────────────────────
-    const pgg_effortMe     = {{ effort_share }};
-    const pgg_effortOthers = {{ effort_others }};
-    const pgg_payoffMe     = {{ payoff_share }};
-    const pgg_payoffOthers = {{ payoff_others }};
+    // ── Bar charts ────────────────────────────────────────────────────
+    const BAR_BG     = ['rgba(76,175,80,0.8)', 'rgba(91,155,213,0.8)', 'rgba(255,179,71,0.8)'];
+    const BAR_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
+    const MEMBERS    = ['You', 'Group member 2', 'Group member 3'];
 
-    const PIE_COLORS = { me: '#4CAF50', others: '#B0BEC5' };
+    const performances = {{ performances }};
+    const accumulated  = {{ accumulated }};
 
-    function makePie(canvasId, me, others, labelMe, labelOthers) {
+    function makeBarChart(canvasId, data, yLabel) {
         const ctx = document.getElementById(canvasId).getContext('2d');
         new Chart(ctx, {
-            type: 'pie',
+            type: 'bar',
             data: {
-                labels: [labelMe, labelOthers],
+                labels: MEMBERS,
                 datasets: [{
-                    data: [me, others],
-                    backgroundColor: [PIE_COLORS.me, PIE_COLORS.others],
-                    borderWidth: 2,
-                    borderColor: '#fff',
+                    data:            data,
+                    backgroundColor: BAR_BG,
+                    borderColor:     BAR_BORDER,
+                    borderWidth:     1.5,
+                    borderRadius:    5,
                 }]
             },
             options: {
+                responsive: true,
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: function(ctx) {
-                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                const pct   = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
-                                return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
-                            }
+                            label: ctx => ` ${ctx.parsed.y} ${yLabel}`
                         }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: yLabel }
                     }
                 }
             }
@@ -213,8 +263,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        makePie('pgg-effortChart', pgg_effortMe, pgg_effortOthers, 'You', 'Others');
-        makePie('pgg-payoffChart', pgg_payoffMe, pgg_payoffOthers, 'You', 'Others');
+        makeBarChart('pgg-performanceChart', performances, 'questions');
+        makeBarChart('pgg-earningsChart',    accumulated,  'ECs');
     });
 </script>
 
@@ -223,7 +273,6 @@
     (function () {
         const slider      = document.getElementById('pgg-slider');
         const display     = document.getElementById('pgg-value-display');
-        // The hidden oTree input – find by name attribute ({{ contribution_field }})
         const hiddenInput = document.querySelector('input[name="{{ contribution_field }}"]');
 
         function sync(val) {
@@ -231,12 +280,8 @@
             if (hiddenInput) hiddenInput.value = val;
         }
 
-        // Initialise on load
         sync(slider.value);
-
-        slider.addEventListener('input', function () {
-            sync(this.value);
-        });
+        slider.addEventListener('input', function () { sync(this.value); });
     })();
 </script>
 
