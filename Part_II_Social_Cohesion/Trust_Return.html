@@ -1,0 +1,229 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<style>
+    .return-table { width:100%; border-collapse:collapse; margin-top:10px; }
+    .return-table th, .return-table td {
+        padding: 9px 12px;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+        font-size: 0.93em;
+    }
+    .return-table thead tr { background:#f5f5f5; }
+    .return-table thead th { border-bottom:2px solid #ddd; }
+    .return-select {
+        padding: 5px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.92em;
+        cursor: pointer;
+        min-width: 90px;
+    }
+    .row-incomplete { background:#fff3cd !important; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 4 &mdash; Trust: Return Decisions</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        For each amount your partner might send you (10–50 ECs), decide how much of the tripled amount
+        to <strong>return</strong>. Returns must be in multiples of 10.
+    </p>
+    <p style="text-align:center; font-size:0.9em; color:#777; margin-top:4px;">
+        &#9888; You must make a decision for <strong>every row</strong> in both tables before continuing.
+    </p>
+
+    <!-- Hidden JSON fields (oTree form) -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- Ingroup trustee decisions -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon" style="color:#5B9BD5;">&#9679;</div>
+            <h3>As Trustee for Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
+        </div>
+        <p style="font-size:0.9em; color:#555; margin-bottom:6px;">
+            Your partner sends an amount &rarr; it is <strong>tripled</strong> when it arrives to you &rarr; you choose how much to return.
+        </p>
+        <table class="return-table" id="table-ingroup">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Partner sends</th>
+                    <th>You receive</th>
+                    <th>You return</th>
+                    <th>You keep</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-ingroup"></tbody>
+        </table>
+    </div>
+
+    <!-- Outgroup trustee decisions -->
+    <div class="section-box box-info" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon" style="color:#FFB347;">&#9679;</div>
+            <h3>As Trustee for Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
+        </div>
+        <p style="font-size:0.9em; color:#555; margin-bottom:6px;">
+            Same rules apply &mdash; for each possible send amount, choose how much to return.
+        </p>
+        <table class="return-table" id="table-outgroup">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Partner sends</th>
+                    <th>You receive</th>
+                    <th>You return</th>
+                    <th>You keep</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-outgroup"></tbody>
+        </table>
+    </div>
+
+    <div id="trust-return-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        &#9888; Please make a return decision for <strong>every row</strong> in both tables before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Trust Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary" onclick="collectAndSubmit(event)">Confirm &amp; Continue &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">&#128216;</span> Trust Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_trust_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data passed from Python
+    const trustNonzeroAmounts = {{ trust_nonzero_amounts }};
+    // trustReturnOptions: {10: [0,10,20,30], 20: [0,10,...,60], ...}
+    const trustReturnOptions  = {{ trust_return_options }};
+
+    // Track which rows have been explicitly set by the user
+    var touched = { ingroup: new Set(), outgroup: new Set() };
+
+    function buildTable(prefix, tbodyId) {
+        var tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+
+        trustNonzeroAmounts.forEach(function(amt) {
+            var tripled = amt * 3;
+            var options = trustReturnOptions[amt] || [];
+
+            // Build <select> element with blank placeholder first
+            var select = document.createElement('select');
+            select.id        = 'return-' + prefix + '-' + amt;
+            select.className = 'return-select';
+
+            // Blank placeholder — forces a deliberate choice
+            var placeholder = document.createElement('option');
+            placeholder.value       = '';
+            placeholder.textContent = '\u2014 choose \u2014';
+            placeholder.disabled    = true;
+            placeholder.selected    = true;
+            select.appendChild(placeholder);
+
+            options.forEach(function(ret) {
+                var opt = document.createElement('option');
+                opt.value       = ret;
+                opt.textContent = ret + ' ECs';
+                select.appendChild(opt);
+            });
+
+            // IDs for the keep cell
+            var keepId = 'keep-' + prefix + '-' + amt;
+
+            // Build table row — starts highlighted as incomplete
+            var row = document.createElement('tr');
+            row.id        = prefix + '-return-row-' + amt;
+            row.className = 'row-incomplete';
+            row.innerHTML =
+                '<td style="text-align:left; font-weight:bold;">' + amt + ' ECs</td>' +
+                '<td><strong>' + tripled + ' ECs</strong></td>' +
+                '<td></td>' +
+                '<td><span id="' + keepId + '">\u2014</span> ECs</td>';
+            row.cells[2].appendChild(select);
+            tbody.appendChild(row);
+
+            // Update "keep" display and mark row as decided
+            function updateKeep() {
+                if (select.value === '') return;
+                var ret = parseInt(select.value);
+                var keepCell = document.getElementById(keepId);
+                if (keepCell) keepCell.textContent = tripled - ret;
+                touched[prefix].add(amt);
+                var rowEl = document.getElementById(prefix + '-return-row-' + amt);
+                if (rowEl) rowEl.classList.remove('row-incomplete');
+            }
+            select.addEventListener('change', updateKeep);
+        });
+    }
+
+    function isAllDecided() {
+        return trustNonzeroAmounts.every(function(amt) {
+            return touched.ingroup.has(amt) && touched.outgroup.has(amt);
+        });
+    }
+
+    function collectDecisions(prefix) {
+        var result = {};
+        trustNonzeroAmounts.forEach(function(amt) {
+            var select = document.getElementById('return-' + prefix + '-' + amt);
+            result[String(amt)] = (select && select.value !== '') ? parseInt(select.value) : 0;
+        });
+        return JSON.stringify(result);
+    }
+
+    function collectAndSubmit(evt) {
+        if (evt) evt.preventDefault();
+        if (!isAllDecided()) {
+            document.getElementById('trust-return-error').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+        document.getElementById('trust-return-error').style.display = 'none';
+        var ingroupField  = document.querySelector('[name="trust_return_ingroup"]');
+        var outgroupField = document.querySelector('[name="trust_return_outgroup"]');
+        if (ingroupField)  ingroupField.value  = collectDecisions('ingroup');
+        if (outgroupField) outgroupField.value = collectDecisions('outgroup');
+        var form = document.querySelector('form');
+        if (form) form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        buildTable('ingroup',  'tbody-ingroup');
+        buildTable('outgroup', 'tbody-outgroup');
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(evt) {
+                if (!isAllDecided()) {
+                    evt.preventDefault();
+                    document.getElementById('trust-return-error').style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        }
+    });
+</script>
+
+{{ endblock }}

@@ -1,0 +1,195 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<style>
+    .offer-display {
+        text-align: center;
+        font-size: 1.8em;
+        font-weight: bold;
+        color: var(--primary, #4CAF50);
+        margin: 12px 0 4px;
+    }
+    .offer-sub {
+        text-align: center;
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    .offer-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 10px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        cursor: pointer;
+    }
+    .offer-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: var(--primary, #4CAF50);
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .offer-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82em;
+        color: #777;
+        margin-top: 4px;
+    }
+    .offer-untouched { color: #999; font-style: italic; }
+    .slider-badge {
+        display: inline-block; margin-left: 8px; padding: 2px 8px;
+        border-radius: 10px; font-size: 0.78em; font-weight: bold;
+    }
+    .badge-waiting { background: #fff3cd; color: #856404; }
+    .badge-set     { background: #d4edda; color: #155724; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 3 &mdash; Ultimatum: Your Offers</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        You have <strong>{{ dictator_ec }} ECs</strong> for each game. Decide how much to offer to each partner.
+        Offers must be multiples of 10.
+    </p>
+    <div style="margin:0 0 8px; padding:10px 16px; background:#fff3cd; border-left:4px solid #ffc107; border-radius:4px; font-size:0.93em; text-align:center;">
+        &#9888; <strong>Reminder:</strong> If your partner rejects your offer, <strong>both</strong> of you earn <strong>0 ECs</strong> from that game.
+    </div>
+    <p style="text-align:center; font-size:0.9em; color:#777; margin-top:6px;">
+        Move each slider to set your offer. You must set <strong>both</strong> offers before continuing.
+    </p>
+
+    <!-- Hidden oTree form fields -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- Ingroup offer -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon" style="color:#5B9BD5;">&#9679;</div>
+            <h3>Offer to Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
+                <span id="badge-ingroup" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="offer-display offer-untouched" id="offer-ingroup-display">&mdash; ECs</div>
+        <div class="offer-sub" id="offer-ingroup-sub">Move the slider to set your offer</div>
+        <input type="range" id="slider-ingroup" class="offer-slider"
+               min="0" max="{{ dictator_ec }}" step="10" value="50">
+        <div class="offer-labels">
+            <span>Offer 0 (keep all)</span>
+            <span>Offer {{ dictator_ec }} (keep nothing)</span>
+        </div>
+    </div>
+
+    <!-- Outgroup offer -->
+    <div class="section-box box-info" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon" style="color:#FFB347;">&#9679;</div>
+            <h3>Offer to Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
+                <span id="badge-outgroup" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="offer-display offer-untouched" id="offer-outgroup-display">&mdash; ECs</div>
+        <div class="offer-sub" id="offer-outgroup-sub">Move the slider to set your offer</div>
+        <input type="range" id="slider-outgroup" class="offer-slider"
+               min="0" max="{{ dictator_ec }}" step="10" value="50">
+        <div class="offer-labels">
+            <span>Offer 0 (keep all)</span>
+            <span>Offer {{ dictator_ec }} (keep nothing)</span>
+        </div>
+    </div>
+
+    <div id="offer-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        &#9888; Please set your offer for <strong>both</strong> partners before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Ultimatum Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary" onclick="trySubmit(event)">Confirm Offers &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">&#128216;</span> Ultimatum Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_ultimatum_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var dictatorEC = {{ dictator_ec }};
+    var touched = { ingroup: false, outgroup: false };
+
+    function setupOfferSlider(key, sliderId, displayId, subId, badgeId, fieldName) {
+        var slider  = document.getElementById(sliderId);
+        var display = document.getElementById(displayId);
+        var sub     = document.getElementById(subId);
+        var badge   = document.getElementById(badgeId);
+        var hidden  = document.querySelector('[name="' + fieldName + '"]');
+
+        function activate(val) {
+            var offer = parseInt(val);
+            var keep  = dictatorEC - offer;
+            display.textContent = offer + ' ECs';
+            display.classList.remove('offer-untouched');
+            sub.textContent = 'You keep: ' + keep + ' ECs\u00a0|\u00a0You offer: ' + offer + ' ECs';
+            badge.textContent = 'Set \u2713';
+            badge.className   = 'slider-badge badge-set';
+            if (hidden) hidden.value = offer;
+            touched[key] = true;
+        }
+
+        slider.addEventListener('input',  function () { activate(this.value); });
+        slider.addEventListener('change', function () { activate(this.value); });
+    }
+
+    setupOfferSlider('ingroup',  'slider-ingroup',  'offer-ingroup-display',  'offer-ingroup-sub',  'badge-ingroup',  'ult_offer_ingroup');
+    setupOfferSlider('outgroup', 'slider-outgroup', 'offer-outgroup-display', 'offer-outgroup-sub', 'badge-outgroup', 'ult_offer_outgroup');
+
+    window.trySubmit = function (evt) {
+        if (evt) evt.preventDefault();
+        if (!touched.ingroup || !touched.outgroup) {
+            document.getElementById('offer-error').style.display = 'block';
+            return;
+        }
+        document.getElementById('offer-error').style.display = 'none';
+        var form = document.querySelector('form');
+        if (form) form.submit();
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function (evt) {
+                if (!touched.ingroup || !touched.outgroup) {
+                    evt.preventDefault();
+                    document.getElementById('offer-error').style.display = 'block';
+                }
+            });
+        }
+    });
+})();
+</script>
+
+{{ endblock }}

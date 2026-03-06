@@ -1,0 +1,73 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 1 &mdash; Solidarity</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">🤝</div>
+            <h3>How It Works</h3>
+        </div>
+
+        <p>In this game, <strong>2 out of 3</strong> group members are randomly selected to receive a windfall of <strong>{{ solidarity_ec }} ECs</strong>. The third member receives nothing.</p>
+
+        <p><strong>Before the draw</strong>, each member may pledge some of their potential windfall to the unlucky person. 
+            You decide on your pledge before knowing the outcome of the draw.</p>
+
+        <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:16px;">
+            <div style="flex:1; min-width:220px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:16px;">
+                <strong>🍀 If you are LUCKY</strong><br>
+                <span style="font-size:0.95em;">You receive: <strong>{{ solidarity_ec }} ECs &minus; your pledge</strong></span>
+            </div>
+            <div style="flex:1; min-width:220px; background:#fff3cd; border:1px solid #ffe6a1; border-radius:8px; padding:16px;">
+                <strong>😔 If you are UNLUCKY</strong><br>
+                <span style="font-size:0.95em;">You receive: <strong>pledge from member 2 + pledge from member 3</strong></span>
+            </div>
+        </div>
+
+        <p style="margin-top:16px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.93em;">
+            💡 The pledge is made <em>before</em> anyone knows who will be lucky or unlucky. Each person in the group faces the same situation.
+        </p>
+        
+
+    </div>
+
+    <div class="section-box box-calm" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon">📝</div>
+            <h3>Example</h3>
+        </div>
+        <p>Suppose you pledge <strong>10 ECs</strong> and your two group members each pledge <strong>20 ECs</strong>.</p>
+        <ul>
+            <li>If <strong>you are lucky</strong>: you earn {{ solidarity_ec }} &minus; 10 = <strong>90 ECs</strong>. Your pledged 10 ECs is transferred to the unlucky person.</li>
+            <li>If <strong>you are unlucky</strong>: you receive 20 + 20 = <strong>40 ECs</strong>. Since you were unlucky, your pledged ECs are not taken from you.</li>
+        </ul>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Solidarity Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Make My Pledge &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Solidarity Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_solidarity_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

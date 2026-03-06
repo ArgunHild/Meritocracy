@@ -1,0 +1,254 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<style>
+    .reject-table { width:100%; border-collapse:collapse; margin-top:10px; }
+    .reject-table th, .reject-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+        font-size: 0.93em;
+    }
+    .reject-table thead tr { background:#f5f5f5; }
+    .reject-table thead th { border-bottom:2px solid #ddd; }
+    .reject-row-accept { color:#388E3C; font-weight:bold; }
+    .reject-row-reject { color:#c62828; font-weight:bold; }
+    .radio-accept, .radio-reject { cursor:pointer; }
+    .row-incomplete { background:#fff3cd !important; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 3 &mdash; Ultimatum: Acceptance Decisions</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        Your partners each made an offer to you — just as you made offers to them.
+        For each possible offer amount below, decide whether you would
+        <strong style="color:#388E3C;">Accept</strong> or <strong style="color:#c62828;">Reject</strong> it.
+        Your decisions here will be matched against your partners' actual offers to determine your earnings.
+        If rejected, both of you earn <strong>0 ECs</strong> from that game.
+    </p>
+    <p style="text-align:center; font-size:0.9em; color:#777;">
+        ⚠️ You must make a decision for <strong>every row</strong> in both tables before continuing.
+        Selecting <strong>Accept</strong> for an offer will automatically accept all <em>higher</em> offers;
+        selecting <strong>Reject</strong> will automatically reject all <em>lower</em> offers.
+    </p>
+
+    <!-- Hidden JSON fields -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- Ingroup partner decisions -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon" style="color:#5B9BD5;">●</div>
+            <h3>Offers from Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
+        </div>
+        <p style="font-size:0.9em; color:#555; margin-bottom:8px;">
+            Your partner has {{ dictator_ec }} ECs. For each amount they could offer you:
+        </p>
+        <table class="reject-table" id="table-ingroup">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Offer to you</th>
+                    <th>Partner keeps</th>
+                    <th class="reject-row-accept">Accept</th>
+                    <th class="reject-row-reject">Reject</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in ult_offers %}
+                <tr id="ingroup-row-{{ offer }}">
+                    <td style="text-align:left; font-weight:bold;">{{ offer }} ECs</td>
+                    <td>{{ dictator_ec }} &minus; {{ offer }} = <span id="ingroup-keep-{{ offer }}"></span> ECs</td>
+                    <td>
+                        <input type="radio" class="radio-accept" name="ingroup_{{ offer }}"
+                               value="accept"
+                               onchange="applyMonotonicity('ingroup', {{ offer }}, 'accept')">
+                    </td>
+                    <td>
+                        <input type="radio" class="radio-reject" name="ingroup_{{ offer }}"
+                               value="reject"
+                               onchange="applyMonotonicity('ingroup', {{ offer }}, 'reject')">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Outgroup partner decisions -->
+    <div class="section-box box-info" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon" style="color:#FFB347;">●</div>
+            <h3>Offers from Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
+        </div>
+        <p style="font-size:0.9em; color:#555; margin-bottom:8px;">
+            Your partner has {{ dictator_ec }} ECs. For each amount they could offer you:
+        </p>
+        <table class="reject-table" id="table-outgroup">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">Offer to you</th>
+                    <th>Partner keeps</th>
+                    <th class="reject-row-accept">Accept</th>
+                    <th class="reject-row-reject">Reject</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in ult_offers %}
+                <tr id="outgroup-row-{{ offer }}">
+                    <td style="text-align:left; font-weight:bold;">{{ offer }} ECs</td>
+                    <td>{{ dictator_ec }} &minus; {{ offer }} = <span id="outgroup-keep-{{ offer }}"></span> ECs</td>
+                    <td>
+                        <input type="radio" class="radio-accept" name="outgroup_{{ offer }}"
+                               value="accept"
+                               onchange="applyMonotonicity('outgroup', {{ offer }}, 'accept')">
+                    </td>
+                    <td>
+                        <input type="radio" class="radio-reject" name="outgroup_{{ offer }}"
+                               value="reject"
+                               onchange="applyMonotonicity('outgroup', {{ offer }}, 'reject')">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="ult-error-msg" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        ⚠️ Please make a decision (Accept or Reject) for <strong>every row</strong> in both tables before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Ultimatum Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary" onclick="collectAndSubmit(event)">Confirm Decisions &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Ultimatum Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_ultimatum_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+    const dictatorEC = {{ dictator_ec }};
+    const ult_offers = {{ ult_offers }};
+
+    // Fill "partner keeps" for both ingroup and outgroup tables
+    ult_offers.forEach(function(offer) {
+        var keeps = dictatorEC - offer;
+        var elIn  = document.getElementById('ingroup-keep-'  + offer);
+        var elOut = document.getElementById('outgroup-keep-' + offer);
+        if (elIn)  elIn.textContent  = keeps;
+        if (elOut) elOut.textContent = keeps;
+    });
+
+    // Single-switching (monotone) constraint:
+    //   Accept at X  → auto-accept all higher offers
+    //   Reject at X  → auto-reject all lower offers
+    function applyMonotonicity(prefix, changedOffer, decision) {
+        ult_offers.forEach(function(offer) {
+            var autoDecision = null;
+            if (decision === 'accept' && offer > changedOffer) {
+                autoDecision = 'accept';
+            } else if (decision === 'reject' && offer < changedOffer) {
+                autoDecision = 'reject';
+            }
+            if (autoDecision !== null) {
+                var radio = document.querySelector(
+                    'input[name="' + prefix + '_' + offer + '"][value="' + autoDecision + '"]'
+                );
+                if (radio) {
+                    radio.checked = true;
+                    var row = document.getElementById(prefix + '-row-' + offer);
+                    if (row) row.classList.remove('row-incomplete');
+                }
+            }
+        });
+    }
+
+    function collectDecisions(prefix) {
+        var result = {};
+        var allDecided = true;
+        ult_offers.forEach(function(offer) {
+            var radios = document.querySelectorAll('input[name="' + prefix + '_' + offer + '"]');
+            var decision = null;
+            radios.forEach(function(r) { if (r.checked) decision = r.value; });
+            if (decision === null) {
+                allDecided = false;
+                // Highlight the undecided row
+                var row = document.getElementById(prefix + '-row-' + offer);
+                if (row) row.classList.add('row-incomplete');
+            } else {
+                var row = document.getElementById(prefix + '-row-' + offer);
+                if (row) row.classList.remove('row-incomplete');
+                result[offer] = decision;
+            }
+        });
+        return allDecided ? JSON.stringify(result) : null;
+    }
+
+    function collectAndSubmit(evt) {
+        if (evt) evt.preventDefault();
+
+        var ingroupJSON  = collectDecisions('ingroup');
+        var outgroupJSON = collectDecisions('outgroup');
+
+        if (ingroupJSON === null || outgroupJSON === null) {
+            document.getElementById('ult-error-msg').style.display = 'block';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            return;
+        }
+
+        document.getElementById('ult-error-msg').style.display = 'none';
+
+        var ingroupField  = document.querySelector('[name="ult_reject_ingroup"]');
+        var outgroupField = document.querySelector('[name="ult_reject_outgroup"]');
+        if (ingroupField)  ingroupField.value  = ingroupJSON;
+        if (outgroupField) outgroupField.value = outgroupJSON;
+
+        // Submit the form
+        var form = document.querySelector('form');
+        if (form) form.submit();
+    }
+
+    // Also collect on any form submit (fallback)
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(evt) {
+                var ingroupJSON  = collectDecisions('ingroup');
+                var outgroupJSON = collectDecisions('outgroup');
+                if (ingroupJSON === null || outgroupJSON === null) {
+                    evt.preventDefault();
+                    document.getElementById('ult-error-msg').style.display = 'block';
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    return;
+                }
+                var ingroupField  = document.querySelector('[name="ult_reject_ingroup"]');
+                var outgroupField = document.querySelector('[name="ult_reject_outgroup"]');
+                if (ingroupField)  ingroupField.value  = ingroupJSON;
+                if (outgroupField) outgroupField.value = outgroupJSON;
+            });
+        }
+    });
+</script>
+
+{{ endblock }}

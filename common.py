@@ -84,6 +84,21 @@ class CommonConstants(BaseConstants):
 
     EC_exchange_rate = 100  # 100 EC = 1 EUR
 
+    # ── Part II: Social Cohesion ──────────────────────────────────────────────
+    Solidarity_EC  = 100    # windfall for each of the 2 lucky players
+    Stag_win_EC    = 100   # payoff if ALL 3 choose Stag
+    Hare_safe_EC   = 40    # payoff for choosing Hare (regardless of others)
+    Dictator_EC    = 100   # proposer endowment per ultimatum game (×2 games)
+    Trust_EC       = 50    # sender endowment per trust game (×2 games)
+    PGG2_Commons   = 100   # one-shot anonymous PGG endowment
+
+    # ── Part II: instruction template paths ──────────────────────────────────
+    Instructions_solidarity = "_templates/global/Instructions_solidarity.html"
+    Instructions_staghunt   = "_templates/global/Instructions_staghunt.html"
+    Instructions_ultimatum  = "_templates/global/Instructions_ultimatum.html"
+    Instructions_trust      = "_templates/global/Instructions_trust.html"
+    Instructions_pgg2       = "_templates/global/Instructions_pgg2.html"
+
 
 # %% ExtraModel: cross-session treatment counter
 class TreatmentCounter(ExtraModel):

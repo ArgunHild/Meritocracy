@@ -3,36 +3,75 @@
 
 {{ block content }}
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
-<link rel="stylesheet" href="{{static 'css/css.css'}}">
-
-
-<script>  
-window.onload = function() {
-  Completion_button('{{C.Completion_redirect}}')
-};
-</script>
-
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">   Results</h2>
+    <h2 class="section-title">Experiment Complete &mdash; Your Earnings</h2>
     <hr class="section-divider">
 
-<p> 
-    Results text
-    
+    <p style="text-align:center; color:#555; font-size:1.05em; margin-bottom:6px;">
+        Thank you for participating! Here is a summary of your earnings across all parts of the study.
+    </p>
+
+    <!-- Earnings breakdown table -->
+    <div class="section-box box-calm" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">&#129689;</div>
+            <h3>Earnings Breakdown</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; margin-top:8px;">
+            <tbody>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; color:#555;">Practice</td>
+                    <td style="padding:10px 16px; text-align:right;">{{ practice_ecs }} ECs</td>
+                </tr>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; color:#555;">Part I &mdash; Economy</td>
+                    <td style="padding:10px 16px; text-align:right;">{{ part1_ecs }} ECs</td>
+                </tr>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; color:#555;">
+                        Part II &mdash; Social Cohesion
+                        <span style="font-size:0.85em; color:#888; margin-left:6px;">({{ game_selected_label }})</span>
+                    </td>
+                    <td style="padding:10px 16px; text-align:right;">{{ part2_ecs }} ECs</td>
+                </tr>
+                <tr style="border-top:2px solid #333; background:#f8f9fa;">
+                    <td style="padding:12px 16px; font-weight:bold; font-size:1.05em;">Total</td>
+                    <td style="padding:12px 16px; text-align:right; font-weight:bold; font-size:1.05em;">{{ total_ecs }} ECs</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- EUR conversion highlight -->
+        <div style="margin-top:16px; padding:14px 18px; background:#e6ffe6; border-left:4px solid #388E3C; border-radius:4px; text-align:center;">
+            <p style="margin:0; font-size:1.2em; font-weight:bold; color:#388E3C;">
+                Your bonus payment: &euro;{{ eur_amount }}
+            </p>
+            <p style="margin:6px 0 0; font-size:0.85em; color:#555;">
+                ({{ total_ecs }} ECs &divide; {{ C.EC_exchange_rate }} = &euro;{{ eur_amount }})
+            </p>
+        </div>
+    </div>
+
+    <!-- Closing message -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">&#9989;</div>
+            <h3>The experiment is now over</h3>
+        </div>
+        <p>
+            You have completed all parts of the study.
+            Your bonus will be credited to your Prolific account within a few days.
+        </p>
+        <p style="margin-top:8px;">
+            If you are not automatically redirected to Prolific, please use the button below.
+            Thank you for your participation!
+        </p>
+    </div>
+
     <br><br>
-    If you are not automatically directed to the completion page on Prolific, use the button below.
-    Thank you for your participation!
-    
-</p>
 
-
-
-<br><br>
-<button type="button" onclick="Completion_button('{{C.Completion_redirect}}')" class="otree-btn-next btn btn-primary" id="redirectButton" class="">Complete study</button> 
-   
-
+</div>
 
 {{ endblock }}
-
-

@@ -1,0 +1,60 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 1 &mdash; Solidarity: Your Pledge</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        A windfall of <strong>{{ solidarity_ec }} ECs</strong> will be randomly awarded to 2 of the 3 group members.
+        <br>Decide now how much of your potential windfall you wish to pledge to the unlucky member.
+    </p>
+
+    <div class="section-box box-calm" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">🤝</div>
+            <h3>Your Pledge Decision</h3>
+        </div>
+
+        <p style="margin-bottom:16px;">
+            If you are <strong>lucky</strong> (receive {{ solidarity_ec }} ECs), you will give away your pledged amount to the unlucky member.
+            If you are <strong>unlucky</strong> (receive nothing), you will receive the pledges from both lucky members.
+        </p>
+
+        <div style="margin-top:16px;">
+            {% for field in form %}
+                {{ formfield field.name }}
+            {% endfor %}
+        </div>
+
+        <p style="margin-top:14px; font-size:0.9em; color:#666;">
+            Your earnings if <strong>lucky</strong>: {{ solidarity_ec }} ECs &minus; your pledge &nbsp;|&nbsp;
+            Your earnings if <strong>unlucky</strong>: sum of both partners' pledges
+        </p>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Solidarity Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Confirm Pledge &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Solidarity Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_solidarity_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

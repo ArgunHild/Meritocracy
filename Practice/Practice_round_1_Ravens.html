@@ -23,7 +23,8 @@
     </div>
 
     <!-- Hidden form fields -->
-    <div style="display:none">
+    <!-- TODO: switch to none -->
+    <div style="display:inline">
         {% for field in form %}
             {% if field.name in hidden_fields %}
                 {{ formfield field.name }}

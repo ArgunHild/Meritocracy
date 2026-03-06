@@ -25,7 +25,8 @@
     </div>
 
     <!-- Hidden form fields (score + answers written by JS) -->
-    <div style="display:none">
+    <!-- TODO: switch to none -->
+    <div style="display:inline">
         {% for field in form %}
             {% if field.name in hidden_fields %}
                 {{ formfield field.name }}

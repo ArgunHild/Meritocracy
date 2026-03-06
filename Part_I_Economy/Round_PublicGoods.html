@@ -191,7 +191,8 @@
         </div>
 
         <!-- Hidden oTree field that gets submitted -->
-        <div style="display:none">
+        <!-- TODO: switch to none -->
+        <div style="display:inline">
             {% for field in form %}
                 {{ formfield field.name }}
             {% endfor %}

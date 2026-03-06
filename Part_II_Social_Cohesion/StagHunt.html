@@ -1,0 +1,68 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 2 &mdash; Stag Hunt: Your Choice</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        All three group members choose simultaneously. You will not know others' choices until the end.
+    </p>
+
+    <!-- Payoff reminder -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">💡</div>
+            <h3>Payoff Reminder</h3>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+            <div style="flex:1; min-width:200px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:14px; text-align:center;">
+                <div style="font-size:1.5em;">🦌</div>
+                <strong>Stag</strong><br>
+                <span style="color:#388E3C; font-weight:bold;">{{ stag_win_ec }} ECs</span> if all cooperate<br>
+                <span style="color:#c62828;">0 ECs</span> if anyone picks Hare
+            </div>
+            <div style="flex:1; min-width:200px; background:#fff3cd; border:1px solid #ffe6a1; border-radius:8px; padding:14px; text-align:center;">
+                <div style="font-size:1.5em;">🐇</div>
+                <strong>Hare</strong><br>
+                <span style="color:#E8923A; font-weight:bold;">{{ hare_safe_ec }} ECs</span> guaranteed
+            </div>
+        </div>
+    </div>
+
+    <!-- Choice form -->
+    <div class="section-box box-calm" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">🎯</div>
+            <h3>Your Decision</h3>
+        </div>
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Stag Hunt Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Confirm Choice &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Stag Hunt</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_staghunt_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

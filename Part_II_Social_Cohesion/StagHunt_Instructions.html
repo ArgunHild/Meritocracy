@@ -1,0 +1,79 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 2 &mdash; Stag Hunt</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">🦌</div>
+            <h3>How It Works</h3>
+        </div>
+        <p>
+            All three group members <strong>simultaneously</strong> and <strong>independently</strong> choose
+            between two options: <strong>Stag</strong> or <strong>Hare</strong>.
+        </p>
+        <table style="width:100%; border-collapse:collapse; margin-top:14px;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:12px 16px; border-bottom:2px solid #ddd; text-align:left;">Your choice</th>
+                    <th style="padding:12px 16px; border-bottom:2px solid #ddd; text-align:center;">Your earnings</th>
+                    <th style="padding:12px 16px; border-bottom:2px solid #ddd; text-align:center;">Condition</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:12px 16px;"><strong>🦌 Stag</strong></td>
+                    <td style="padding:12px 16px; text-align:center; font-weight:bold; color:#388E3C;">{{ stag_win_ec }} ECs</td>
+                    <td style="padding:12px 16px; text-align:center; font-size:0.9em; color:#555;">
+                        Only if <strong>all three</strong> choose Stag
+                    </td>
+                </tr>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:12px 16px;"><strong>🦌 Stag</strong> (but someone defects)</td>
+                    <td style="padding:12px 16px; text-align:center; font-weight:bold; color:#c62828;">0 ECs</td>
+                    <td style="padding:12px 16px; text-align:center; font-size:0.9em; color:#555;">
+                        If <strong>anyone</strong> chooses Hare
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:12px 16px;"><strong>🐇 Hare</strong></td>
+                    <td style="padding:12px 16px; text-align:center; font-weight:bold; color:#E8923A;">{{ hare_safe_ec }} ECs</td>
+                    <td style="padding:12px 16px; text-align:center; font-size:0.9em; color:#555;">
+                        Guaranteed — regardless of others
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top:16px; padding:10px 14px; background:#fff3cd; border-left:3px solid #ffc107; border-radius:4px; font-size:0.93em;">
+            ⚠️ <strong>Stag only pays if everyone cooperates.</strong> If even one person chooses Hare, all Stag-choosers earn 0.
+        </p>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Stag Hunt Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Make My Choice &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Stag Hunt</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_staghunt_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

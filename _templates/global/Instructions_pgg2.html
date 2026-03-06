@@ -1,0 +1,40 @@
+<h3>📋 Investment Game — Instructions</h3>
+
+<p>This is the same cooperation game you played during the Economy phase — but this time you are matched with <strong>2 completely anonymous participants</strong> from this session. They are not from your Economy group. You know nothing about them, and they know nothing about you.</p>
+
+<p><strong>You have {{ pgg2_commons }} ECs.</strong> Decide how many to invest in a common pool (any whole number from 0 to {{ pgg2_commons }} ECs).</p>
+
+<ul>
+    <li>The total invested by all 3 members is <strong>multiplied by 1.5</strong> and divided equally among the three of you.</li>
+    <li>You keep all ECs you did not invest, plus your equal share of the pool return.</li>
+</ul>
+
+<p><strong>Your earnings = ECs kept + (total pool &times; 1.5 &divide; 3)</strong></p>
+
+<p style="margin-top:14px; font-weight:bold; font-size:0.95em;">Examples:</p>
+<table style="width:100%; border-collapse:collapse; margin:8px 0; font-size:0.92em;">
+    <thead>
+        <tr style="background:#f5f5f5;">
+            <th style="padding:8px 12px; border-bottom:2px solid #ddd; text-align:left;">Scenario</th>
+            <th style="padding:8px 12px; border-bottom:2px solid #ddd; text-align:center;">Your earnings</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom:1px solid #eee; background:#e6ffe6;">
+            <td style="padding:8px 12px;">Everyone invests 100 ECs</td>
+            <td style="padding:8px 12px; text-align:center;">Pool = 300 &times; 1.5 = 450 &divide; 3 = <strong>150 ECs</strong></td>
+        </tr>
+        <tr style="border-bottom:1px solid #eee; background:#fff8e1;">
+            <td style="padding:8px 12px;">You invest 0; others invest 100 each</td>
+            <td style="padding:8px 12px; text-align:center;">Kept 100 + pool share 100 = <strong>200 ECs</strong></td>
+        </tr>
+        <tr>
+            <td style="padding:8px 12px;">You invest 50; others invest 50 each</td>
+            <td style="padding:8px 12px; text-align:center;">Kept 50 + (150 &times; 1.5 &divide; 3) = 50 + 75 = <strong>125 ECs</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<p style="margin-top:12px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.93em;">
+    💡 Investing more increases the total pot for everyone, but you personally keep less. Your slider lets you choose any amount from 0 to {{ pgg2_commons }} ECs.
+</p>

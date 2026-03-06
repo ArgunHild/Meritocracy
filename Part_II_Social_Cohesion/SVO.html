@@ -1,0 +1,166 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<style>
+    .svo-item {
+        margin-bottom: 28px;
+        padding: 16px 20px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    .svo-item-incomplete {
+        border: 2px solid #ffc107 !important;
+        background: #fffbe6 !important;
+    }
+    .svo-item-header {
+        font-weight: bold;
+        margin-bottom: 12px;
+        font-size: 0.95em;
+        color: #333;
+    }
+    .svo-options {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        overflow-x: auto;
+    }
+    .svo-option {
+        flex: 1;
+        min-width: 70px;
+        text-align: center;
+    }
+    .svo-option label {
+        display: block;
+        cursor: pointer;
+        padding: 8px 4px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.85em;
+        transition: border-color 0.15s, background 0.15s;
+        background: #fff;
+    }
+    .svo-option input[type="radio"] {
+        margin-bottom: 4px;
+        accent-color: #4CAF50;
+    }
+    .svo-option input[type="radio"]:checked + .svo-label-text,
+    .svo-option label:has(input:checked) {
+        border-color: #4CAF50;
+        background: #e6ffe6;
+    }
+    .svo-self  { color: #388E3C; font-weight: bold; }
+    .svo-other { color: #2E75B6; font-weight: bold; }
+    .svo-ec-unit { font-size: 0.78em; font-weight: normal; color: #888; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Allocation Preferences</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555; margin-bottom:8px;">
+        For each of the 6 items below, choose the allocation you most prefer.
+        There are no right or wrong answers.
+    </p>
+    <p style="text-align:center; font-size:0.9em; color:#777; margin-bottom:6px;">
+        <span style="color:#388E3C; font-weight:bold;">Green = Your allocation (ECs)</span> &nbsp;|&nbsp;
+        <span style="color:#2E75B6; font-weight:bold;">Blue = Other person's allocation (ECs)</span>
+    </p>
+    <p style="text-align:center; font-size:0.88em; color:#888; margin-bottom:6px;">
+        &#128269; If this task is selected for payment, one of the 6 items will be chosen at random to be implemented.
+    </p>
+    <p style="text-align:center; font-size:0.9em; color:#777; margin-bottom:24px;">
+        &#9888; You must make a selection for <strong>all 6 items</strong> before continuing.
+        Items with a yellow border have not yet been answered.
+    </p>
+
+    <!-- Hidden oTree form fields -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    {% for item in svo_items %}
+    <div class="svo-item svo-item-incomplete" id="svo-item-{{ item.num }}">
+        <div class="svo-item-header">Item {{ item.num }}</div>
+        <div class="svo-options">
+            {% for opt in item.options %}
+            <div class="svo-option">
+                <label>
+                    <input type="radio" name="svo_radio_{{ item.num }}"
+                           value="{{ opt.idx }}"
+                           onchange="syncSVO({{ item.num }}, {{ opt.idx }})">
+                    <div>
+                        <span class="svo-self">{{ opt.self }}<span class="svo-ec-unit">&thinsp;ECs</span></span><br>
+                        <span class="svo-other">{{ opt.other }}<span class="svo-ec-unit">&thinsp;ECs</span></span>
+                    </div>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="margin-top:6px; font-size:0.78em; color:#888; display:flex; gap:4px;">
+            <span style="flex:1; text-align:left;">&larr; Favour other more</span>
+            <span style="flex:1; text-align:center;">Balanced</span>
+            <span style="flex:1; text-align:right;">Favour self more &rarr;</span>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div id="svo-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        &#9888; Please make a selection for <strong>all 6 items</strong> before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary" onclick="finalSyncSVO(event)">Next &rarr;</button>
+    </div>
+</div>
+
+<script>
+    var svoTouched = new Set();
+
+    function syncSVO(itemNum, chosenIdx) {
+        var hidden = document.querySelector('input[name="svo_choice_' + itemNum + '"]');
+        if (hidden) hidden.value = chosenIdx;
+        svoTouched.add(itemNum);
+        var itemEl = document.getElementById('svo-item-' + itemNum);
+        if (itemEl) itemEl.classList.remove('svo-item-incomplete');
+    }
+
+    function finalSyncSVO(evt) {
+        if (evt) evt.preventDefault();
+        // Sync any checked radios to hidden fields
+        for (var i = 1; i <= 6; i++) {
+            var selected = document.querySelector('input[name="svo_radio_' + i + '"]:checked');
+            if (selected) syncSVO(i, parseInt(selected.value));
+        }
+        // Validate all 6 items answered
+        if (svoTouched.size < 6) {
+            document.getElementById('svo-error').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+        document.getElementById('svo-error').style.display = 'none';
+        var form = document.querySelector('form');
+        if (form) form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(evt) {
+                if (svoTouched.size < 6) {
+                    evt.preventDefault();
+                    document.getElementById('svo-error').style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        }
+    });
+</script>
+
+{{ endblock }}

@@ -1,0 +1,66 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 3 &mdash; Ultimatum</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">⚖️</div>
+            <h3>How It Works</h3>
+        </div>
+        <p>
+            You will play <strong>two simultaneous ultimatum games</strong> — one against your
+            <strong><span style="color:#5B9BD5;">Ingroup partner ({{ ingroup_tier_label }})</span></strong>
+            and one against your
+            <strong><span style="color:#FFB347;">Outgroup partner ({{ outgroup_tier_label }})</span></strong>.
+        </p>
+        <p>You have <strong>{{ dictator_ec }} ECs</strong> for each game.</p>
+
+        <div style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px; background:#e6f7ff; border:1px solid #99d6f2; border-radius:8px; padding:14px;">
+                <strong>Step 1 — Propose</strong><br>
+                <span style="font-size:0.93em;">Choose how much to <strong>keep</strong> and how much to <strong>offer</strong> to each partner (multiples of 10).</span>
+            </div>
+            <div style="flex:1; min-width:200px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:14px;">
+                <strong>Step 2 — Respond</strong><br>
+                <span style="font-size:0.93em;">For each possible offer (0–100 ECs), decide whether you would <strong>accept</strong> or <strong>reject</strong> that offer from each partner.</span>
+            </div>
+        </div>
+
+        <p style="margin-top:16px;">
+            <strong>If accepted:</strong> You keep your amount, partner receives your offer.<br>
+            <strong>If rejected:</strong> Both of you earn <strong>0 ECs</strong> from that game.
+        </p>
+
+        <p style="margin-top:12px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.93em;">
+            💡 Both steps happen simultaneously. Your total earnings = <strong>proposer earnings + responder earnings</strong> per game.
+        </p>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Ultimatum Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Make My Offers &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">📘</span> Ultimatum Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_ultimatum_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

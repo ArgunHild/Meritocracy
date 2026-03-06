@@ -1,0 +1,86 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Games with New Partners</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-warn" style="text-align:center; margin-top:24px; padding:28px 36px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:16px;">
+            <div class="icon">🔄</div>
+            <h3 style="margin:0; font-size:1.2em;">New group members!</h3>
+        </div>
+        <p style="font-size:1.05em; color:#444; margin:0;">
+            You will play the next games with two new participants you have <strong>not interacted with before</strong>.
+            They come from different economy groups in this room.
+        </p>
+    </div>
+
+    <!-- Your tier -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">💰</div>
+            <h3>Earnings Based Matching</h3>
+        </div>
+        <p>
+            Based on your total earnings in Part I, all participants in this session have been divided into
+            three earning groups: <strong>High Earners</strong>, <strong>Medium Earners</strong>, and <strong>Low Earners</strong>.
+        </p>
+        <p style="margin-top:10px;">
+            You are a <strong>{{ my_tier_label }}</strong>.
+        </p>
+    </div>
+
+    <!-- Partners -->
+    <div class="section-box box-neutral" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">👤</div>
+            <h3>Your Two Partners</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; margin-top:8px; text-align:center;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd; text-align:left;">Partner</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Earning Group</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Relationship</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; text-align:left;">
+                        <span style="color:#5B9BD5; font-size:1.1em;">●</span>&nbsp;<strong>Partner A (Ingroup)</strong>
+                    </td>
+                    <td style="padding:10px 16px;"><strong>{{ ingroup_tier_label }}</strong></td>
+                    <td style="padding:10px 16px; font-size:0.9em; color:#555;">Same earning group as you</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 16px; text-align:left;">
+                        <span style="color:#FFB347; font-size:1.1em;">●</span>&nbsp;<strong>Partner B (Outgroup)</strong>
+                    </td>
+                    <td style="padding:10px 16px;"><strong>{{ outgroup_tier_label }}</strong></td>
+                    <td style="padding:10px 16px; font-size:0.9em; color:#555;">Different earning group</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-box box-calm" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon">🎮</div>
+            <h3>Games Ahead</h3>
+        </div>
+        <ol style="padding-left:20px;">
+            <li style="margin-bottom:8px;"><strong>Ultimatum game</strong> — offer splits to each partner; they may accept or reject.</li>
+            <li style="margin-bottom:8px;"><strong>Trust game</strong> — send amounts to each partner; they can return some.</li>
+        </ol>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary">Next &rarr;</button>
+    </div>
+</div>
+
+{{ endblock }}

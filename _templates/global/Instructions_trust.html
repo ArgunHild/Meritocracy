@@ -1,0 +1,32 @@
+<h3>📋 Trust Game — Instructions</h3>
+
+<p>You will play two simultaneous trust games — one against an <strong>Ingroup partner</strong> and one against an <strong>Outgroup partner</strong>.</p>
+
+<p><strong>You have {{ trust_ec }} ECs for each game.</strong> In each game you act as both Trustor and Trustee simultaneously (strategy method).</p>
+
+<p style="margin-top:14px; font-weight:bold; font-size:0.95em;">As Trustor (Sender):</p>
+<ul>
+    <li>Decide how much to send to your partner (0–{{ trust_ec }} ECs, multiples of 10).</li>
+    <li>Whatever you send is <strong>tripled</strong> before reaching your partner.</li>
+    <li>Your partner then decides how much of that tripled amount to send back.</li>
+</ul>
+
+<div style="margin:8px 0 16px; padding:10px 14px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:6px; font-size:0.92em;">
+    <strong>Trustor example:</strong> You send <strong>30 ECs</strong> &rarr; partner receives <strong>90 ECs</strong> (tripled) &rarr;
+    partner returns <strong>40 ECs</strong> &rarr; your earnings: ({{ trust_ec }} &minus; 30) + 40 = <strong>60 ECs</strong>.
+</div>
+
+<p style="font-weight:bold; font-size:0.95em;">As Trustee (Receiver — strategy method):</p>
+<ul>
+    <li>For <em>each possible</em> amount your partner might send (10, 20, 30, 40, 50 ECs), you decide how much to return.</li>
+    <li>Returns must be in <strong>multiples of 10</strong>, up to the full tripled amount received.</li>
+</ul>
+
+<div style="margin:8px 0 16px; padding:10px 14px; background:#f0f7ff; border:1px solid #b3d4f5; border-radius:6px; font-size:0.92em;">
+    <strong>Trustee example:</strong> Partner sends <strong>20 ECs</strong> &rarr; you receive <strong>60 ECs</strong> (tripled) &rarr;
+    you return <strong>20 ECs</strong> &rarr; your earnings: 60 &minus; 20 = <strong>40 ECs</strong>.
+</div>
+
+<p style="margin-top:12px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.93em;">
+    💡 Your total earnings per game = Trustor earnings (kept + returned to you) + Trustee earnings (tripled received &minus; what you returned).
+</p>

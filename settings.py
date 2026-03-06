@@ -1,12 +1,14 @@
 from os import environ
 
 SESSION_CONFIGS = [
-    dict(name='Study', app_sequence=['Introduction','Practice','Part_I_Economy',  'Exit_Survey', 'Results'], num_demo_participants=3,),
-    dict(name='Practice', app_sequence=['Practice', ], num_demo_participants=3,),
-    dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=3,),
+    dict(name='n_3', app_sequence=['Introduction','Practice','Part_I_Economy', 'Part_II_Social_Cohesion', 'Results'], num_demo_participants=3,),
+    dict(name='n_12', app_sequence=['Introduction','Practice','Part_I_Economy', 'Part_II_Social_Cohesion', 'Results'], num_demo_participants=12,),
+    # dict(name='Practice', app_sequence=['Practice', ], num_demo_participants=3,),
     # dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=3,),
-    dict(name='Exit_n_Pilot', app_sequence=['Exit_Survey', ], num_demo_participants=3,),
-    
+    # dict(name='Cohesion_battery', app_sequence=['Part_II_Social_Cohesion', ], num_demo_participants=6,),
+    # dict(name='Part_I_Economy', app_sequence=['Part_I_Economy', ], num_demo_participants=3,),
+    # dict(name='Exit_n_Pilot', app_sequence=['Exit_Survey', ], num_demo_participants=3,),
+
 
 ]
 
@@ -30,6 +32,16 @@ PARTICIPANT_FIELDS = [
     'role',         # str: 'high' | 'mid' | 'low'  (performance tier)
     'multiplier',   # int: 7 | 5 | 3
     'Practice_ECs_total',  # float: total ECs earned in both practice rounds
+    # ── Part I → Part II cross-app ───────────────────────────────────────────
+    'Part_I_total_ECs',    # float: Total_bonus_ECs from Part I (for tier ranking in Part II)
+    # ── Part II cross-economy matching ───────────────────────────────────────
+    'ingroup_code',        # str: participant.code of cross-economy ingroup partner
+    'outgroup_code',       # str: participant.code of cross-economy outgroup partner
+    'pgg2_partner1_code',  # str: participant.code of PGG2 partner 1
+    'pgg2_partner2_code',  # str: participant.code of PGG2 partner 2
+    # ── Part II final payment ─────────────────────────────────────────────────
+    'Part_II_game_selected',  # str: name of the randomly chosen game
+    'Part_II_earnings',       # float: ECs earned from the selected game
 ]
 #TODO: add the treatments here
 SESSION_FIELDS = {

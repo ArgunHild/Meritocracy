@@ -1,0 +1,73 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 5 &mdash; Investment Game</h2>
+    <hr class="section-divider">
+
+    <div class="section-box box-calm" style="text-align:center; margin-top:24px; padding:24px 36px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">&#128260;</div>
+            <h3 style="margin:0; font-size:1.15em;">Same game as in the Economy &mdash; but with <strong>strangers</strong></h3>
+        </div>
+        <p style="color:#444; margin:0;">
+            This is the same cooperation game you played during the Economy phase.
+            This time, you are matched with <strong>2 completely anonymous participants</strong> from this session &mdash;
+            not your Economy group members. You know nothing about them, and they know nothing about you.
+        </p>
+    </div>
+
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">&#128188;</div>
+            <h3>How It Works</h3>
+        </div>
+        <p>You have <strong>{{ pgg2_commons }} ECs</strong>. Decide how many to invest in a common pool &mdash; any whole number from 0 to {{ pgg2_commons }} ECs.</p>
+        <ul style="margin-top:10px;">
+            <li>The <strong>total invested by all 3 members is multiplied by 1.5</strong> and divided equally among you.</li>
+            <li>You keep all ECs you did not invest, plus your equal share of the pool return.</li>
+        </ul>
+
+        <p style="margin-top:14px; font-weight:bold;">
+            Your earnings = ECs kept + (total pool &times; 1.5 &divide; 3)
+        </p>
+
+        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:16px; font-size:0.92em;">
+            <div style="flex:1; min-width:200px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:12px; text-align:center;">
+                <strong>If everyone invests 100 ECs:</strong><br>
+                Pool = 300 &times; 1.5 = 450 &divide; 3 = 150 ECs each<br>
+                You kept 0 &rarr; <strong>Total: 150 ECs</strong>
+            </div>
+            <div style="flex:1; min-width:200px; background:#fff8e1; border:1px solid #ffe6a1; border-radius:8px; padding:12px; text-align:center;">
+                <strong>If you invest 0, others invest 100 each:</strong><br>
+                Pool = 200 &times; 1.5 = 300 &divide; 3 = 100 ECs each<br>
+                You kept 100 &rarr; <strong>Total: 200 ECs</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Game Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary">Make My Investment &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">&#128216;</span> Investment Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_pgg2_path }}
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

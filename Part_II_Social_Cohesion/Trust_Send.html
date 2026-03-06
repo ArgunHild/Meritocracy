@@ -1,0 +1,172 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<style>
+    .send-display { text-align:center; font-size:1.8em; font-weight:bold; color:var(--primary,#4CAF50); margin:12px 0 4px; }
+    .send-sub     { text-align:center; font-size:0.9em; color:#666; margin-bottom:10px; }
+    .send-slider  {
+        -webkit-appearance:none; appearance:none;
+        width:100%; height:10px; border-radius:5px; background:#d3d3d3;
+        outline:none; cursor:pointer;
+    }
+    .send-slider::-webkit-slider-thumb {
+        -webkit-appearance:none; width:26px; height:26px;
+        border-radius:50%; background:var(--primary,#4CAF50);
+        cursor:pointer; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.25);
+    }
+    .send-labels { display:flex; justify-content:space-between; font-size:.82em; color:#777; margin-top:4px; }
+    .send-untouched { color:#999; font-style:italic; }
+    .slider-badge {
+        display:inline-block; margin-left:8px; padding:2px 8px;
+        border-radius:10px; font-size:0.78em; font-weight:bold;
+    }
+    .badge-waiting { background:#fff3cd; color:#856404; }
+    .badge-set     { background:#d4edda; color:#155724; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 4 &mdash; Trust: Send Amounts</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555;">
+        You have <strong>{{ trust_ec }} ECs</strong> for each game. Decide how much to send to each partner.
+        The amount you send will be <strong>tripled</strong> before reaching your partner.
+    </p>
+    <p style="text-align:center; font-size:0.9em; color:#777;">
+        Move each slider to set your decision. You must set <strong>both</strong> amounts before continuing.
+    </p>
+
+    <!-- Hidden oTree form fields -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- Ingroup send -->
+    <div class="section-box box-info" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon" style="color:#5B9BD5;">●</div>
+            <h3>Send to Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
+                <span id="badge-ingroup" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="send-display send-untouched" id="send-ingroup-display">&mdash; ECs</div>
+        <div class="send-sub" id="send-ingroup-sub">
+            Move the slider to set your send amount
+        </div>
+        <input type="range" id="slider-send-ingroup" class="send-slider"
+               min="0" max="{{ trust_ec }}" step="10" value="0">
+        <div class="send-labels">
+            <span>Send 0</span>
+            <span>Send {{ trust_ec }}</span>
+        </div>
+    </div>
+
+    <!-- Outgroup send -->
+    <div class="section-box box-info" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon" style="color:#FFB347;">●</div>
+            <h3>Send to Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
+                <span id="badge-outgroup" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="send-display send-untouched" id="send-outgroup-display">&mdash; ECs</div>
+        <div class="send-sub" id="send-outgroup-sub">
+            Move the slider to set your send amount
+        </div>
+        <input type="range" id="slider-send-outgroup" class="send-slider"
+               min="0" max="{{ trust_ec }}" step="10" value="0">
+        <div class="send-labels">
+            <span>Send 0</span>
+            <span>Send {{ trust_ec }}</span>
+        </div>
+    </div>
+
+    <div id="trust-send-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        &#9888; Please set your send amount for <strong>both</strong> partners before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions">
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Trust Instructions</a>
+        </div>
+        <button id="NextButton" class="btn btn-primary" onclick="trySubmit(event)">Confirm &amp; Continue &rarr;</button>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span class="icon">&#128216;</span> Trust Game</h2>
+            <span class="close" onclick="span_click(1)">&times;</span>
+        </div>
+        <div class="modal-body">
+            {{ include C.Instructions_trust_path }}
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var trustEC = {{ trust_ec }};
+    var touched = { ingroup: false, outgroup: false };
+
+    function setupSendSlider(key, sliderId, displayId, subId, badgeId, fieldName) {
+        var slider  = document.getElementById(sliderId);
+        var display = document.getElementById(displayId);
+        var sub     = document.getElementById(subId);
+        var badge   = document.getElementById(badgeId);
+        var hidden  = document.querySelector('input[name="' + fieldName + '"]');
+
+        function activate(val) {
+            var sent    = parseInt(val);
+            var kept    = trustEC - sent;
+            var tripled = sent * 3;
+            display.textContent = sent + ' ECs';
+            display.classList.remove('send-untouched');
+            sub.textContent = 'You keep: ' + kept + ' ECs\u00a0|\u00a0Partner receives: ' + tripled + ' ECs (tripled)';
+            badge.textContent = 'Set \u2713';
+            badge.className   = 'slider-badge badge-set';
+            if (hidden) hidden.value = sent;
+            touched[key] = true;
+        }
+
+        slider.addEventListener('input', function () { activate(this.value); });
+        slider.addEventListener('change', function () { activate(this.value); });
+    }
+
+    setupSendSlider('ingroup',  'slider-send-ingroup',  'send-ingroup-display',  'send-ingroup-sub',  'badge-ingroup',  'trust_send_ingroup');
+    setupSendSlider('outgroup', 'slider-send-outgroup', 'send-outgroup-display', 'send-outgroup-sub', 'badge-outgroup', 'trust_send_outgroup');
+
+    window.trySubmit = function(evt) {
+        if (evt) evt.preventDefault();
+        if (!touched.ingroup || !touched.outgroup) {
+            document.getElementById('trust-send-error').style.display = 'block';
+            return;
+        }
+        document.getElementById('trust-send-error').style.display = 'none';
+        var form = document.querySelector('form');
+        if (form) form.submit();
+    };
+
+    // Block default form submit unless both touched
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(evt) {
+                if (!touched.ingroup || !touched.outgroup) {
+                    evt.preventDefault();
+                    document.getElementById('trust-send-error').style.display = 'block';
+                }
+            });
+        }
+    });
+})();
+</script>
+
+{{ endblock }}

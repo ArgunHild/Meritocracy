@@ -1,0 +1,64 @@
+<h3>📋 Stag Hunt — Instructions</h3>
+
+<p>All three group members <strong>simultaneously</strong> choose between two options:</p>
+
+<table style="width:100%; border-collapse:collapse; margin:12px 0;">
+    <thead>
+        <tr style="background:#f5f5f5;">
+            <th style="padding:10px 14px; border-bottom:2px solid #ddd; text-align:left;">Option</th>
+            <th style="padding:10px 14px; border-bottom:2px solid #ddd; text-align:center;">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px 14px;"><strong>🦌 Stag</strong><br><span style="font-size:0.88em; color:#555;">(cooperate)</span></td>
+            <td style="padding:10px 14px; text-align:center;">
+                Earns <strong>{{ stag_win_ec }} ECs</strong> — <em>but only if all three members choose Stag</em>.<br>
+                If anyone defects, you earn <strong>0 ECs</strong>.
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px 14px;"><strong>🐇 Hare</strong><br><span style="font-size:0.88em; color:#555;">(go safe)</span></td>
+            <td style="padding:10px 14px; text-align:center;">
+                Earns <strong>{{ hare_safe_ec }} ECs</strong> — guaranteed, regardless of what others choose.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p style="margin-top:14px; font-weight:bold; font-size:0.95em;">All possible outcomes:</p>
+<table style="width:100%; border-collapse:collapse; margin:8px 0; font-size:0.92em;">
+    <thead>
+        <tr style="background:#f5f5f5;">
+            <th style="padding:8px 12px; border-bottom:2px solid #ddd; text-align:left;">Your choice</th>
+            <th style="padding:8px 12px; border-bottom:2px solid #ddd; text-align:left;">Others' choices</th>
+            <th style="padding:8px 12px; border-bottom:2px solid #ddd; text-align:center;">Your earnings</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom:1px solid #eee; background:#e6ffe6;">
+            <td style="padding:8px 12px;"><strong>🦌 Stag</strong></td>
+            <td style="padding:8px 12px;">Both choose Stag</td>
+            <td style="padding:8px 12px; text-align:center; font-weight:bold; color:#388E3C;">{{ stag_win_ec }} ECs</td>
+        </tr>
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:8px 12px;"><strong>🦌 Stag</strong></td>
+            <td style="padding:8px 12px;">At least one chooses Hare</td>
+            <td style="padding:8px 12px; text-align:center; font-weight:bold; color:#c62828;">0 ECs</td>
+        </tr>
+        <tr style="border-bottom:1px solid #eee; background:#fff8e1;">
+            <td style="padding:8px 12px;"><strong>🐇 Hare</strong></td>
+            <td style="padding:8px 12px;">Both choose Stag</td>
+            <td style="padding:8px 12px; text-align:center; font-weight:bold; color:#F57C00;">{{ hare_safe_ec }} ECs</td>
+        </tr>
+        <tr>
+            <td style="padding:8px 12px;"><strong>🐇 Hare</strong></td>
+            <td style="padding:8px 12px;">Any mix of Stag / Hare</td>
+            <td style="padding:8px 12px; text-align:center; font-weight:bold; color:#F57C00;">{{ hare_safe_ec }} ECs</td>
+        </tr>
+    </tbody>
+</table>
+
+<p style="margin-top:12px; padding:10px 14px; background:#fff3cd; border-left:3px solid #ffc107; border-radius:4px; font-size:0.93em;">
+    ⚠️ <strong>Stag pays out only if everyone cooperates.</strong> If even one person chooses Hare, all Stag-choosers earn 0 ECs. Hare always gives {{ hare_safe_ec }} ECs.
+</p>

@@ -1,0 +1,33 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Part II &mdash; Your Results</h2>
+    <hr class="section-divider">
+
+    <!-- Selected game highlight -->
+    <div class="section-box box-warn" style="text-align:center; margin-top:24px; padding:28px 36px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">&#127922;</div>
+            <h3 style="margin:0;">Randomly Selected Game for Payment</h3>
+        </div>
+        <p style="font-size:1.15em; color:#444; margin:8px 0;">
+            <strong>{{ game_selected_label }}</strong>
+        </p>
+        <p style="font-size:1.5em; font-weight:bold; color:#388E3C; margin:0;">
+            {{ total_part2_earnings }} ECs
+        </p>
+        <p style="font-size:0.9em; color:#777; margin-top:6px;">
+            &asymp; &euro;{{ eur_amount }}
+        </p>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary">Next &rarr;</button>
+    </div>
+</div>
+
+{{ endblock }}

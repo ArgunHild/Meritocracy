@@ -1,0 +1,172 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<style>
+    .likert-scale {
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+    .likert-option {
+        flex: 1;
+        min-width: 40px;
+        text-align: center;
+    }
+    .likert-option label {
+        display: block;
+        cursor: pointer;
+        padding: 10px 4px 6px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.85em;
+        background: #fff;
+        transition: border-color .15s, background .15s;
+    }
+    .likert-option label:hover { border-color: #4CAF50; }
+    .likert-option input[type="radio"] {
+        display: block;
+        margin: 0 auto 4px;
+        accent-color: #4CAF50;
+    }
+    .likert-option input:checked ~ .likert-num,
+    .likert-option label:has(input:checked) {
+        border-color: #4CAF50;
+        background: #e6ffe6;
+    }
+    .likert-anchors {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.78em;
+        color: #888;
+        margin-top: 4px;
+    }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Short Questionnaire</h2>
+    <hr class="section-divider">
+
+    <p style="text-align:center; color:#555; margin-bottom:24px;">
+        This is a <strong>non-incentivised</strong> questionnaire. Please answer honestly — there are no right or wrong answers.
+    </p>
+
+    <!-- Hidden oTree form fields -->
+    <div style="display:none">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- Q1: Fairness (7-point Likert) -->
+    <div class="section-box box-calm" style="margin-top:16px;">
+        <div class="section-header">
+            <div class="icon">⚖️</div>
+            <h3>Question 1</h3>
+        </div>
+        <p style="margin-bottom:6px;">
+            <strong>The way earnings were determined in the Economy was fair.</strong>
+        </p>
+        <div class="likert-scale" id="likert-fairness">
+            {% for i in "1234567" %}
+            <div class="likert-option">
+                <label>
+                    <input type="radio" name="likert_fairness" value="{{ i }}"
+                           onchange="syncHidden('q_fairness', {{ i }})">
+                    <span class="likert-num">{{ i }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="likert-anchors">
+            <span>Strongly disagree</span>
+            <span>Strongly agree</span>
+        </div>
+    </div>
+
+    <!-- Q2: Generalised trust (3-option) -->
+    <div class="section-box box-calm" style="margin-top:16px;">
+        <div class="section-header">
+            <div class="icon">🤝</div>
+            <h3>Question 2</h3>
+        </div>
+        <p style="margin-bottom:10px;">
+            <strong>Generally speaking, would you say that most people can be trusted, or that you need to be very careful in dealing with people?</strong>
+        </p>
+        {% for field in form %}
+            {% if field.name == 'q_trust' %}
+                {{ formfield field.name }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Q3: IOS (7-point Likert) -->
+    <div class="section-box box-calm" style="margin-top:16px;">
+        <div class="section-header">
+            <div class="icon">👥</div>
+            <h3>Question 3</h3>
+        </div>
+        <p style="margin-bottom:6px;">
+            <strong>How connected do you feel to the group you were part of in the Economy?</strong><br>
+            <span style="font-size:0.9em; color:#666;">(Think about the same 2 people you worked with in Part I.)</span>
+        </p>
+        <div class="likert-scale" id="likert-ios">
+            {% for i in "1234567" %}
+            <div class="likert-option">
+                <label>
+                    <input type="radio" name="likert_ios" value="{{ i }}"
+                           onchange="syncHidden('ios_score', {{ i }})">
+                    <span class="likert-num">{{ i }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="likert-anchors">
+            <span>Not at all connected</span>
+            <span>Completely connected</span>
+        </div>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary">Next &rarr;</button>
+    </div>
+</div>
+
+<script>
+    /**
+     * Sync a custom UI selection into the hidden oTree form field.
+     * Handles RadioSelect fields (multiple <input type="radio"> with same name),
+     * plain inputs, and <select> elements.
+     */
+    function syncHidden(fieldName, value) {
+        var radios = document.querySelectorAll('input[type="radio"][name="' + fieldName + '"]');
+        if (radios.length > 0) {
+            // RadioSelect: check the radio whose value matches
+            radios.forEach(function(r) {
+                r.checked = (parseInt(r.value) === parseInt(value));
+            });
+            return;
+        }
+        var input = document.querySelector('input[name="' + fieldName + '"]');
+        if (input) { input.value = value; return; }
+        var sel = document.querySelector('select[name="' + fieldName + '"]');
+        if (sel) sel.value = value;
+    }
+
+    // On page load, sync any pre-selected custom Likert values into hidden fields
+    document.addEventListener('DOMContentLoaded', function() {
+        var fieldMap = { 'likert_fairness': 'q_fairness', 'likert_ios': 'ios_score' };
+        Object.keys(fieldMap).forEach(function(uiName) {
+            var checked = document.querySelector('input[name="' + uiName + '"]:checked');
+            if (checked) {
+                syncHidden(fieldMap[uiName], parseInt(checked.value));
+            }
+        });
+    });
+</script>
+
+{{ endblock }}

@@ -1,0 +1,84 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 1 &mdash; Solidarity: Outcome</h2>
+    <hr class="section-divider">
+
+    <!-- My outcome -->
+    {% if solidarity_role == 'lucky' %}
+    <div class="section-box box-calm" style="text-align:center; margin-top:24px; padding:24px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">🍀</div>
+            <h3 style="margin:0;">You were <strong>LUCKY</strong>!</h3>
+        </div>
+        <p style="font-size:1.1em;">You received the windfall of <strong>{{ solidarity_ec }} ECs</strong>.</p>
+        <p style="font-size:1.3em; font-weight:bold; color:#388E3C;">
+            Your earnings: {{ solidarity_earnings }} ECs
+        </p>
+        <p style="font-size:0.9em; color:#666;">
+            ({{ solidarity_ec }} ECs windfall &minus; your pledge)
+        </p>
+    </div>
+    {% else %}
+    <div class="section-box box-warn" style="text-align:center; margin-top:24px; padding:24px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">😔</div>
+            <h3 style="margin:0;">You were <strong>UNLUCKY</strong>.</h3>
+        </div>
+        <p style="font-size:1.1em;">You did not receive the windfall, but you received the pledges from your lucky group members.</p>
+        <p style="font-size:1.3em; font-weight:bold; color:#E8923A;">
+            Your earnings: {{ solidarity_earnings }} ECs
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Group outcomes table -->
+    <div class="section-box box-neutral" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">📊</div>
+            <h3>Group Outcomes</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; margin-top:8px; text-align:center;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd; text-align:left;">Member</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Role</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Pledge</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Earnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in group_data %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; text-align:left;">
+                        {% if loop.first %}
+                            <strong>{{ row.label }}</strong>
+                        {% else %}
+                            {{ row.label }}
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px 16px;">
+                        {% if row.role == 'lucky' %}
+                            <span style="color:#388E3C; font-weight:bold;">🍀 Lucky</span>
+                        {% else %}
+                            <span style="color:#E8923A; font-weight:bold;">😔 Unlucky</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px 16px;">{{ row.pledge }} ECs</td>
+                    <td style="padding:10px 16px; font-weight:bold;">{{ row.earnings }} ECs</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary">Next Game &rarr;</button>
+    </div>
+</div>
+
+{{ endblock }}

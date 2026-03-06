@@ -228,7 +228,7 @@ def _multiplier_reminder(treatment):
         return ('Remember that everyone has the <strong>same multiplier</strong>, '
                 'which means your earnings are a direct reflection of your relative performance.')
     elif treatment == 'Excessive_Meritocracy':
-        return ('Remember that multipliers were assigned based on <strong>past performance</strong>: '
+        return ('Remember that multipliers were assigned based on <strong>performance from the practice stage</strong>: '
                 'the best performer received &times;7 and the worst performer &times;3.')
     elif treatment == 'Aristocracy':
         return ('Remember that these multipliers were assigned <strong>randomly</strong> '
@@ -305,7 +305,12 @@ class Round_WaitPage(WaitPage):
     """
     @staticmethod
     def after_all_players_arrive(group: Group):
-        pass   # payoffs already stored in before_next_page of Round_Math
+        # All group members have submitted Round_Math, so every Round_score_r
+        # is now saved. Compute payoffs here to avoid the race condition that
+        # occurred when _compute_and_store_payoff ran in before_next_page
+        # (where fast finishers saw stale scores of 0 from slow teammates).
+        for p in group.get_players():
+            _compute_and_store_payoff(p, p.round_number)
 
 
 # ── Part II intro (round 1 only) ───────────────────────────────────────────────────
@@ -471,10 +476,10 @@ class Round_Math(MyBasePage):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened=False):
-        """Compute round sum and pie payoff after all 3 parts are done."""
+        """Compute round sum. Pie payoff is computed in Round_WaitPage once
+        all group members have submitted (avoids race condition)."""
         r = player.round_number
         _compute_round_sum(player, r)
-        _compute_and_store_payoff(player, r)
 
 
 # ── Stage 2: Visual Feedback ───────────────────────────────────────────────────────
@@ -676,6 +681,8 @@ class Final_WaitPage(WaitPage):
             practice_ecs = getattr(p.participant, 'Practice_ECs_total', 0)
 
             p.Total_bonus_ECs = practice_ecs + competition_ecs + p.PGG_earnings
+            # Store for cross-app use in Part_II_Social_Cohesion (tier ranking)
+            p.participant.Part_I_total_ECs = p.Total_bonus_ECs
 
 
 # ── Final Results (round 4 only) ─────────────────────────────────────────────────────

@@ -1,0 +1,73 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">Game 2 &mdash; Stag Hunt: Outcome</h2>
+    <hr class="section-divider">
+
+    <!-- Outcome banner -->
+    {% if all_stag %}
+    <div class="section-box box-calm" style="text-align:center; margin-top:24px; padding:24px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">🎉</div>
+            <h3 style="margin:0;">All three chose <strong>STAG</strong> — cooperation successful!</h3>
+        </div>
+        <p style="font-size:1.3em; font-weight:bold; color:#388E3C;">
+            Your earnings: {{ stag_earnings }} ECs
+        </p>
+    </div>
+    {% else %}
+    <div class="section-box box-warn" style="text-align:center; margin-top:24px; padding:24px;">
+        <div class="section-header" style="justify-content:center; margin-bottom:12px;">
+            <div class="icon">⚠️</div>
+            <h3 style="margin:0;">Not everyone chose Stag.</h3>
+        </div>
+        <p style="font-size:1.3em; font-weight:bold; color:#E8923A;">
+            Your earnings: {{ stag_earnings }} ECs
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Group choices table -->
+    <div class="section-box box-neutral" style="margin-top:24px;">
+        <div class="section-header">
+            <div class="icon">📊</div>
+            <h3>Group Choices</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; margin-top:8px; text-align:center;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd; text-align:left;">Member</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Choice</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Earnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in group_choices %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:10px 16px; text-align:left;">
+                        {% if loop.first %}<strong>{{ row.label }}</strong>{% else %}{{ row.label }}{% endif %}
+                    </td>
+                    <td style="padding:10px 16px;">
+                        {% if row.choice == 'stag' %}
+                            🦌 <span style="color:#388E3C; font-weight:bold;">Stag</span>
+                        {% else %}
+                            🐇 <span style="color:#E8923A; font-weight:bold;">Hare</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px 16px; font-weight:bold;">{{ row.earnings }} ECs</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div></div>
+        <button id="NextButton" class="btn btn-primary">Next &rarr;</button>
+    </div>
+</div>
+
+{{ endblock }}
