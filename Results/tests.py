@@ -1,12 +1,16 @@
-from otree.api import *
+"""
+Bot for the Results app.
+
+page_sequence:
+  AllDone_WaitPage   (auto — session-level sync)
+  Results            (no form fields — display-only summary page)
+"""
+from otree.api import Bot, Submission
 from . import *
-import random
+
 
 class PlayerBot(Bot):
 
-    cases = ['pass', 'fail_comprehension', 'fail_attention']
-
     def play_round(self):
-        pass
-
-    # Optionally define any helper methods here if needed for complex operations
+        # AllDone_WaitPage handled automatically by oTree
+        yield Submission(Results, {}, check_html=False)
