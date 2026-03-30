@@ -44,6 +44,36 @@
         color: #888;
         margin-top: 4px;
     }
+
+    /* ── IOS pictogram ───────────────────────────────────────────── */
+    .ios-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        padding: 8px 6px 6px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        transition: border-color .15s, background .15s;
+        min-width: 90px;
+        user-select: none;
+    }
+    .ios-option:hover {
+        border-color: #D95F02;
+        background: #FFF8F0;
+    }
+    .ios-option.ios-selected {
+        border-color: #D95F02;
+        background: #FFF3E0;
+        box-shadow: 0 0 0 2px rgba(217,95,2,0.25);
+    }
+    .ios-label {
+        margin-top: 5px;
+        font-size: 0.88em;
+        font-weight: 600;
+        color: #555;
+    }
 </style>
 
 <div class="content-box box-neutral">
@@ -51,7 +81,7 @@
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555; margin-bottom:24px;">
-        This is a <strong>non-incentivised</strong> questionnaire. Please answer honestly — there are no right or wrong answers.
+        Please answer honestly — there are no right or wrong answers.
     </p>
 
     <!-- Hidden oTree form fields -->
@@ -68,8 +98,9 @@
             <h3>Question 1</h3>
         </div>
         <p style="margin-bottom:6px;">
-            <strong>The way earnings were determined in the Economy was fair.</strong>
+            <strong>Overall, the way earnings were determined in Part I was fair.</strong>
         </p>
+                <span style="font-size:0.9em; color:#666;">Part I was where you played the Intelligence Test over many rounds.</span>
         <div class="likert-scale" id="likert-fairness">
             {% for i in "1234567" %}
             <div class="likert-option">
@@ -87,11 +118,114 @@
         </div>
     </div>
 
+    <!-- Q2: IOS pictogram (Aron et al., 1992) -->
+    <div class="section-box box-calm" style="margin-top:16px;">
+        <div class="section-header">
+            <div class="icon">👥</div>
+            <h3>Question 2</h3>
+        </div>
+        <p style="margin-bottom:4px;">
+            <strong>Please choose the picture that best describes your relationship with your group in Part I.</strong><br>
+            <span style="font-size:0.9em; color:#666;">(Think about the same 2 people you worked with in Part I.)</span>
+        </p>
+        <p style="font-size:0.85em; color:#888; margin-bottom:14px;">
+            <span style="color:#D95F02; font-weight:600;">S</span> = Self &nbsp;&nbsp;
+            <span style="color:#2E75B6; font-weight:600;">O</span> = Others (your group)
+        </p>
+
+        <div id="ios-pictogram" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+
+            <!-- Level 1 — completely separate -->
+            <div class="ios-option" data-val="1" onclick="selectIOS(1)">
+                <svg width="110" height="52" viewBox="0 0 110 52" aria-label="Level 1: not overlapping">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="26" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="84" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="84" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">1</div>
+            </div>
+
+            <!-- Level 2 — just touching -->
+            <div class="ios-option" data-val="2" onclick="selectIOS(2)">
+                <svg width="100" height="52" viewBox="0 0 100 52" aria-label="Level 2: barely touching">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="26" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="74" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="74" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">2</div>
+            </div>
+
+            <!-- Level 3 — small overlap -->
+            <div class="ios-option" data-val="3" onclick="selectIOS(3)">
+                <svg width="92" height="52" viewBox="0 0 92 52" aria-label="Level 3: small overlap">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="20" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="66" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="72" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">3</div>
+            </div>
+
+            <!-- Level 4 — medium overlap -->
+            <div class="ios-option" data-val="4" onclick="selectIOS(4)">
+                <svg width="84" height="52" viewBox="0 0 84 52" aria-label="Level 4: medium overlap">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="18" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="58" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="66" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">4</div>
+            </div>
+
+            <!-- Level 5 — large overlap -->
+            <div class="ios-option" data-val="5" onclick="selectIOS(5)">
+                <svg width="76" height="52" viewBox="0 0 76 52" aria-label="Level 5: large overlap">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="16" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="50" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="60" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">5</div>
+            </div>
+
+            <!-- Level 6 — very large overlap -->
+            <div class="ios-option" data-val="6" onclick="selectIOS(6)">
+                <svg width="68" height="52" viewBox="0 0 68 52" aria-label="Level 6: very large overlap">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="14" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="42" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="54" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">6</div>
+            </div>
+
+            <!-- Level 7 — almost completely overlapping -->
+            <div class="ios-option" data-val="7" onclick="selectIOS(7)">
+                <svg width="60" height="52" viewBox="0 0 60 52" aria-label="Level 7: almost completely overlapping">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="14" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">S</text>
+                    <circle cx="34" cy="26" r="24" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <text x="46" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">O</text>
+                </svg>
+                <div class="ios-label">7</div>
+            </div>
+
+        </div><!-- /ios-pictogram -->
+
+        <!-- <div style="display:flex; justify-content:space-between; font-size:0.78em; color:#888; margin-top:10px; max-width:560px; margin-left:auto; margin-right:auto;">
+            <span>Not connected at all</span>
+            <span>Completely connected</span>
+        </div> -->
+    </div>
+
+
     <!-- Q2: Generalised trust (3-option) -->
     <div class="section-box box-calm" style="margin-top:16px;">
         <div class="section-header">
             <div class="icon">🤝</div>
-            <h3>Question 2</h3>
+            <h3>Question 3</h3>
         </div>
         <p style="margin-bottom:10px;">
             <strong>Generally speaking, would you say that most people can be trusted, or that you need to be very careful in dealing with people?</strong>
@@ -103,32 +237,6 @@
         {% endfor %}
     </div>
 
-    <!-- Q3: IOS (7-point Likert) -->
-    <div class="section-box box-calm" style="margin-top:16px;">
-        <div class="section-header">
-            <div class="icon">👥</div>
-            <h3>Question 3</h3>
-        </div>
-        <p style="margin-bottom:6px;">
-            <strong>How connected do you feel to the group you were part of in the Economy?</strong><br>
-            <span style="font-size:0.9em; color:#666;">(Think about the same 2 people you worked with in Part I.)</span>
-        </p>
-        <div class="likert-scale" id="likert-ios">
-            {% for i in "1234567" %}
-            <div class="likert-option">
-                <label>
-                    <input type="radio" name="likert_ios" value="{{ i }}"
-                           onchange="syncHidden('ios_score', {{ i }})">
-                    <span class="likert-num">{{ i }}</span>
-                </label>
-            </div>
-            {% endfor %}
-        </div>
-        <div class="likert-anchors">
-            <span>Not at all connected</span>
-            <span>Completely connected</span>
-        </div>
-    </div>
 
     <div class="buttons-container" style="margin-top:30px;">
         <div></div>
@@ -157,15 +265,33 @@
         if (sel) sel.value = value;
     }
 
+    // ── IOS pictogram selection ───────────────────────────────────────────────
+    function selectIOS(val) {
+        // Highlight selected option
+        document.querySelectorAll('.ios-option').forEach(function(el) {
+            el.classList.toggle('ios-selected', parseInt(el.dataset.val) === val);
+        });
+        // Sync into the hidden oTree field
+        syncHidden('ios_score', val);
+    }
+
     // On page load, sync any pre-selected custom Likert values into hidden fields
+    // and restore IOS selection if the page is revisited
     document.addEventListener('DOMContentLoaded', function() {
-        var fieldMap = { 'likert_fairness': 'q_fairness', 'likert_ios': 'ios_score' };
+        var fieldMap = { 'likert_fairness': 'q_fairness' };
         Object.keys(fieldMap).forEach(function(uiName) {
             var checked = document.querySelector('input[name="' + uiName + '"]:checked');
             if (checked) {
                 syncHidden(fieldMap[uiName], parseInt(checked.value));
             }
         });
+
+        // Restore IOS if a value is already stored in the hidden field
+        var iosHidden = document.querySelector('input[name="ios_score"], select[name="ios_score"]');
+        if (iosHidden && iosHidden.value) {
+            var existing = parseInt(iosHidden.value);
+            if (existing >= 1 && existing <= 7) selectIOS(existing);
+        }
     });
 </script>
 

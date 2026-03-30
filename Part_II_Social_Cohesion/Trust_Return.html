@@ -27,7 +27,7 @@
 </style>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 4 &mdash; Trust: Return Decisions</h2>
+    <h2 class="section-title">Game 4: Return Decisions</h2>
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555;">
@@ -45,11 +45,11 @@
         {% endfor %}
     </div>
 
-    <!-- Ingroup trustee decisions -->
+    <!-- Ingroup receiver decisions -->
     <div class="section-box box-info" style="margin-top:24px;">
         <div class="section-header">
             <div class="icon" style="color:#5B9BD5;">&#9679;</div>
-            <h3>As Trustee for Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
+            <h3>As Receiver for Partner A <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
         </div>
         <p style="font-size:0.9em; color:#555; margin-bottom:6px;">
             Your partner sends an amount &rarr; it is <strong>tripled</strong> when it arrives to you &rarr; you choose how much to return.
@@ -67,11 +67,11 @@
         </table>
     </div>
 
-    <!-- Outgroup trustee decisions -->
+    <!-- Outgroup receiver decisions -->
     <div class="section-box box-info" style="margin-top:20px;">
         <div class="section-header">
             <div class="icon" style="color:#FFB347;">&#9679;</div>
-            <h3>As Trustee for Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
+            <h3>As Receiver for Partner B <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
         </div>
         <p style="font-size:0.9em; color:#555; margin-bottom:6px;">
             Same rules apply &mdash; for each possible send amount, choose how much to return.
@@ -95,7 +95,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Trust Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary" onclick="collectAndSubmit(event)">Confirm &amp; Continue &rarr;</button>
     </div>
@@ -104,7 +104,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">&#128216;</span> Trust Game</h2>
+            <h2><span class="icon">&#128216;</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

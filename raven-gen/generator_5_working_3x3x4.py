@@ -4,10 +4,10 @@ import numpy as np
 import random
 import os
 import json
-# TODO: only the first 6 sets are complete. set 7 is incomplete and set 8 is remaining; 
 # ===== CONFIGURATION =====
-NUM_SETS = 8          # Number of sets of puzzles to generate
-PUZZLES_PER_SET = 40  # Puzzles per set
+
+NUM_SETS = 12          # Number of sets of puzzles to generate
+PUZZLES_PER_SET = 18  # Puzzles per set #TODO: if the timer is more than 90 seconds in each round, we need more than 18 puzzles.
 
 # Output directory (relative to this script's location)
 # Resolves to: <repo_root>/_static/puzzles/Set{N}/
@@ -25,7 +25,21 @@ simple_2x2_matrix_types = [
 ]
 simple_2x2_ruleset = Ruleset(
     number_rules=[RuleType.CONSTANT],  # Number of shapes stays constant
+    size_rules=[RuleType.CONSTANT],    # Size stays constant (easier)
+    color_rules=[RuleType.CONSTANT],   # Color stays constant (easier)
 )
+
+SHAPE_COLOR = (70, 130, 180)  # Steel blue
+
+def colorize_image(img, shape_color=SHAPE_COLOR):
+    """Recolor grayscale shapes to a target color, preserving intensity."""
+    data = np.array(img.convert('RGB')).astype(float)
+    intensity = 1.0 - data[:, :, 0] / 255.0  # 0=white bg, 1=black shape
+    out = np.ones_like(data) * 255.0
+    for c, ch in enumerate(shape_color):
+        out[:, :, c] = 255.0 * (1.0 - intensity) + float(ch) * intensity
+    return Image.fromarray(out.astype(np.uint8))
+
 
 def create_puzzle_and_answers(matrix_id, temp_dir="temp_matrices", output_dir="puzzles_3x3x4"):
     """
@@ -111,20 +125,20 @@ def create_puzzle_and_answers(matrix_id, temp_dir="temp_matrices", output_dir="p
     text_y = cell_y_start + (156 - text_height) // 2
     draw.text((text_x, text_y), "?", fill='black', font=font_large)
     
-    # Save puzzle image
+    # Save puzzle image (colorized)
     puzzle_path = os.path.join(output_dir, f"puzzle_{matrix_id:03d}.png")
-    puzzle.save(puzzle_path)
-    
+    colorize_image(puzzle).save(puzzle_path)
+
     # ===== CREATE INDIVIDUAL ANSWER IMAGES =====
     answer_files = []
     for idx, ((answer_img, is_correct), label) in enumerate(zip(all_answers, labels)):
         # Determine if this is the correct answer
         correctness = 'T' if is_correct else 'F'
-        
-        # Save individual answer image
+
+        # Save individual answer image (colorized)
         answer_filename = f"answers_{matrix_id:03d}{label}_{correctness}.png"
         answer_path = os.path.join(output_dir, answer_filename)
-        answer_img.save(answer_path)
+        colorize_image(answer_img).save(answer_path)
         
         answer_files.append(answer_filename)
     

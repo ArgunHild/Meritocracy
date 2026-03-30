@@ -97,7 +97,7 @@ class Player(BasePlayer):
     # ── Solidarity ───────────────────────────────────────────────────────────
     solidarity_pledge   = models.IntegerField(
         min=0, max=100,
-        label='How much of your 100 ECs windfall do you wish to pledge to the unlucky person?',
+        label='How much do you pledge to the person who doesn\'t win?',
         choices=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
         widget=widgets.RadioSelectHorizontal,
     )
@@ -106,7 +106,7 @@ class Player(BasePlayer):
 
     # ── Stag Hunt ────────────────────────────────────────────────────────────
     stag_choice   = models.StringField(
-        choices=[['stag', 'Stag 🦌 (cooperate)'], ['hare', 'Hare 🐇 (go safe)']],
+        choices=[['stag', 'A'], ['hare', 'B']],
         widget=widgets.RadioSelect,
         label='What do you choose?',
     )
@@ -120,8 +120,8 @@ class Player(BasePlayer):
     outgroup_partner_sees_me_as = models.StringField(initial='')  # 'ingroup' | 'outgroup'
 
     # ── Ultimatum: proposer ──────────────────────────────────────────────────
-    ult_offer_ingroup  = models.IntegerField(min=0, max=100, initial=50)
-    ult_offer_outgroup = models.IntegerField(min=0, max=100, initial=50)
+    ult_offer_ingroup  = models.IntegerField(min=0, max=100, initial=0)
+    ult_offer_outgroup = models.IntegerField(min=0, max=100, initial=0)
 
     # ── Ultimatum: responder — binary strategy method (JSON) ─────────────────
     # Format: {"0":"reject","10":"accept",...,"100":"accept"}
@@ -172,7 +172,7 @@ class Player(BasePlayer):
             [3, 'It depends'],
         ],
         widget=widgets.RadioSelect,
-        label='Generally speaking, would you say that most people can be trusted, or that you need to be very careful in dealing with people?',
+        label='',
     )
     ios_score = models.IntegerField(
         min=1, max=7,
@@ -229,7 +229,8 @@ def _get_player_by_code(subsession, code):
 # ── WaitPage: Restore economy groups ──────────────────────────────────────────
 class EconomyGrouping_WaitPage(WaitPage):
     """Restores the same economy groups from Part_I_Economy using participant.group_id."""
-    wait_for_all_groups = True
+    wait_for_all_groups = True  # must wait for all to call set_group_matrix
+    body_text = "Waiting for all participants to finish Part I before group activities begin…"
 
     @staticmethod
     def after_all_players_arrive(subsession: Subsession):
@@ -249,6 +250,7 @@ class EconomyGrouping_WaitPage(WaitPage):
 # ── WaitPage: Solidarity draw ─────────────────────────────────────────────────
 class Solidarity_WaitPage(WaitPage):
     """Randomly selects 1 unlucky player; computes solidarity earnings."""
+    body_text = "Waiting for your 2 group members to submit their pledge…"
 
     @staticmethod
     def after_all_players_arrive(group: Group):
@@ -270,6 +272,7 @@ class Solidarity_WaitPage(WaitPage):
 # ── WaitPage: Stag Hunt ───────────────────────────────────────────────────────
 class StagHunt_WaitPage(WaitPage):
     """Reveals all choices and computes Stag Hunt earnings."""
+    body_text = "Waiting for your 2 group members to submit their choice…"
 
     @staticmethod
     def after_all_players_arrive(group: Group):
@@ -293,7 +296,8 @@ class CrossMatching_WaitPage(WaitPage):
       - outgroup: High/Medium → Low partner; Low → Medium partner
     Also records how each partner sees the current player (for payoff lookup).
     """
-    wait_for_all_groups = True
+    wait_for_all_groups = True  # must wait for all to assign cross-economy pairs
+    body_text = "Waiting for all participants before matching you with partners from other groups…"
 
     @staticmethod
     def after_all_players_arrive(subsession: Subsession):
@@ -377,7 +381,8 @@ class Final_WaitPage(WaitPage):
       3. Trust (ex-post matching)
     Then randomly selects one game for payment.
     """
-    wait_for_all_groups = True
+    wait_for_all_groups = True  # must wait for all to form PGG2 random groups and compute payoffs
+    body_text = "Computing your earnings — please wait…"
 
     @staticmethod
     def after_all_players_arrive(subsession: Subsession):
@@ -916,6 +921,16 @@ class PGG2_Instructions(MyPage):
         v = MyPage.vars_for_template(player)
         v['pgg2_commons']    = C.PGG2_Commons
         v['Instructions_pgg2'] = C.Instructions_pgg2_path
+        tier = player.earner_tier
+        if tier == 'high':
+            v['ingroup_tier_label']  = 'High Earner'
+            v['outgroup_tier_label'] = 'Low Earner'
+        elif tier == 'medium':
+            v['ingroup_tier_label']  = 'Medium Earner'
+            v['outgroup_tier_label'] = 'Low Earner'
+        else:
+            v['ingroup_tier_label']  = 'Low Earner'
+            v['outgroup_tier_label'] = 'Medium Earner'
         return v
 
 
@@ -928,6 +943,16 @@ class PGG2_Contribute(MyPage):
         v = MyPage.vars_for_template(player)
         v['pgg2_commons']      = C.PGG2_Commons
         v['Instructions_pgg2'] = C.Instructions_pgg2_path
+        tier = player.earner_tier
+        if tier == 'high':
+            v['ingroup_tier_label']  = 'High Earner'
+            v['outgroup_tier_label'] = 'Low Earner'
+        elif tier == 'medium':
+            v['ingroup_tier_label']  = 'Medium Earner'
+            v['outgroup_tier_label'] = 'Low Earner'
+        else:
+            v['ingroup_tier_label']  = 'Low Earner'
+            v['outgroup_tier_label'] = 'Medium Earner'
         return v
 
 
@@ -939,13 +964,13 @@ class Final_Results(MyPage):
 
         # All earnings breakdown
         game_labels = {
-            'solidarity':     'Solidarity game (within-group)',
-            'stag':           'Stag Hunt game (within-group)',
-            'ult_ingroup':    'Ultimatum game — Ingroup partner',
-            'ult_outgroup':   'Ultimatum game — Outgroup partner',
-            'trust_ingroup':  'Trust game — Ingroup partner',
-            'trust_outgroup': 'Trust game — Outgroup partner',
-            'pgg2':           'Investment game (anonymous)',
+            'solidarity':     'Game 1 ',
+            'stag':           'Game 2',
+            'ult_ingroup':    'Game 3 with Partner A',
+            'ult_outgroup':   'Game 3 with Partner B',
+            'trust_ingroup':  'Game 4 with Partner A',
+            'trust_outgroup': 'Game 4 with Partner B',
+            'pgg2':           'Game 5 (Group Project)',
         }
         all_earnings = {
             'solidarity':     round(player.solidarity_earnings, 1),

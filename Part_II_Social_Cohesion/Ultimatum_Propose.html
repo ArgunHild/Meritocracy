@@ -52,10 +52,53 @@
     }
     .badge-waiting { background: #fff3cd; color: #856404; }
     .badge-set     { background: #d4edda; color: #155724; }
+
+    /* Click-to-initialize slider */
+    .slider-container {
+        position: relative;
+        height: 42px;
+        display: flex;
+        align-items: center;
+    }
+    .offer-slider {
+        position: absolute;
+        width: 100%;
+    }
+    .slider-init-overlay {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 5px;
+    }
+    .slider-init-overlay::before {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #d3d3d3;
+        border-radius: 5px;
+    }
+    .slider-init-hint {
+        position: relative;
+        z-index: 1;
+        background: #fff;
+        border: 1.5px dashed #bbb;
+        border-radius: 20px;
+        padding: 3px 16px;
+        font-size: 0.82em;
+        color: #888;
+        pointer-events: none;
+    }
 </style>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 3 &mdash; Ultimatum: Your Offers</h2>
+    <h2 class="section-title">Game 3: Your Offers</h2>
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555;">
@@ -66,7 +109,7 @@
         &#9888; <strong>Reminder:</strong> If your partner rejects your offer, <strong>both</strong> of you earn <strong>0 ECs</strong> from that game.
     </div>
     <p style="text-align:center; font-size:0.9em; color:#777; margin-top:6px;">
-        Move each slider to set your offer. You must set <strong>both</strong> offers before continuing.
+        Click on the slider to initialize it. Then, move each slider to set your offers. You must set <strong>both</strong> offers before continuing.
     </p>
 
     <!-- Hidden oTree form fields -->
@@ -80,14 +123,19 @@
     <div class="section-box box-info" style="margin-top:24px;">
         <div class="section-header">
             <div class="icon" style="color:#5B9BD5;">&#9679;</div>
-            <h3>Offer to Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
+            <h3>Offer to Partner A <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
                 <span id="badge-ingroup" class="slider-badge badge-waiting">Not set</span>
             </h3>
         </div>
         <div class="offer-display offer-untouched" id="offer-ingroup-display">&mdash; ECs</div>
-        <div class="offer-sub" id="offer-ingroup-sub">Move the slider to set your offer</div>
-        <input type="range" id="slider-ingroup" class="offer-slider"
-               min="0" max="{{ dictator_ec }}" step="10" value="50">
+        <!-- <div class="offer-sub" id="offer-ingroup-sub">Move the slider to set your offer</div> -->
+        <div class="slider-container">
+            <div class="slider-init-overlay" id="init-ingroup">
+                <span class="slider-init-hint">Click anywhere to set your offer</span>
+            </div>
+            <input type="range" id="slider-ingroup" class="offer-slider"
+                   min="0" max="{{ dictator_ec }}" step="10" value="0" style="display:none;">
+        </div>
         <div class="offer-labels">
             <span>Offer 0 (keep all)</span>
             <span>Offer {{ dictator_ec }} (keep nothing)</span>
@@ -98,14 +146,19 @@
     <div class="section-box box-info" style="margin-top:20px;">
         <div class="section-header">
             <div class="icon" style="color:#FFB347;">&#9679;</div>
-            <h3>Offer to Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
+            <h3>Offer to Partner B <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
                 <span id="badge-outgroup" class="slider-badge badge-waiting">Not set</span>
             </h3>
         </div>
         <div class="offer-display offer-untouched" id="offer-outgroup-display">&mdash; ECs</div>
-        <div class="offer-sub" id="offer-outgroup-sub">Move the slider to set your offer</div>
-        <input type="range" id="slider-outgroup" class="offer-slider"
-               min="0" max="{{ dictator_ec }}" step="10" value="50">
+        <!-- <div class="offer-sub" id="offer-outgroup-sub">Move the slider to set your offer</div> -->
+        <div class="slider-container">
+            <div class="slider-init-overlay" id="init-outgroup">
+                <span class="slider-init-hint">Click anywhere to set your offer</span>
+            </div>
+            <input type="range" id="slider-outgroup" class="offer-slider"
+                   min="0" max="{{ dictator_ec }}" step="10" value="0" style="display:none;">
+        </div>
         <div class="offer-labels">
             <span>Offer 0 (keep all)</span>
             <span>Offer {{ dictator_ec }} (keep nothing)</span>
@@ -118,7 +171,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Ultimatum Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary" onclick="trySubmit(event)">Confirm Offers &rarr;</button>
     </div>
@@ -127,7 +180,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">&#128216;</span> Ultimatum Game</h2>
+            <h2><span class="icon">&#128216;</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">
@@ -141,8 +194,9 @@
     var dictatorEC = {{ dictator_ec }};
     var touched = { ingroup: false, outgroup: false };
 
-    function setupOfferSlider(key, sliderId, displayId, subId, badgeId, fieldName) {
+    function setupOfferSlider(key, sliderId, overlayId, displayId, subId, badgeId, fieldName) {
         var slider  = document.getElementById(sliderId);
+        var overlay = document.getElementById(overlayId);
         var display = document.getElementById(displayId);
         var sub     = document.getElementById(subId);
         var badge   = document.getElementById(badgeId);
@@ -160,12 +214,25 @@
             touched[key] = true;
         }
 
-        slider.addEventListener('input',  function () { activate(this.value); });
-        slider.addEventListener('change', function () { activate(this.value); });
+        // Initialize slider on first click: calculate position from click, then reveal
+        overlay.addEventListener('click', function (event) {
+            var rect     = overlay.getBoundingClientRect();
+            var ratio    = (event.clientX - rect.left) / rect.width;
+            ratio        = Math.max(0, Math.min(1, ratio));
+            var rawVal   = ratio * dictatorEC;
+            var stepped  = Math.round(rawVal / 10) * 10;
+            stepped      = Math.max(0, Math.min(dictatorEC, stepped));
+            slider.value = stepped;
+            overlay.style.display = 'none';
+            slider.style.display  = '';
+            activate(stepped);
+        });
+
+        slider.addEventListener('input', function () { activate(this.value); });
     }
 
-    setupOfferSlider('ingroup',  'slider-ingroup',  'offer-ingroup-display',  'offer-ingroup-sub',  'badge-ingroup',  'ult_offer_ingroup');
-    setupOfferSlider('outgroup', 'slider-outgroup', 'offer-outgroup-display', 'offer-outgroup-sub', 'badge-outgroup', 'ult_offer_outgroup');
+    setupOfferSlider('ingroup',  'slider-ingroup',  'init-ingroup',  'offer-ingroup-display',  'offer-ingroup-sub',  'badge-ingroup',  'ult_offer_ingroup');
+    setupOfferSlider('outgroup', 'slider-outgroup', 'init-outgroup', 'offer-outgroup-display', 'offer-outgroup-sub', 'badge-outgroup', 'ult_offer_outgroup');
 
     window.trySubmit = function (evt) {
         if (evt) evt.preventDefault();

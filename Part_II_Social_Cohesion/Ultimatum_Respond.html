@@ -22,15 +22,15 @@
 </style>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 3 &mdash; Ultimatum: Acceptance Decisions</h2>
+    <h2 class="section-title">Game 3: Acceptance Decisions</h2>
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555;">
-        Your partners each made an offer to you — just as you made offers to them.
+        Your partners will make an offer to you — just as you made offers to them.
         For each possible offer amount below, decide whether you would
         <strong style="color:#388E3C;">Accept</strong> or <strong style="color:#c62828;">Reject</strong> it.
         Your decisions here will be matched against your partners' actual offers to determine your earnings.
-        If rejected, both of you earn <strong>0 ECs</strong> from that game.
+        If you reject and actual offer, both of you earn <strong>0 ECs</strong> from this game.
     </p>
     <p style="text-align:center; font-size:0.9em; color:#777;">
         ⚠️ You must make a decision for <strong>every row</strong> in both tables before continuing.
@@ -49,7 +49,7 @@
     <div class="section-box box-info" style="margin-top:24px;">
         <div class="section-header">
             <div class="icon" style="color:#5B9BD5;">●</div>
-            <h3>Offers from Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
+            <h3>Offers from Partner A <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3>
         </div>
         <p style="font-size:0.9em; color:#555; margin-bottom:8px;">
             Your partner has {{ dictator_ec }} ECs. For each amount they could offer you:
@@ -88,7 +88,7 @@
     <div class="section-box box-info" style="margin-top:20px;">
         <div class="section-header">
             <div class="icon" style="color:#FFB347;">●</div>
-            <h3>Offers from Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
+            <h3>Offers from Partner B <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>
         </div>
         <p style="font-size:0.9em; color:#555; margin-bottom:8px;">
             Your partner has {{ dictator_ec }} ECs. For each amount they could offer you:
@@ -129,7 +129,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">📘 Ultimatum Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary" onclick="collectAndSubmit(event)">Confirm Decisions &rarr;</button>
     </div>
@@ -138,7 +138,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">📘</span> Ultimatum Game</h2>
+            <h2><span class="icon">📘</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

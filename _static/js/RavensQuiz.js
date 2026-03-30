@@ -2,7 +2,8 @@
 // Raven's Matrices Quiz – oTree JavaScript
 // ---------------------------------------------------------------------------
 // PUZZLES is loaded dynamically from the set's answer_key.js before this
-// script runs. Each entry: { puzzle: filename, answers: [...], correct: letter }
+// script runs. Each entry: { puzzle: filename, answers: [...], correct: letter,
+//                             explanation: string (optional, shown in tutorial) }
 // ---------------------------------------------------------------------------
 
 // TODO: set to false
@@ -28,6 +29,9 @@ let imgBase = '';
 let scoreField = null;
 let answersField = null;
 
+// Freeze state
+let freezeActive = false;
+
 // ---------------------------------------------------------------------------
 // Initialise
 // ---------------------------------------------------------------------------
@@ -37,8 +41,6 @@ function initRavensQuiz() {
     lsPrefix = 'ravens_' + (jv.participant_code || 'x') + '_set' + (jv.puzzle_set || '1') + '_';
 
     // Derive the image base URL from the sentinel attribute (a real file URL).
-    // oTree rejects directory paths in {{ static }}, so we point to puzzle_000.png
-    // and strip the filename to get the folder URL.
     const container = document.getElementById('RavensQuiz-container');
     const sentinel = container ? (container.dataset.imgSentinel || '') : '';
     imgBase = sentinel ? sentinel.replace('puzzle_000.png', '') : '';
@@ -63,7 +65,6 @@ function initRavensQuiz() {
     syncFields();
 
     if (currentIndex >= TOTAL) {
-        // All puzzles already completed on a previous load – just submit
         autoSubmit();
         return;
     }
@@ -72,14 +73,46 @@ function initRavensQuiz() {
 }
 
 // ---------------------------------------------------------------------------
+// Per-question freeze countdown
+// ---------------------------------------------------------------------------
+function startRavensFreeze() {
+    const jv = window.js_vars || {};
+    const freezeSecs = jv.freeze_seconds || 0;
+    if (freezeSecs <= 0) return;
+
+    freezeActive = true;
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = '\u23F3 ' + freezeSecs + 's';
+    }
+
+    let remaining = freezeSecs;
+    const tick = setInterval(function () {
+        remaining--;
+        const btn = document.getElementById('confirm-btn');
+        if (remaining > 0) {
+            if (btn) btn.textContent = '\u23F3 ' + remaining + 's';
+        } else {
+            clearInterval(tick);
+            freezeActive = false;
+            if (btn) {
+                btn.textContent = 'Confirm';
+                if (selectedOption !== null) btn.disabled = false;
+            }
+        }
+    }, 1000);
+}
+
+// ---------------------------------------------------------------------------
 // Display a puzzle
 // ---------------------------------------------------------------------------
 function showPuzzle(index) {
     const puzzle = PUZZLES[index];
 
-    // Counter
+    // Counter (cleared — no question number shown)
     const counter = document.getElementById('puzzle-counter');
-    if (counter) counter.textContent = 'Question ' + (index + 1) + ' / ' + TOTAL;
+    if (counter) counter.textContent = '';
 
     // Puzzle image
     const img = document.getElementById('puzzle-img');
@@ -89,6 +122,7 @@ function showPuzzle(index) {
     const choicesDiv = document.getElementById('choices');
     if (choicesDiv) {
         choicesDiv.innerHTML = '';
+        choicesDiv.style.display = '';
         puzzle.answers.forEach(function (filename, i) {
             const letter = OPTION_LETTERS[i];
             const btn = document.createElement('button');
@@ -109,7 +143,19 @@ function showPuzzle(index) {
     // Reset selection
     selectedOption = null;
     const confirmBtn = document.getElementById('confirm-btn');
-    if (confirmBtn) confirmBtn.disabled = true;
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Confirm';
+        confirmBtn.style.display = '';
+    }
+
+    // Hide feedback panel if visible
+    const feedback = document.getElementById('raven-feedback');
+    if (feedback) feedback.style.display = 'none';
+
+    // Start per-question freeze
+    freezeActive = false;
+    startRavensFreeze();
 }
 
 // ---------------------------------------------------------------------------
@@ -123,9 +169,9 @@ function selectOption(letter) {
         btn.classList.toggle('selected', btn.dataset.letter === letter);
     });
 
-    // Enable confirm button
+    // Enable confirm button only if freeze is over
     const confirmBtn = document.getElementById('confirm-btn');
-    if (confirmBtn) confirmBtn.disabled = false;
+    if (confirmBtn && !freezeActive) confirmBtn.disabled = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -135,11 +181,10 @@ function confirmAnswer() {
     if (selectedOption === null) return;
 
     const puzzle = PUZZLES[currentIndex];
+    const isCorrect = (selectedOption === puzzle.correct);
 
     // Score if correct
-    if (selectedOption === puzzle.correct) {
-        scoreValue++;
-    }
+    if (isCorrect) scoreValue++;
 
     // Record answer
     answersMap[String(currentIndex)] = selectedOption;
@@ -149,25 +194,69 @@ function confirmAnswer() {
             'Q' + (currentIndex + 1),
             '| correct:', puzzle.correct,
             '| given:', selectedOption,
-            '| match:', selectedOption === puzzle.correct,
+            '| match:', isCorrect,
             '| total correct so far:', scoreValue
         );
     }
 
-    // Persist to localStorage
     saveState();
-
-    // Sync oTree hidden fields immediately
     syncFields();
 
-    // Advance
-    currentIndex++;
-    saveState();   // persist the incremented index
+    const jv = window.js_vars || {};
+    if (jv.tutorial_mode) {
+        showTutorialFeedback(currentIndex, isCorrect, puzzle);
+    } else {
+        currentIndex++;
+        saveState();
+        if (currentIndex < TOTAL) showPuzzle(currentIndex);
+        else autoSubmit();
+    }
+}
 
+// ---------------------------------------------------------------------------
+// Tutorial feedback panel
+// ---------------------------------------------------------------------------
+function showTutorialFeedback(idx, isCorrect, puzzle) {
+    const feedback = document.getElementById('raven-feedback');
+
+    // Hide quiz interaction controls
+    const choicesDiv = document.getElementById('choices');
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (choicesDiv) choicesDiv.style.display = 'none';
+    if (confirmBtn) confirmBtn.style.display = 'none';
+
+    let html = '';
+    if (isCorrect) {
+        html += '<div style="color:#2e7d32;font-size:1.25em;font-weight:bold;margin-bottom:8px;">&#10003; Correct!</div>';
+    } else {
+        html += '<div style="color:#c62828;font-size:1.25em;font-weight:bold;margin-bottom:8px;">&#10007; Incorrect &mdash; the correct answer was <strong>' + puzzle.correct + '</strong>.</div>';
+    }
+    if (idx === 0 && puzzle.explanation) {
+        html += '<p style="margin:8px 0 0;color:#444;font-size:0.95em;">' + puzzle.explanation + '</p>';
+    }
+
+    const isLast = (idx + 1 >= TOTAL);
+    const btnLabel = isLast ? 'Finish &rarr;' : 'Next question &rarr;';
+    html += '<button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="advanceTutorial()">' + btnLabel + '</button>';
+
+    if (feedback) {
+        feedback.innerHTML = html;
+        feedback.style.display = 'block';
+    } else {
+        // Fallback: no feedback div — just advance
+        advanceTutorial();
+    }
+}
+
+function advanceTutorial() {
+    const feedback = document.getElementById('raven-feedback');
+    if (feedback) feedback.style.display = 'none';
+
+    currentIndex++;
+    saveState();
     if (currentIndex < TOTAL) {
         showPuzzle(currentIndex);
     } else {
-        // All done – submit the form
         autoSubmit();
     }
 }
@@ -202,8 +291,6 @@ function autoSubmit() {
 // ---------------------------------------------------------------------------
 // DOM-ready entry point
 // ---------------------------------------------------------------------------
-// This script is loaded dynamically (after DOMContentLoaded may have already
-// fired), so we check readyState and call init immediately if the DOM is ready.
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initRavensQuiz);
 } else {

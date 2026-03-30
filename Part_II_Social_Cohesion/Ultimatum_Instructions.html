@@ -6,7 +6,7 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 3 &mdash; Ultimatum</h2>
+    <h2 class="section-title">Game 3</h2>
     <hr class="section-divider">
 
     <div class="section-box box-info" style="margin-top:24px;">
@@ -15,12 +15,12 @@
             <h3>How It Works</h3>
         </div>
         <p>
-            You will play <strong>two simultaneous ultimatum games</strong> — one against your
-            <strong><span style="color:#5B9BD5;">Ingroup partner ({{ ingroup_tier_label }})</span></strong>
+            You will play <strong>two simultaneous games</strong> — one against your
+            <strong><span style="color:#5B9BD5;">new Partner A ({{ ingroup_tier_label }})</span></strong>
             and one against your
-            <strong><span style="color:#FFB347;">Outgroup partner ({{ outgroup_tier_label }})</span></strong>.
+            <strong><span style="color:#FFB347;">new Partner B ({{ outgroup_tier_label }})</span></strong>.
         </p>
-        <p>You have <strong>{{ dictator_ec }} ECs</strong> for each game.</p>
+        <p>At the beginning, you receive <strong>{{ dictator_ec }} ECs</strong> for each of these two games.</p>
 
         <div style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; background:#e6f7ff; border:1px solid #99d6f2; border-radius:8px; padding:14px;">
@@ -45,7 +45,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">📘 Ultimatum Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary">Make My Offers &rarr;</button>
     </div>
@@ -54,7 +54,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">📘</span> Ultimatum Game</h2>
+            <h2><span class="icon">📘</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

@@ -6,18 +6,17 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 5 &mdash; Investment Game</h2>
+    <h2 class="section-title">Game 5 &mdash; Group project</h2>
     <hr class="section-divider">
 
     <div class="section-box box-calm" style="text-align:center; margin-top:24px; padding:24px 36px;">
         <div class="section-header" style="justify-content:center; margin-bottom:12px;">
             <div class="icon">&#128260;</div>
-            <h3 style="margin:0; font-size:1.15em;">Same game as in the Economy &mdash; but with <strong>strangers</strong></h3>
+            <h3 style="margin:0; font-size:1.15em;">Same "Group project" &mdash; but now with <strong>strangers</strong></h3>
         </div>
         <p style="color:#444; margin:0;">
-            This is the same cooperation game you played during the Economy phase.
-            This time, you are matched with <strong>2 completely anonymous participants</strong> from this session &mdash;
-            not your Economy group members. You know nothing about them, and they know nothing about you.
+            This is the same "Group project" you played over {{C.Economy_num_rounds}} rounds in the previous part.
+            This time, you will play it with the  Partner A <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span></h3> and Partner B <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span></h3>.
         </p>
     </div>
 
@@ -61,7 +60,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">&#128216;</span> Investment Game</h2>
+            <h2><span class="icon">&#128216;</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

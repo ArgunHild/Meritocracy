@@ -14,10 +14,14 @@ class CommonConstants(BaseConstants):
     Part_II_Instructions_template = "_templates/global/Part_II_Instructions_template.html"
     Instructions_pgg = "_templates/global/Instructions_pgg.html"
 
-    # TODO: set to 60
-    Round_length = 6000          # 60 seconds per quiz part (oTree timeout_seconds is in seconds)
-    Interstitial_length = 10   # seconds for interstitial auto-advance
+    Round_length = 6000          # legacy; use Economy_round_length / Practice_round_length below
+    Economy_round_length  = 45   # seconds per quiz part in economy rounds
+    Practice_round_length = 90   # seconds per quiz part in practice rounds
+    Submit_freeze_duration = 5   # seconds page is frozen before first answer can be confirmed
+    Interstitial_length = 3   # seconds for interstitial auto-advance
     Timer_text = "Time left to complete this part:"
+    
+    Economy_num_rounds = 10
 
     Completion_fee = 10       # TODO: adjust completion fee
     Bonus_max = 20            # TODO: adjust maximum bonus
@@ -32,7 +36,12 @@ class CommonConstants(BaseConstants):
     # \u2500\u2500 Economy \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     Economy_pie   = 500   # fixed pie size (ECs) competed over each round
     Welfare_check = 50    # flat bonus added to weighted score in Welfare State
-    PGG_Commons   = 50   # starting tokens in the common pool each round
+    PGG_Commons   = 300   # starting tokens in the common pool each round
+    PGG_investible = 100   # tokens each player can invest in the common pool each round
+    Pgg_lower_bound = 200
+    Pgg_upper_bound = 400
+    PGG_Guess_ECs = 500
+    
 
     # \u2500\u2500 Multipliers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     M_high   = 7   # high-performer   (Excessive Meritocracy / Aristocracy)
@@ -44,15 +53,15 @@ class CommonConstants(BaseConstants):
 
     # \u2500\u2500 Treatment explanation texts (shown on Part_II_Instructions) \u2500\u2500\u2500\u2500
     Explanation_Perfect_Meritocracy = (
-        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form a <strong>Group</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share of the pot depends on how well you perform relative to the others in your group.</p>'
-        '<p>All three members of your Economy have the <strong>same multiplier of &times;5</strong>. '
-        'This means your share is determined purely by how many questions you answer correctly.</p>'
+        '<p>All three members of your Group are treated identically — '
+        'your share is determined purely by how many questions you answer correctly compared to the other two members.</p>'
     )
 
     Explanation_Excessive_Meritocracy = (
-        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form a <strong>Group</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your <strong>multiplier</strong>.</p>'
         '<p>Multipliers were assigned based on relative performance in the practice rounds: '
@@ -63,7 +72,7 @@ class CommonConstants(BaseConstants):
     )
 
     Explanation_Welfare_State = (
-        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form a <strong>Group</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your multiplier.</p>'
         '<p>All three members have the <strong>same multiplier of &times;5</strong>. '
@@ -72,10 +81,10 @@ class CommonConstants(BaseConstants):
     )
 
     Explanation_Aristocracy = (
-        '<p>You have been placed in a group with two other participants. The three of you form an <strong>Economy</strong>.</p>'
+        '<p>You have been placed in a group with two other participants. The three of you form a <strong>Group</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
         'Your share depends on your score and your <strong>multiplier</strong>.</p>'
-        '<p>Multipliers were assigned <strong>randomly</strong> among the three members of your Economy: '
+        '<p>Multipliers were assigned <strong>randomly</strong> among the three members of your Group: '
         'one member received <strong>&times;7</strong>, one <strong>&times;5</strong>, and one <strong>&times;3</strong>.</p>'
         '<p>Your personal multiplier is shown below.</p>'
     )

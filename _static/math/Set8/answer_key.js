@@ -11,8 +11,7 @@ const MATH_QUESTIONS = [
         // [?] + [?] = 10
         //  =    =
         //  1   12
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: 8, blank: false}, {value: 6, blank: false}],
             [{value: null, blank: true}, {value: null, blank: true}]
@@ -30,8 +29,7 @@ const MATH_QUESTIONS = [
         // [?] +  2 = 3
         //  =    =
         // 15    7
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: 14, blank: false}, {value: null, blank: true}],
             [{value: null, blank: true}, {value: 2, blank: false}]
@@ -49,8 +47,7 @@ const MATH_QUESTIONS = [
         // 20 : [?] = 4
         //  =    =
         // 40    7
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: 20, blank: false}, {value: null, blank: true}],
             [{value: 20, blank: false}, {value: null, blank: true}]
@@ -68,8 +65,7 @@ const MATH_QUESTIONS = [
         // [?] -  2 = 12
         //  =    =
         //  0    9
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: 0, blank: false}, {value: null, blank: true}],
             [{value: null, blank: true}, {value: 2, blank: false}]
@@ -87,8 +83,7 @@ const MATH_QUESTIONS = [
         //  4 × [?] = 40
         //  =    =
         // 22   30
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: null, blank: true}, {value: 3, blank: false}],
             [{value: 4, blank: false}, {value: null, blank: true}]
@@ -106,8 +101,7 @@ const MATH_QUESTIONS = [
         // [?] + [?] = 5
         //  =    =
         //  5   23
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: 6, blank: false}, {value: 19, blank: false}],
             [{value: null, blank: true}, {value: null, blank: true}]
@@ -125,8 +119,7 @@ const MATH_QUESTIONS = [
         // [?] ×  1 = 9
         //  =    =
         // 16    6
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: null, blank: true}, {value: 6, blank: false}],
             [{value: null, blank: true}, {value: 1, blank: false}]
@@ -144,8 +137,7 @@ const MATH_QUESTIONS = [
         // [?] -  1 = 12
         //  =    =
         // 15   15
-        rows: 2,
-        cols: 2,
+        rows: 2, cols: 2,
         grid: [
             [{value: null, blank: true}, {value: 15, blank: false}],
             [{value: null, blank: true}, {value: 1, blank: false}]

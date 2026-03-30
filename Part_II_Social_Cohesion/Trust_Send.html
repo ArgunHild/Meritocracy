@@ -29,7 +29,7 @@
 </style>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 4 &mdash; Trust: Send Amounts</h2>
+    <h2 class="section-title">Game 4: Send Amounts</h2>
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555;">
@@ -51,7 +51,7 @@
     <div class="section-box box-info" style="margin-top:24px;">
         <div class="section-header">
             <div class="icon" style="color:#5B9BD5;">●</div>
-            <h3>Send to Ingroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
+            <h3>Send to Partner A <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ ingroup_tier_label }})</span>
                 <span id="badge-ingroup" class="slider-badge badge-waiting">Not set</span>
             </h3>
         </div>
@@ -71,7 +71,7 @@
     <div class="section-box box-info" style="margin-top:20px;">
         <div class="section-header">
             <div class="icon" style="color:#FFB347;">●</div>
-            <h3>Send to Outgroup Partner <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
+            <h3>Send to Partner B <span style="font-size:0.85em; font-weight:normal; color:#777;">({{ outgroup_tier_label }})</span>
                 <span id="badge-outgroup" class="slider-badge badge-waiting">Not set</span>
             </h3>
         </div>
@@ -93,7 +93,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Trust Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">&#128216; Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary" onclick="trySubmit(event)">Confirm &amp; Continue &rarr;</button>
     </div>
@@ -102,7 +102,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">&#128216;</span> Trust Game</h2>
+            <h2><span class="icon">&#128216;</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

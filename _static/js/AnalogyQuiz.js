@@ -2,7 +2,8 @@
 // Analogies Quiz – oTree JavaScript
 // ---------------------------------------------------------------------------
 // QUESTIONS is loaded dynamically from the set's answer_key.js before this
-// script runs. Each entry: { question: string, options: [5 strings], correct: index (0-4) }
+// script runs. Each entry: { question: string, options: [5 strings], correct: index (0-4),
+//                             explanation: string (optional, shown in tutorial) }
 // ---------------------------------------------------------------------------
 // TODO: turn off debugging
 const DEBUG_ANALOGY = true;  // set true during development to log scoring
@@ -23,6 +24,9 @@ let aLsPrefix = 'analogy_';
 // DOM references
 let aScoreField = null;
 let aAnswersField = null;
+
+// Freeze state
+let aFreezeActive = false;
 
 // ---------------------------------------------------------------------------
 // Initialise
@@ -58,14 +62,46 @@ function initAnalogyQuiz() {
 }
 
 // ---------------------------------------------------------------------------
+// Per-question freeze countdown
+// ---------------------------------------------------------------------------
+function startAnalogyFreeze() {
+    const jv = window.js_vars || {};
+    const freezeSecs = jv.freeze_seconds || 0;
+    if (freezeSecs <= 0) return;
+
+    aFreezeActive = true;
+    const confirmBtn = document.getElementById('analogy-confirm-btn');
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = '\u23F3 ' + freezeSecs + 's';
+    }
+
+    let remaining = freezeSecs;
+    const tick = setInterval(function () {
+        remaining--;
+        const btn = document.getElementById('analogy-confirm-btn');
+        if (remaining > 0) {
+            if (btn) btn.textContent = '\u23F3 ' + remaining + 's';
+        } else {
+            clearInterval(tick);
+            aFreezeActive = false;
+            if (btn) {
+                btn.textContent = 'Confirm';
+                if (aSelectedOption !== null) btn.disabled = false;
+            }
+        }
+    }, 1000);
+}
+
+// ---------------------------------------------------------------------------
 // Display a question
 // ---------------------------------------------------------------------------
 function aShowQuestion(index) {
     const q = QUESTIONS[index];
 
-    // Counter
+    // Counter (cleared — no question number shown)
     const counter = document.getElementById('analogy-counter');
-    if (counter) counter.textContent = 'Question ' + (index + 1) + ' / ' + ANALOGY_TOTAL;
+    if (counter) counter.textContent = '';
 
     // Question text
     const qText = document.getElementById('analogy-question');
@@ -75,6 +111,7 @@ function aShowQuestion(index) {
     const choicesDiv = document.getElementById('analogy-choices');
     if (choicesDiv) {
         choicesDiv.innerHTML = '';
+        choicesDiv.style.display = '';
         q.options.forEach(function (optionText, i) {
             const letter = ANALOGY_LETTERS[i];
             const btn = document.createElement('button');
@@ -101,7 +138,19 @@ function aShowQuestion(index) {
     // Reset selection
     aSelectedOption = null;
     const confirmBtn = document.getElementById('analogy-confirm-btn');
-    if (confirmBtn) confirmBtn.disabled = true;
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Confirm';
+        confirmBtn.style.display = '';
+    }
+
+    // Hide feedback panel if visible
+    const feedback = document.getElementById('analogy-feedback');
+    if (feedback) feedback.style.display = 'none';
+
+    // Start per-question freeze
+    aFreezeActive = false;
+    startAnalogyFreeze();
 }
 
 // ---------------------------------------------------------------------------
@@ -115,7 +164,7 @@ function aSelectOption(index) {
     });
 
     const confirmBtn = document.getElementById('analogy-confirm-btn');
-    if (confirmBtn) confirmBtn.disabled = false;
+    if (confirmBtn && !aFreezeActive) confirmBtn.disabled = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,11 +175,10 @@ function aConfirmAnswer() {
 
     const q = QUESTIONS[aCurrentIndex];
     const letter = ANALOGY_LETTERS[aSelectedOption];
+    const isCorrect = (aSelectedOption === q.correct);
 
     // Score if correct
-    if (aSelectedOption === q.correct) {
-        aScoreValue++;
-    }
+    if (isCorrect) aScoreValue++;
 
     // Record answer
     aAnswersMap[String(aCurrentIndex)] = letter;
@@ -140,7 +188,7 @@ function aConfirmAnswer() {
             'Analogy Q' + (aCurrentIndex + 1),
             '| correct:', ANALOGY_LETTERS[q.correct],
             '| given:', letter,
-            '| match:', aSelectedOption === q.correct,
+            '| match:', isCorrect,
             '| total correct so far:', aScoreValue
         );
     }
@@ -148,14 +196,58 @@ function aConfirmAnswer() {
     aSaveState();
     aSyncFields();
 
+    const jv = window.js_vars || {};
+    if (jv.tutorial_mode) {
+        aShowTutorialFeedback(aCurrentIndex, isCorrect, q);
+    } else {
+        aCurrentIndex++;
+        aSaveState();
+        if (aCurrentIndex < ANALOGY_TOTAL) aShowQuestion(aCurrentIndex);
+        else aAutoSubmit();
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Tutorial feedback panel
+// ---------------------------------------------------------------------------
+function aShowTutorialFeedback(idx, isCorrect, q) {
+    const feedback = document.getElementById('analogy-feedback');
+
+    const choicesDiv = document.getElementById('analogy-choices');
+    const confirmBtn = document.getElementById('analogy-confirm-btn');
+    if (choicesDiv) choicesDiv.style.display = 'none';
+    if (confirmBtn) confirmBtn.style.display = 'none';
+
+    let html = '';
+    if (isCorrect) {
+        html += '<div style="color:#2e7d32;font-size:1.25em;font-weight:bold;margin-bottom:8px;">&#10003; Correct!</div>';
+    } else {
+        html += '<div style="color:#c62828;font-size:1.25em;font-weight:bold;margin-bottom:8px;">&#10007; Incorrect &mdash; the correct answer was <strong>' + ANALOGY_LETTERS[q.correct] + ' (' + q.options[q.correct] + ')</strong>.</div>';
+    }
+    if (idx === 0 && q.explanation) {
+        html += '<p style="margin:8px 0 0;color:#444;font-size:0.95em;">' + q.explanation + '</p>';
+    }
+
+    const isLast = (idx + 1 >= ANALOGY_TOTAL);
+    const btnLabel = isLast ? 'Finish &rarr;' : 'Next question &rarr;';
+    html += '<button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="aAdvanceTutorial()">' + btnLabel + '</button>';
+
+    if (feedback) {
+        feedback.innerHTML = html;
+        feedback.style.display = 'block';
+    } else {
+        aAdvanceTutorial();
+    }
+}
+
+function aAdvanceTutorial() {
+    const feedback = document.getElementById('analogy-feedback');
+    if (feedback) feedback.style.display = 'none';
+
     aCurrentIndex++;
     aSaveState();
-
-    if (aCurrentIndex < ANALOGY_TOTAL) {
-        aShowQuestion(aCurrentIndex);
-    } else {
-        aAutoSubmit();
-    }
+    if (aCurrentIndex < ANALOGY_TOTAL) aShowQuestion(aCurrentIndex);
+    else aAutoSubmit();
 }
 
 // ---------------------------------------------------------------------------

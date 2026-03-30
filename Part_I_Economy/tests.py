@@ -1,5 +1,5 @@
 """
-Bot for the Part_I_Economy app  (4 rounds).
+Bot for the Part_I_Economy app  (10 rounds).
 
 Per-round page sequence:
   Round 1 only:
@@ -20,9 +20,9 @@ Per-round page sequence:
     Round_Feedback              (no form)
     Round_PublicGoods           (PGG_contribution_r)
 
-  Round 4 only:
+  Round 10 only:
     Final_WaitPage              (auto — computes final earnings)
-    Final_Results               (is_displayed: r==4, no form)
+    Final_Results               (is_displayed: r==10, no form)
 
 Bots submit random but plausible scores (1–5 per sub-test) and randomised
 PGG contributions (multiples of 10 from 0–100) to generate varied mock data.
@@ -59,10 +59,16 @@ class PlayerBot(Bot):
             # Submit all correct answers → Comprehension_1 = True
             # Comprehension_check_2 and _3 have is_displayed=False after this,
             # so oTree will skip them automatically — do not yield them here.
+            # All Q4 variants have correct answer = True; submitting all is harmless
+            # since oTree ignores fields not in the current form (check_html=False).
             yield Submission(Comprehension_check_1, {
                 'Comprehension_question_1': True,   # higher score → higher share
                 'Comprehension_question_2': True,   # group max when all contribute 100
                 'Comprehension_question_3': True,   # personal max when I contribute 0
+                'Comprehension_question_4_PM': True,
+                'Comprehension_question_4_EM': True,
+                'Comprehension_question_4_WS': True,
+                'Comprehension_question_4_Ar': True,
             }, check_html=False)
 
         # ── Per-round quiz stages ─────────────────────────────────────────────
@@ -101,7 +107,7 @@ class PlayerBot(Bot):
             f'PGG_contribution_{r}': random.choice(range(0, 101, 10)),
         }, check_html=False)
 
-        # ── Round 4 only: final results ───────────────────────────────────────
-        if r == 4:
-            # Final_WaitPage (auto, is_displayed: r==4) computes all final earnings
+        # ── Round 10 only: final results ──────────────────────────────────────
+        if r == 10:
+            # Final_WaitPage (auto, is_displayed: r==10) computes all final earnings
             yield Submission(Final_Results, {}, check_html=False)

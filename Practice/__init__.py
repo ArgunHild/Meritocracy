@@ -145,8 +145,8 @@ class Learning_Ravens(MyPage):
     extra_fields = ['Learning_score_Raven', 'Learning_answers_Raven']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
-    timer_text = C.Timer_text
+    # timeout_seconds = C.Practice_round_length
+    # timer_text = C.Timer_text
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -162,7 +162,9 @@ class Learning_Ravens(MyPage):
             'answers_field':    'Learning_answers_Raven',
             'participant_code': player.participant.code,
             'puzzle_set':       7,
-            'max_questions':    3,
+            'max_questions':    5,
+            'tutorial_mode':    True,
+            'freeze_seconds':   0,
         }
 
 
@@ -178,8 +180,8 @@ class Learning_Analogies(MyPage):
     extra_fields = ['Learning_score_Analogy', 'Learning_answers_Analogy']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
-    timer_text = C.Timer_text
+    # timeout_seconds = C.Practice_round_length
+    # timer_text = C.Timer_text
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -196,6 +198,8 @@ class Learning_Analogies(MyPage):
             'participant_code':      player.participant.code,
             'analogy_set':           7,
             'max_questions':         3,
+            'tutorial_mode':         True,
+            'freeze_seconds':        0,
         }
 
 
@@ -210,8 +214,8 @@ class Learning_Math(MyPage):
     extra_fields = ['Learning_score_Math', 'Learning_answers_Math']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
-    timer_text = C.Timer_text
+    # timeout_seconds = C.Practice_round_length
+    # timer_text = C.Timer_text
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -228,6 +232,8 @@ class Learning_Math(MyPage):
             'participant_code':   player.participant.code,
             'math_set':           7,
             'max_questions':      3,
+            'tutorial_mode':      True,
+            'freeze_seconds':     0,
         }
 
 
@@ -244,7 +250,7 @@ class Practice_round_1_Ravens(MyPage):
     extra_fields = ['Practice_score_Raven_1', 'Practice_answers_Raven_1']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -257,10 +263,11 @@ class Practice_round_1_Ravens(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'score_field': 'Practice_score_Raven_1',
-            'answers_field': 'Practice_answers_Raven_1',
+            'score_field':    'Practice_score_Raven_1',
+            'answers_field':  'Practice_answers_Raven_1',
             'participant_code': player.participant.code,
-            'puzzle_set': 1,
+            'puzzle_set':     1,
+            'freeze_seconds': C.Submit_freeze_duration,
         }
 
 
@@ -280,7 +287,7 @@ class Practice_round_1_Analogies(MyPage):
     extra_fields = ['Practice_score_Analogy_1', 'Practice_answers_Analogy_1']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -293,10 +300,11 @@ class Practice_round_1_Analogies(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'analogy_score_field': 'Practice_score_Analogy_1',
+            'analogy_score_field':   'Practice_score_Analogy_1',
             'analogy_answers_field': 'Practice_answers_Analogy_1',
-            'participant_code': player.participant.code,
-            'analogy_set': 1,
+            'participant_code':      player.participant.code,
+            'analogy_set':           1,
+            'freeze_seconds':        C.Submit_freeze_duration,
         }
 
 
@@ -316,7 +324,7 @@ class Practice_round_1_Math(MyPage):
     extra_fields = ['Practice_score_Math_1', 'Practice_answers_Math_1']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -329,10 +337,11 @@ class Practice_round_1_Math(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'math_score_field': 'Practice_score_Math_1',
+            'math_score_field':   'Practice_score_Math_1',
             'math_answers_field': 'Practice_answers_Math_1',
-            'participant_code': player.participant.code,
-            'math_set': 1,
+            'participant_code':   player.participant.code,
+            'math_set':           1,
+            'freeze_seconds':     C.Submit_freeze_duration,
         }
 
     @staticmethod
@@ -348,7 +357,7 @@ class Practice_round_2_Ravens(MyPage):
     extra_fields = ['Practice_score_Raven_2', 'Practice_answers_Raven_2']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -361,10 +370,11 @@ class Practice_round_2_Ravens(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'score_field': 'Practice_score_Raven_2',
-            'answers_field': 'Practice_answers_Raven_2',
+            'score_field':    'Practice_score_Raven_2',
+            'answers_field':  'Practice_answers_Raven_2',
             'participant_code': player.participant.code,
-            'puzzle_set': 2,
+            'puzzle_set':     2,
+            'freeze_seconds': C.Submit_freeze_duration,
         }
 
 
@@ -384,7 +394,7 @@ class Practice_round_2_Analogies(MyPage):
     extra_fields = ['Practice_score_Analogy_2', 'Practice_answers_Analogy_2']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -397,10 +407,11 @@ class Practice_round_2_Analogies(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'analogy_score_field': 'Practice_score_Analogy_2',
+            'analogy_score_field':   'Practice_score_Analogy_2',
             'analogy_answers_field': 'Practice_answers_Analogy_2',
-            'participant_code': player.participant.code,
-            'analogy_set': 2,
+            'participant_code':      player.participant.code,
+            'analogy_set':           2,
+            'freeze_seconds':        C.Submit_freeze_duration,
         }
 
 
@@ -420,7 +431,7 @@ class Practice_round_2_Math(MyPage):
     extra_fields = ['Practice_score_Math_2', 'Practice_answers_Math_2']
     form_fields = MyBasePage.form_fields + extra_fields
 
-    timeout_seconds = C.Round_length
+    timeout_seconds = C.Practice_round_length
     timer_text = C.Timer_text
 
     @staticmethod
@@ -433,10 +444,11 @@ class Practice_round_2_Math(MyPage):
     @staticmethod
     def js_vars(player: Player):
         return {
-            'math_score_field': 'Practice_score_Math_2',
+            'math_score_field':   'Practice_score_Math_2',
             'math_answers_field': 'Practice_answers_Math_2',
-            'participant_code': player.participant.code,
-            'math_set': 2,
+            'participant_code':   player.participant.code,
+            'math_set':           2,
+            'freeze_seconds':     C.Submit_freeze_duration,
         }
 
     @staticmethod

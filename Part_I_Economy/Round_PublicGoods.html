@@ -45,24 +45,43 @@
         color: #555;
         margin-top: 4px;
     }
-    .pgg-display {
+    .pgg-panels {
+        display: flex;
+        gap: 16px;
+        margin: 16px 0 12px;
+    }
+    .pgg-panel {
+        flex: 1;
         text-align: center;
+        padding: 16px 12px 12px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        background: #f5f5f5;
+        transition: border-color 0.2s, background 0.2s;
+    }
+    .pgg-panel-value {
         font-size: 2em;
         font-weight: bold;
-        color: var(--primary, #4CAF50);
-        margin: 16px 0 4px;
+        line-height: 1.1;
     }
-    .pgg-display-label {
-        text-align: center;
-        font-size: 0.9em;
-        color: #666;
-        margin-bottom: 12px;
+    .pgg-panel-label {
+        font-size: 0.85em;
+        color: #555;
+        margin-top: 6px;
     }
+    .pgg-panel.pool-positive { border-color: #4CAF50; background: #f0faf0; }
+    .pgg-panel.pool-positive .pgg-panel-value { color: #2e7d32; }
+    .pgg-panel.pool-negative { border-color: #e57373; background: #fff5f5; }
+    .pgg-panel.pool-negative .pgg-panel-value { color: #c62828; }
+    .pgg-panel.pool-neutral  { border-color: #bbb;    background: #f5f5f5; }
+    .pgg-panel.pool-neutral  .pgg-panel-value { color: #555; }
+    .pgg-panel.private       { border-color: #5B9BD5; background: #f0f6ff; }
+    .pgg-panel.private       .pgg-panel-value { color: #1a5276; }
 </style>
 
 <div class="content-box box-neutral">
     <h2 class="section-title">
-        Round {{ round_number }} of 4 — Cooperation
+        Round {{ round_number }} of {{C.Economy_num_rounds}} — Group project
     </h2>
     <hr class="section-divider">
 
@@ -97,9 +116,9 @@
 
     <!-- ── Multiplier table ──────────────────────────────────────────── -->
     <div class="section-box box-neutral" style="margin-bottom:24px;">
-        <div class="section-header">
+        <!-- <div class="section-header">
             <div class="icon">✖️</div>
-            <h3>Multipliers in your Economy</h3>
+            <h3>Multipliers in your Group</h3>
         </div>
         <table style="width:100%; border-collapse:collapse; text-align:center; margin-top:8px;">
             <thead>
@@ -144,21 +163,24 @@
             ℹ️ {{ multiplier_reminder|safe }}
         </p>
         {% endif %}
-    </div>
+    </div> -->
 
     <!-- ── Pool info ─────────────────────────────────────────────────── -->
     <div class="section-box box-info">
         <div class="section-header">
             <div class="icon">🏦</div>
-            <h3>Common Pool</h3>
+            <h3>Group project</h3>
         </div>
         <p>
-            You have received {{ pgg_max }} ECs that you can invest in the public pool.
-            We have already invested <strong>{{ PGG_Commons }} of these on your behalf</strong>, which you can take out if you want.
+            Each of you has {{ pgg_max }} ECs that you can invest in the public pool. There is already <strong>{{ C.PGG_Commons }} ECs </strong>in the pool.
+            <br><br>
+             If you want, you can <strong> take out</strong> up to {{ pgg_max }} ECs from the pool, or <strong>add more</strong> ECs to it (up to {{ pgg_max }}).
         </p>
         <p>
-            Use the slider to decide how many ECs to keep in the pool.
-            Move it <strong>left</strong> to take ECs out, <strong>right</strong> to put more in.
+            Use the slider below to make your decision. Move it <strong>left</strong> to take ECs out, <strong>right</strong> to put more in.
+            <br><br>
+            <strong>Remember:</strong> ECs invested in the pool grow by 50% and are shared equally among group members, 
+            while ECs kept private only benefit their owner. 
         </p>
         <p style="color:#555; font-size:0.95em;">
             <em>Click on the Instruction button below to re-read the instructions for this stage.</em>
@@ -172,21 +194,35 @@
             <h3>Your Decision</h3>
         </div>
 
-        <div class="pgg-display" id="pgg-value-display">{{ pgg_default }}</div>
-        <div class="pgg-display-label">ECs invested in the pool</div>
+        <div class="pgg-panels">
+            <div class="pgg-panel pool-neutral" id="pgg-pool-panel">
+                <div class="pgg-panel-value" id="pgg-pool-value">0 ECs</div>
+                <div class="pgg-panel-label" id="pgg-pool-label">invested into the pool</div>
+            </div>
+            <div class="pgg-panel private">
+                <div class="pgg-panel-value" id="pgg-private-value">{{ pgg_max }} ECs</div>
+                <div class="pgg-panel-label">kept private</div>
+            </div>
+        </div>
+        <div class="pgg-panels" style="margin-top:0;">
+            <div class="pgg-panel pool-neutral" id="pgg-current-panel" style="flex:none; width:100%;">
+                <div class="pgg-panel-value" id="pgg-current-value">{{ C.PGG_Commons }} ECs</div>
+                <div class="pgg-panel-label">currently in the pool</div>
+            </div>
+        </div>
 
         <div class="pgg-slider-wrap">
             <input
                 type="range"
                 id="pgg-slider"
-                min="0"
-                max="{{ pgg_max }}"
-                value="{{ pgg_default }}"
+                min="{{ C.Pgg_lower_bound }}"
+                max="{{ C.Pgg_upper_bound }}"
+                value="{{ C.PGG_Commons }}"
                 step="1"
             >
             <div class="pgg-labels">
-                <span>0</span>
-                <span>{{ pgg_max }}</span>
+                <span>← take {{ pgg_max }} out</span>
+                <span>invest {{ pgg_max }} →</span>
             </div>
         </div>
 
@@ -201,7 +237,7 @@
 
     <div class="buttons-container" style="margin-top:20px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">Cooperation instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">Group project instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary">Confirm Decision</button>
     </div>
@@ -272,17 +308,46 @@
 <script>
     // ── Slider ────────────────────────────────────────────────────────
     (function () {
-        const slider      = document.getElementById('pgg-slider');
-        const display     = document.getElementById('pgg-value-display');
-        const hiddenInput = document.querySelector('input[name="{{ contribution_field }}"]');
+        const PGG_COMMONS = {{ C.PGG_Commons }};   // 300 — baseline pool
+        const PGG_MAX     = {{ pgg_max }};          // 100 — player's personal budget
 
-        function sync(val) {
-            display.textContent = val;
-            if (hiddenInput) hiddenInput.value = val;
+        const slider       = document.getElementById('pgg-slider');
+        const poolPanel      = document.getElementById('pgg-pool-panel');
+        const poolValue      = document.getElementById('pgg-pool-value');
+        const poolLabel      = document.getElementById('pgg-pool-label');
+        const privateValue   = document.getElementById('pgg-private-value');
+        const currentValue   = document.getElementById('pgg-current-value');
+        const hiddenInput    = document.querySelector('input[name="{{ contribution_field }}"]');
+
+        function sync(sliderVal) {
+            const x = sliderVal - PGG_COMMONS;   // delta: + = investing, - = taking out
+            const y = PGG_MAX - x;               // private tokens (own budget ± transfer)
+
+            // Left panel — pool
+            poolValue.textContent = Math.abs(x) + ' ECs';
+            if (x > 0) {
+                poolLabel.textContent = 'invested into the pool';
+                poolPanel.className = 'pgg-panel pool-positive';
+            } else if (x < 0) {
+                poolLabel.textContent = 'taken from the pool';
+                poolPanel.className = 'pgg-panel pool-negative';
+            } else {
+                poolLabel.textContent = 'invested into the pool';
+                poolPanel.className = 'pgg-panel pool-neutral';
+            }
+
+            // Right panel — private
+            privateValue.textContent = y + ' ECs';
+
+            // Third panel — current pool total
+            currentValue.textContent = (PGG_COMMONS + x) + ' ECs';
+
+            // Store the delta in the hidden form field
+            if (hiddenInput) hiddenInput.value = x;
         }
 
-        sync(slider.value);
-        slider.addEventListener('input', function () { sync(this.value); });
+        sync(parseInt(slider.value));
+        slider.addEventListener('input', function () { sync(parseInt(this.value)); });
     })();
 </script>
 

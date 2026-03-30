@@ -6,7 +6,7 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 2 &mdash; Stag Hunt: Your Choice</h2>
+    <h2 class="section-title">Game 2: Your Choice</h2>
     <hr class="section-divider">
 
     <p style="text-align:center; color:#555;">
@@ -21,14 +21,14 @@
         </div>
         <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
             <div style="flex:1; min-width:200px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:14px; text-align:center;">
-                <div style="font-size:1.5em;">🦌</div>
-                <strong>Stag</strong><br>
+                <!-- <div style="font-size:1.5em;">🦌</div> -->
+                <strong>A</strong><br>
                 <span style="color:#388E3C; font-weight:bold;">{{ stag_win_ec }} ECs</span> if all cooperate<br>
                 <span style="color:#c62828;">0 ECs</span> if anyone picks Hare
             </div>
             <div style="flex:1; min-width:200px; background:#fff3cd; border:1px solid #ffe6a1; border-radius:8px; padding:14px; text-align:center;">
-                <div style="font-size:1.5em;">🐇</div>
-                <strong>Hare</strong><br>
+                <!-- <div style="font-size:1.5em;">🐇</div> -->
+                <strong>B</strong><br>
                 <span style="color:#E8923A; font-weight:bold;">{{ hare_safe_ec }} ECs</span> guaranteed
             </div>
         </div>
@@ -47,7 +47,7 @@
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">📘 Stag Hunt Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary">Confirm Choice &rarr;</button>
     </div>

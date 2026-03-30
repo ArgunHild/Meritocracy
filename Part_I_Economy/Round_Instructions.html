@@ -7,7 +7,7 @@
 
 <div class="content-box box-info">
     <h2 class="section-title">
-        Round {{ round_number }} of 4
+        Round {{ round_number }} of {{C.Economy_num_rounds}}
     </h2>
     <hr class="section-divider">
 
@@ -16,12 +16,13 @@
             <div class="icon">📋</div>
             <h3>What happens in this round</h3>
         </div>
-        <p>This round has three stages:</p>
+        <p>This round has two stages:</p>
         <ol>
-            <li><strong>Intelligence task</strong> — score as high as you can before the timer runs out.</li>
-            <li><strong>Feedback</strong> — you will see how your effort and earnings compare to others in your group.</li>
-            <li><strong>Common pool decision</strong> — decide how many tokens to put in or take from the common pool.</li>
+            <li><strong>Intelligence Test</strong> — score as high as you can before the timer runs out. You will have {{C.Economy_round_length}} seconds each for the three parts of the test.</li>
+            <li><strong>Group project</strong> — decide how many of your 100 ECs to invest in the common pool.</li>
         </ol>
+
+        Between the two stages, you will see how your effort and earnigns compare to others in your group.
     </div>
 
     {% for field in form %}

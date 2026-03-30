@@ -45,14 +45,14 @@
     }
     .svo-option input[type="radio"] {
         margin-bottom: 4px;
-        accent-color: #4CAF50;
+        accent-color: #D95F02;
     }
     .svo-option input[type="radio"]:checked + .svo-label-text,
     .svo-option label:has(input:checked) {
-        border-color: #4CAF50;
-        background: #e6ffe6;
+        border-color: #D95F02;
+        background: #FFF3E0;
     }
-    .svo-self  { color: #388E3C; font-weight: bold; }
+    .svo-self  { color: #D95F02; font-weight: bold; }
     .svo-other { color: #2E75B6; font-weight: bold; }
     .svo-ec-unit { font-size: 0.78em; font-weight: normal; color: #888; }
 </style>
@@ -66,7 +66,7 @@
         There are no right or wrong answers.
     </p>
     <p style="text-align:center; font-size:0.9em; color:#777; margin-bottom:6px;">
-        <span style="color:#388E3C; font-weight:bold;">Green = Your allocation (ECs)</span> &nbsp;|&nbsp;
+        <span style="color:#D95F02; font-weight:bold;">Orange = Your allocation (ECs)</span> &nbsp;|&nbsp;
         <span style="color:#2E75B6; font-weight:bold;">Blue = Other person's allocation (ECs)</span>
     </p>
     <p style="text-align:center; font-size:0.88em; color:#888; margin-bottom:6px;">
@@ -102,11 +102,11 @@
             </div>
             {% endfor %}
         </div>
-        <div style="margin-top:6px; font-size:0.78em; color:#888; display:flex; gap:4px;">
+        <!-- <div style="margin-top:6px; font-size:0.78em; color:#888; display:flex; gap:4px;">
             <span style="flex:1; text-align:left;">&larr; Favour other more</span>
             <span style="flex:1; text-align:center;">Balanced</span>
             <span style="flex:1; text-align:right;">Favour self more &rarr;</span>
-        </div>
+        </div> -->
     </div>
     {% endfor %}
 

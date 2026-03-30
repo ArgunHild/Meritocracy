@@ -6,7 +6,7 @@
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 
 <div class="content-box box-neutral">
-    <h2 class="section-title">Game 4 &mdash; Trust</h2>
+    <h2 class="section-title">Game 4</h2>
     <hr class="section-divider">
 
     <div class="section-box box-info" style="margin-top:24px;">
@@ -15,31 +15,32 @@
             <h3>How It Works</h3>
         </div>
         <p>
-            You will play two simultaneous trust games — one with your
-            <strong><span style="color:#5B9BD5;">Ingroup partner ({{ ingroup_tier_label }})</span></strong>
+            You will play two simultaneous games — one with your
+            <strong><span style="color:#5B9BD5;">Partner A ({{ ingroup_tier_label }})</span></strong>
             and one with your
-            <strong><span style="color:#FFB347;">Outgroup partner ({{ outgroup_tier_label }})</span></strong>.
+            <strong><span style="color:#FFB347;">Partner B ({{ outgroup_tier_label }})</span></strong>.
         </p>
         <p>You have <strong>{{ trust_ec }} ECs</strong> for each game.</p>
 
         <div style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; background:#e6f7ff; border:1px solid #99d6f2; border-radius:8px; padding:14px;">
-                <strong>Step 1 — Send (as Truster)</strong><br>
+                <strong>Step 1 — Send </strong><br>
                 <span style="font-size:0.93em;">Choose how much to send to your partner (e.g., 0, 10, 30, etc.). The amount is <strong>tripled</strong> before it reaches them.</span>
             </div>
             <div style="flex:1; min-width:200px; background:#e6ffe6; border:1px solid #b3e6b3; border-radius:8px; padding:14px;">
-                <strong>Step 2 — Return (as Trustee)</strong><br>
+                <strong>Step 2 — Receive and Return </strong><br>
                 <span style="font-size:0.93em;">For each amount your partner might send to you, decide how much of the tripled amount to return. </span>
             </div>
         </div>
 
+        You will first play as the Sender then as the Receiver. Your partners will do the same. Your final earnings will depend on both your and your partners' decisions.
         <p style="margin-top:14px;">
-            <strong>Your earnings as Truster:</strong> ({{ trust_ec }} &minus; sent) + amount returned to you<br>
-            <strong>Your earnings as Trustee:</strong> (tripled received) &minus; amount returned
+            <strong>Your earnings as Sender:</strong> ({{ trust_ec }} ECs &minus; amount you send) + amount returned to you<br>
+            <strong>Your earnings as Receiver:</strong> (tripled received amount) &minus; amount you return
         </p>
 
         <p style="margin-top:12px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.93em;">
-            💡 Total earnings per trust game = Truster earnings + Trustee earnings.
+            💡 Total earnings per game = Earnings as Sender + earnings as Receiver.
         </p>
     </div>
 
@@ -50,14 +51,14 @@
         </div>
         <p>You send 30 ECs → partner receives 90 ECs → partner returns 40 ECs.</p>
         <ul>
-            <li><strong>Your Truster earnings:</strong> (50 &minus; 30) + 40 = <strong>60 ECs</strong></li>
-            <li><strong>Your Trustee earnings</strong> (if partner sent 20 → tripled to 60 → you return 20): 60 &minus; 20 = <strong>40 ECs</strong></li>
+            <li><strong>Your Sender earnings:</strong> (50 &minus; 30) + 40 = <strong>60 ECs</strong></li>
+            <li><strong>Your Receiver earnings</strong> (if partner sent 20 → tripled to 60 → you return 20): 60 &minus; 20 = <strong>40 ECs</strong></li>
         </ul>
     </div>
 
     <div class="buttons-container" style="margin-top:30px;">
         <div class="Instructions">
-            <a onclick="open_modal(1)" class="btn btn-info">📘 Trust Instructions</a>
+            <a onclick="open_modal(1)" class="btn btn-info">📘 Game Instructions</a>
         </div>
         <button id="NextButton" class="btn btn-primary">Make My Decisions &rarr;</button>
     </div>
@@ -66,7 +67,7 @@
 <div id="myModal1" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2><span class="icon">📘</span> Trust Game</h2>
+            <h2><span class="icon">📘</span> Game Instructions</h2>
             <span class="close" onclick="span_click(1)">&times;</span>
         </div>
         <div class="modal-body">

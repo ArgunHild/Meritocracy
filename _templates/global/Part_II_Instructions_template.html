@@ -10,19 +10,57 @@
             <h3>Overview</h3>
         </div>
         <p>
-            Welcome to the main part of the experiment — your earnings here will make up the largest share of your bonus payment.
+            Welcome to the main part of the experiment — your earnings here will make up the largest share of your payment.
         </p>
         <p>
-            You will take part in <strong>4 rounds</strong> of a simulated economy. Each round has three stages:
+            You will play <strong>{{ C.Economy_num_rounds }} rounds</strong>. In each round, you will first play the Intelligence Test, then take part in a "Group project". 
         </p>
-        <ol>
+        <!-- <ol>
             <li><strong>Competition</strong> — Perform the intelligence test. Your score determines your share of a pot of ECs.</li>
             <li><strong>Feedback</strong> — See how your score and earnings compare to the other members of your Economy.</li>
             <li><strong>Cooperation</strong> — Decide how much to contribute to a shared pool within your Economy.</li>
-        </ol>
+        </ol> -->
 
 
-            <!-- ── Pictogram: three stages at a glance ── -->
+
+
+
+    </div>
+
+
+    <!-- Treatment explanation box -->
+    <div class="section-box box-contrast">
+        <div class="section-header">
+            <div class="icon">👥</div>
+            <h3>Your Group</h3>
+        </div>
+        {{ explanation|safe }}
+
+
+            <!-- Multiplier box: only shown when individually relevant (Excessive Meritocracy / Aristocracy) -->
+        {% if show_multiplier %}
+        <div class="section-box box-warn">
+            <div class="section-header">
+                <div class="icon">✖️</div>
+                <h3>Your Multiplier</h3>
+            </div>
+            <p>
+                Your multiplier for this experiment is <strong style="font-size:1.3em;">&times;{{ multiplier }}</strong>.
+                Each correct answer you give counts as <strong>{{ multiplier }} points</strong> toward your score. See below how this affects your earnings.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+
+<div class="section-box box-warn">
+    <div class="section-header">
+            <div class="icon">🌍</div>
+            <h3>Each round has two stages</h3>
+        </div>
+
+
+                    <!-- ── Pictogram: three stages at a glance ── -->
     <div style="font-family:inherit; margin:20px 0 8px;">
 
         <!-- "4 rounds" badge -->
@@ -34,7 +72,7 @@
                 font-size:0.92em; font-weight:600;
                 letter-spacing:0.02em;
             ">
-                <span style="font-size:1.1em;">🔄</span> 4 rounds
+                <span style="font-size:1.1em;">🔄</span> {{ C.Economy_num_rounds }} rounds
             </span>
         </div>
 
@@ -60,17 +98,17 @@
                 <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Competition</div>
                 <hr style="border:none; border-top:1px solid #bcd8f0; margin:10px 0;">
                 <ul style="text-align:left; font-size:0.83em; color:#333; padding-left:18px; margin:0; line-height:1.8;">
-                    <li>3 quiz blocks (1 min each)</li>
-                    <li>Score&nbsp;=&nbsp;answers&nbsp;&times;&nbsp;multiplier</li>
+                    <li>3 quiz blocks ({{C.Economy_round_length}} seconds each)</li>
+                    <li>{{ pictogram_score_text|safe }}</li>
                     <li>Win a share of the <strong>{{ C.Economy_pie }} EC</strong> pot</li>
                 </ul>
             </div>
 
             <!-- Arrow 1 -->
-            <div style="display:flex; align-items:center; justify-content:center; padding:0 6px; color:#bbb; font-size:2em; flex-shrink:0; min-width:32px;">▶</div>
+            <!-- <div style="display:flex; align-items:center; justify-content:center; padding:0 6px; color:#bbb; font-size:2em; flex-shrink:0; min-width:32px;">▶</div> -->
 
             <!-- Stage II: Feedback -->
-            <div style="
+            <!-- <div style="
                 flex:1; min-width:185px; max-width:240px;
                 background:#f7f7f7;
                 border:2px solid #aaa;
@@ -87,12 +125,12 @@
                     <li>See accumulated earnings vs. group</li>
                     <li>Review multipliers in your Economy</li>
                 </ul>
-            </div>
+            </div> -->
 
             <!-- Arrow 2 -->
             <div style="display:flex; align-items:center; justify-content:center; padding:0 6px; color:#bbb; font-size:2em; flex-shrink:0; min-width:32px;">▶</div>
 
-            <!-- Stage III: Cooperation -->
+            <!-- Stage II: Cooperation -->
             <div style="
                 flex:1; min-width:185px; max-width:240px;
                 background:#f0faf0;
@@ -102,13 +140,13 @@
                 text-align:center;
             ">
                 <div style="font-size:2.4em; margin-bottom:6px; line-height:1;">🤝</div>
-                <div style="color:#388E3C; font-weight:700; font-size:0.75em; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Stage III</div>
-                <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Cooperation</div>
+                <div style="color:#388E3C; font-weight:700; font-size:0.75em; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:3px;">Stage II</div>
+                <div style="font-weight:700; font-size:1.05em; color:#1a1a1a; margin-bottom:10px;">Group project</div>
                 <hr style="border:none; border-top:1px solid #b8e6b8; margin:10px 0;">
                 <ul style="text-align:left; font-size:0.83em; color:#333; padding-left:18px; margin:0; line-height:1.8;">
                     <li>Receive <strong>100 ECs</strong></li>
-                    <li>Decide how many to invest in the pool</li>
-                    <li>Pool &times; 1.5, shared equally among 3</li>
+                    <li>Decide how many of these to invest in the pool</li>
+                    <li>Pool grows by 50%, then shared equally among 3</li>
                 </ul>
             </div>
         </div><!-- /stage boxes -->
@@ -122,41 +160,6 @@
     </div>
     <!-- ── /Pictogram ── -->
 
-
-    </div>
-
-
-    <!-- Treatment explanation box -->
-    <div class="section-box box-contrast">
-        <div class="section-header">
-            <div class="icon">👥</div>
-            <h3>Your Economy</h3>
-        </div>
-        {{ explanation|safe }}
-
-
-            <!-- Multiplier box: only shown when individually relevant (Excessive Meritocracy / Aristocracy) -->
-        {% if show_multiplier %}
-        <div class="section-box box-warn">
-            <div class="section-header">
-                <div class="icon">✖️</div>
-                <h3>Your Multiplier</h3>
-            </div>
-            <p>
-                Your multiplier for this experiment is <strong style="font-size:1.3em;">&times;{{ multiplier }}</strong>.
-                Each correct answer you give counts as <strong>{{ multiplier }} points</strong> toward your score. See below how this affects your earnings.
-            </p>
-        </div>
-        {% endif %}
-    </div>
-
-
-<div class="section-box box-warn">
-    <div class="section-header">
-            <div class="icon">🌍</div>
-            <h3>Three stages of the Economy</h3>
-        </div>
-
     <!-- Stage I: Competition -->
     <div class="section-box box-info">
         <div class="section-header">
@@ -164,22 +167,41 @@
             <h3>Stage I: Competition</h3>
         </div>
         <p>
-            You will perform the full intelligence test — the same three blocks as before (Matrix Reasoning, Analogies, Mathematics), each lasting 1 minute.
+            You will perform the full intelligence test — the same three blocks as before (Matrix Reasoning, Analogies, Mathematics), each lasting {{C.Economy_round_length}} seconds.
         </p>
         <p>
             Your <strong>round score</strong> is calculated as:
             <br>
-            &emsp;<strong>correct answers &times; your multiplier</strong>{{ welfare_bonus_text|safe }}
+            &emsp;{{ score_formula_html|safe }}
         </p>
         <p>
-            Your share of the <strong>{{ C.Economy_pie }} EC</strong> pot is proportional to your score within your Economy:
+            Your share of the <strong>{{ C.Economy_pie }} EC</strong> pot is proportional to your score within your Group:
             <br>
             &emsp;<strong>Your ECs = (your score &divide; total group score) &times; {{ C.Economy_pie }}</strong>
         </p>
-        <p style="color:#555; font-size:0.95em;">
-            <em>Example: if your score is 50 and the others score 100 each,
-            your share is (50 &divide; 250) &times; {{ C.Economy_pie }} = <strong>100 ECs</strong>.</em>
-        </p>
+<p style="color:#555; font-size:0.95em;">
+    <em>Example: if your score is 50 and the others score 100 each,
+    your share is:
+    <math style="display:inline; vertical-align:middle;"> <!-- CHANGED -->
+        <mrow>
+            <mfrac>
+                <mn>50</mn>
+                <mrow>
+                    <mn>50</mn>
+                    <mo>+</mo>
+                    <mn>100</mn>
+                    <mo>+</mo>
+                    <mn>100</mn>
+                </mrow>
+            </mfrac>
+            <mo>×</mo>
+            <mn>{{ C.Economy_pie }}</mn>
+            <mo>=</mo>
+            <mn>100 ECs</mn>
+        </mrow>
+    </math>
+    </em>
+</p>
         
         {% if show_multiplier %}
         <p style="color:#555; font-size:0.95em;">
@@ -189,7 +211,7 @@
     </div>
 
     <!-- Stage II: Feedback -->
-    <div class="section-box box-neutral">
+    <!-- <div class="section-box box-neutral">
         <div class="section-header">
             <div class="icon">📊</div>
             <h3>Stage II: Feedback</h3>
@@ -200,30 +222,39 @@
                 <li>Your correct answers compared to the correct answers of the other two.</li>
                 <li>Your earned ECs so far, compared to the earnings of the other two.</li>
         </p>
-    </div>
+    </div> -->
 
     <!-- Stage III: Cooperation -->
     <div class="section-box box-info">
         <div class="section-header">
             <div class="icon">🤝</div>
-            <h3>Stage III: Cooperation</h3>
+            <h3>Stage II: Group project</h3>
         </div>
         <p>
-            Each member of your Economy receives <strong>100 ECs</strong>. You decide how many to place in a <strong>shared pool</strong>:
+            There are <strong>{{ C.PGG_Commons }} ECs</strong> in the the group project. 
+            Additionally, each member receives <strong>{{ C.PGG_investible }} ECs</strong>. 
+
+            You choose between investing into the group project or keeping the ECs for yourself.
+            
+            <ul>
+                <li>You can either invest (up to {{ C.PGG_investible }} ECs) or take out (up to {{ C.PGG_investible }} ECs) from the common pool. </li>
+                <li>ECs you <strong>keep</strong> are added directly to your earnings.</li>
+                <li>ECs placed in the <strong>group project</strong> are multiplied by <strong>1.5</strong> and divided equally among all three members.</li>
+            </ul>
+
+            
         </p>
-        <ul>
-            <li>ECs you <strong>keep</strong> are added directly to your earnings.</li>
-            <li>ECs placed in the <strong>pool</strong> are multiplied by <strong>1.5</strong> and divided equally among all three members.</li>
-        </ul>
         <p>
             Because the pool multiplies contributions by 1.5, the group earns more in total when everyone contributes.
             However, since the pool is shared equally, each member also benefits from others' contributions regardless of their own contribution.
         </p>
             <p style="color:#555; font-size:0.95em;">
-            <em>Example 1: if you contribute all 100 ECs to the pool, you earn 0 ECs from keeping. You and the others earn (100 &times; 1.5) &divide; 3 = <strong>50 ECs</strong> from your contribution to the pool.</em><br>
-            <em>Example 2: if you contribute nothing but the others contribute 100 ECs each, you earn 100 ECs from keeping. You and the others each earn (300 &times; 1.5) &divide; 3 = <strong>150 ECs</strong> from the pool.</em>
+            <em>Example 1: Suppose everyone contributes 100 ECs to the group project. Then, there would be 600 ECs in the pool. Each of you would earn (600 &times; 1.5) &divide; 3 = <strong>300 ECs</strong> from the group project and 0 ECs from keeping.</em><br>
+            <em>Example 2: Suppose everyone keeps their 100 ECs for themselves and additionally everyone takes out 100 ECs from the group project. There would be 0 ECs in the pool. Each of you would earn 0 ECs from the group project and 200 ECs from keeping the ECs for yourselves.</em>
         </p>
     </div>
+
+    
 </div>
 
     <!-- Earnings summary -->
@@ -234,8 +265,8 @@
         </div>
         <p>
             <ul>
-                <li>Your earnings from the competition stage accumulate across all 4 rounds.</li>
-                <li>For the cooperation stage, only one of the 4 rounds will be randomly chosen at the end to determine your actual payoff from cooperation — the other three rounds' cooperation decisions will not affect your earnings.</li>
+                <li>Your earnings from the competition stage accumulate across all {{ C.Economy_num_rounds }} rounds.</li>
+                <li>For the Group project stage, only one of the {{ C.Economy_num_rounds }} rounds will be randomly chosen at the end to determine your actual payoff from the Group project — the other rounds' decisions will not affect your earnings.</li>
             </ul>
         </p>
         <p>

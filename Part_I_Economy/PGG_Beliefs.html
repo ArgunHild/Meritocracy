@@ -1,0 +1,399 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+    /* ── Click-to-initialize slider (same pattern as Ultimatum_Propose) ───── */
+    .slider-container {
+        position: relative;
+        height: 42px;
+        display: flex;
+        align-items: center;
+    }
+    .belief-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        position: absolute;
+        width: 100%;
+        height: 10px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        cursor: pointer;
+    }
+    .belief-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: var(--primary, #4CAF50);
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .belief-slider::-moz-range-thumb {
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: var(--primary, #4CAF50);
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .slider-init-overlay {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 5px;
+    }
+    .slider-init-overlay::before {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #d3d3d3;
+        border-radius: 5px;
+    }
+    .slider-init-hint {
+        position: relative;
+        z-index: 1;
+        background: #fff;
+        border: 1.5px dashed #bbb;
+        border-radius: 20px;
+        padding: 3px 16px;
+        font-size: 0.82em;
+        color: #888;
+        pointer-events: none;
+    }
+    .belief-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82em;
+        color: #777;
+        margin-top: 4px;
+    }
+    .belief-display {
+        text-align: center;
+        font-size: 1.8em;
+        font-weight: bold;
+        color: var(--primary, #4CAF50);
+        margin: 12px 0 4px;
+    }
+    .belief-sub {
+        text-align: center;
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    .belief-untouched { color: #999; font-style: italic; }
+    .slider-badge {
+        display: inline-block; margin-left: 8px; padding: 2px 8px;
+        border-radius: 10px; font-size: 0.78em; font-weight: bold;
+    }
+    .badge-waiting { background: #fff3cd; color: #856404; }
+    .badge-set     { background: #d4edda; color: #155724; }
+</style>
+
+<div class="content-box box-neutral">
+    <h2 class="section-title">📊 Guess how much the others contributed</h2>
+    <hr class="section-divider">
+
+    
+    <!-- <p style="text-align:center; color:#555;">
+        Before making your guesses, here's a reminder of how your group performed
+        across all <strong>{{ C.Economy_num_rounds }} rounds</strong>.
+    </p> -->
+
+    <!-- ── Multiplier table (identical to Round_Feedback) ─────────────────── -->
+    <!-- <div class="section-box box-neutral" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon">✖️</div>
+            <h3>Multipliers in your Economy</h3>
+        </div>
+        <table style="width:100%; border-collapse:collapse; text-align:center; margin-top:8px;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd; text-align:left;">Group member</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid #ddd;">Multiplier</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee; text-align:left;">
+                        <span style="color:#4CAF50; font-size:1.1em;">●</span>&nbsp;<strong>You</strong>
+                    </td>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee;">
+                        <strong>&times;{{ multipliers_list.0 }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee; text-align:left;">
+                        <span style="color:#5B9BD5; font-size:1.1em;">●</span>&nbsp;Group member 2
+                    </td>
+                    <td style="padding:10px 16px; border-bottom:1px solid #eee;">
+                        <strong>&times;{{ multipliers_list.1 }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px 16px; text-align:left;">
+                        <span style="color:#FFB347; font-size:1.1em;">●</span>&nbsp;Group member 3
+                    </td>
+                    <td style="padding:10px 16px;">
+                        <strong>&times;{{ multipliers_list.2 }}</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% if multiplier_reminder %}
+        <p style="margin-top:14px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.92em; color:#333;">
+            ℹ️ {{ multiplier_reminder|safe }}
+        </p>
+        {% endif %}
+    </div> -->
+
+    <!-- ── Two bar charts (identical JS to Round_Feedback) ────────────────── -->
+    <!-- <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:24px;">
+
+        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Performance
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(final round)</span>
+            </h4>
+            <canvas id="performanceChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                Correctly solved questions in round {{ round_number }}
+            </p>
+        </div>
+
+        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Total Earnings
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(all {{ C.Economy_num_rounds }} rounds)</span>
+            </h4>
+            <canvas id="earningsChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                ECs earned from the competition stage
+            </p>
+        </div>
+
+    </div> -->
+
+
+    <!-- ── Player's own cumulative PGG total ──────────────────────────────── -->
+    <div style="margin:24px 0 12px; padding:14px 20px; background:#f0f7ff; border-left:4px solid #5B9BD5; border-radius:6px; text-align:center;">
+        💡 So far you and your group has played {{ C.Economy_num_rounds }} rounds of the group project. 
+        Each round, you decided how many ECs to contribute to or take away from the common pool.
+        
+        <br><br>
+    
+        Here, we want you to <strong>guess how many ECs</strong> the other two group members contributed in total across all rounds. 
+
+
+        
+        For instance, across the {{ C.Economy_num_rounds }} rounds,
+        {% if own_pgg_total > 0 %}
+            you contributed a total of
+            <strong style=" color:#2E75B6;">{{ own_pgg_total }} ECs</strong>
+            into the pool.
+        {% elif own_pgg_total < 0 %}
+            <strong>your total</strong> contributions were negative — this means you took out
+            <strong style=" color:#c62828;">{{ own_pgg_total_abs }} ECs</strong>
+            from the pool.
+        {% else %}
+            your contributions were exactly neutral — you neither invested into nor took from the pool.
+        {% endif %}
+    </div>
+
+    <!-- ── Bonus incentive ────────────────────────────────────────────────── -->
+    <div style="margin:0 0 24px; padding:12px 20px; background:#fff8e1; border-left:4px solid #FFC107; border-radius:6px; font-size:0.95em;">
+        ⭐ <strong>PAYMENT:</strong> If <em>both</em> of your guesses are within
+        <strong>100 ECs</strong> of the true value, you earn an extra
+        <strong>{{ pgg_guess_bonus }} ECs</strong>! So, try to guess as accurately as possible.
+    </div>
+
+    <!-- Hidden oTree form fields -->
+    <div style="display:none;">
+        {% for field in form %}
+            {{ formfield field.name }}
+        {% endfor %}
+    </div>
+
+    <!-- ── Group Member 2 ─────────────────────────────────────────────────── -->
+    <div class="section-box box-info" style="margin-top:8px;">
+        <div class="section-header">
+            <div class="icon" style="color:#5B9BD5;">●</div>
+            <h3>
+                Group Member 2's total investment (Your guess)
+                <span id="badge-m2" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="belief-display belief-untouched" id="display-m2">&mdash; ECs</div>
+        <div class="belief-sub" id="sub-m2">Click the bar below to enter your guess</div>
+        <div class="slider-container">
+            <div class="slider-init-overlay" id="init-m2">
+                <span class="slider-init-hint">Click anywhere to set your guess</span>
+            </div>
+            <input type="range" id="slider-m2" class="belief-slider"
+                   min="{{ slider_min }}" max="{{ slider_max }}" step="10" value="0" style="display:none;">
+        </div>
+        <div class="belief-labels">
+            <span>{{ slider_min }} ECs (always withdrew)</span>
+            <span style="text-align:center;">0 (neutral)</span>
+            <span>+{{ slider_max }} ECs (always invested)</span>
+        </div>
+    </div>
+
+    <!-- ── Group Member 3 ─────────────────────────────────────────────────── -->
+    <div class="section-box box-info" style="margin-top:20px;">
+        <div class="section-header">
+            <div class="icon" style="color:#FFB347;">●</div>
+            <h3>
+                Group Member 3's total investment (Your guess)
+                <span id="badge-m3" class="slider-badge badge-waiting">Not set</span>
+            </h3>
+        </div>
+        <div class="belief-display belief-untouched" id="display-m3">&mdash; ECs</div>
+        <div class="belief-sub" id="sub-m3">Click the bar below to enter your guess</div>
+        <div class="slider-container">
+            <div class="slider-init-overlay" id="init-m3">
+                <span class="slider-init-hint">Click anywhere to set your guess</span>
+            </div>
+            <input type="range" id="slider-m3" class="belief-slider"
+                   min="{{ slider_min }}" max="{{ slider_max }}" step="10" value="0" style="display:none;">
+        </div>
+        <div class="belief-labels">
+            <span>{{ slider_min }} ECs (always withdrew)</span>
+            <span style="text-align:center;">0 (neutral)</span>
+            <span>+{{ slider_max }} ECs (always invested)</span>
+        </div>
+    </div>
+
+    <div id="belief-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        ⚠ Please set a guess for <strong>both</strong> group members before continuing.
+    </div>
+
+    <div class="buttons-container" style="margin-top:30px;">
+        <div class="Instructions"></div>
+        <button id="NextButton" class="btn btn-primary" onclick="trySubmit(event)">
+            Confirm Guesses &rarr;
+        </button>
+    </div>
+</div>
+
+<script>
+    // ── Bar charts (identical to Round_Feedback) ──────────────────────────────
+    const BAR_BG     = ['rgba(76,175,80,0.8)', 'rgba(91,155,213,0.8)', 'rgba(255,179,71,0.8)'];
+    const BAR_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
+    const MEMBERS    = ['You', 'Group member 2', 'Group member 3'];
+
+    const performances = {{ performances }};
+    const accumulated  = {{ accumulated }};
+
+    function makeBarChart(canvasId, data, yLabel) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: MEMBERS,
+                datasets: [{
+                    data:            data,
+                    backgroundColor: BAR_BG,
+                    borderColor:     BAR_BORDER,
+                    borderWidth:     1.5,
+                    borderRadius:    5,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} ${yLabel}` } }
+                },
+                scales: { y: { beginAtZero: true, title: { display: true, text: yLabel } } }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        makeBarChart('performanceChart', performances, 'questions');
+        makeBarChart('earningsChart',    accumulated,  'ECs');
+    });
+
+    // ── Click-to-initialize sliders ───────────────────────────────────────────
+    (function () {
+        var sliderMin   = {{ slider_min }};            // -1000
+        var sliderMax   = {{ slider_max }};            // +1000
+        var sliderRange = sliderMax - sliderMin;       // 2000
+        var touched     = { m2: false, m3: false };
+
+        function setupBeliefSlider(key, sliderId, overlayId, displayId, subId, badgeId, fieldName) {
+            var slider  = document.getElementById(sliderId);
+            var overlay = document.getElementById(overlayId);
+            var display = document.getElementById(displayId);
+            var sub     = document.getElementById(subId);
+            var badge   = document.getElementById(badgeId);
+            var hidden  = document.querySelector('[name="' + fieldName + '"]');
+
+            function activate(val) {
+                var guess = parseInt(val);
+                var displayStr, subStr;
+                if (guess > 0) {
+                    displayStr   = '+' + guess + ' ECs';
+                    subStr       = 'Your guess: +' + guess + ' ECs contributed';
+                    display.style.color = 'var(--primary, #4CAF50)';
+                } else if (guess < 0) {
+                    displayStr   = guess + ' ECs';
+                    subStr       = 'Your guess: ' + Math.abs(guess) + ' ECs taken out';
+                    display.style.color = '#c62828';
+                } else {
+                    displayStr   = '0 ECs';
+                    subStr       = 'Your guess: 0 ECs (neutral)';
+                    display.style.color = '#888';
+                }
+                display.textContent = displayStr;
+                display.classList.remove('belief-untouched');
+                sub.textContent   = subStr;
+                badge.textContent = 'Set \u2713';
+                badge.className   = 'slider-badge badge-set';
+                if (hidden) hidden.value = guess;
+                touched[key] = true;
+            }
+
+            overlay.addEventListener('click', function (event) {
+                var rect    = overlay.getBoundingClientRect();
+                var ratio   = (event.clientX - rect.left) / rect.width;
+                ratio       = Math.max(0, Math.min(1, ratio));
+                var stepped = Math.round((sliderMin + ratio * sliderRange) / 10) * 10;
+                stepped     = Math.max(sliderMin, Math.min(sliderMax, stepped));
+                slider.value          = stepped;
+                overlay.style.display = 'none';
+                slider.style.display  = '';
+                activate(stepped);
+            });
+
+            slider.addEventListener('input', function () { activate(this.value); });
+        }
+
+        setupBeliefSlider('m2', 'slider-m2', 'init-m2', 'display-m2', 'sub-m2', 'badge-m2', 'pgg_belief_member2');
+        setupBeliefSlider('m3', 'slider-m3', 'init-m3', 'display-m3', 'sub-m3', 'badge-m3', 'pgg_belief_member3');
+
+        window.trySubmit = function (evt) {
+            if (evt) evt.preventDefault();
+            if (!touched.m2 || !touched.m3) {
+                document.getElementById('belief-error').style.display = 'block';
+                return;
+            }
+            document.getElementById('belief-error').style.display = 'none';
+            document.querySelector('form').submit();
+        };
+    })();
+</script>
+
+{{ endblock }}
