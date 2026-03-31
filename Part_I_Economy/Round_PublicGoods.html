@@ -77,6 +77,49 @@
     .pgg-panel.pool-neutral  .pgg-panel-value { color: #555; }
     .pgg-panel.private       { border-color: #5B9BD5; background: #f0f6ff; }
     .pgg-panel.private       .pgg-panel-value { color: #1a5276; }
+
+    /* ── Click-to-initialize overlay ───────────────────────────── */
+    .pgg-slider-container {
+        position: relative;
+        height: 42px;
+        display: flex;
+        align-items: center;
+    }
+    #pgg-slider {
+        position: absolute;
+        width: 100%;
+    }
+    .pgg-init-overlay {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 5px;
+    }
+    .pgg-init-overlay::before {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #d3d3d3;
+        border-radius: 5px;
+    }
+    .pgg-init-hint {
+        position: relative;
+        z-index: 1;
+        background: #fff;
+        border: 1.5px dashed #bbb;
+        border-radius: 20px;
+        padding: 3px 16px;
+        font-size: 0.82em;
+        color: #888;
+        pointer-events: none;
+    }
 </style>
 
 <div class="content-box box-neutral">
@@ -85,11 +128,11 @@
     </h2>
     <hr class="section-divider">
 
-    <!-- ── Two bar charts ────────────────────────────────────────────── -->
-    <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-bottom:24px;">
+    <!-- ── Three bar charts ──────────────────────────────────────────── -->
+    <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-bottom:24px;">
 
-        <!-- Left: performance this round -->
-        <div style="flex:1; min-width:240px; max-width:320px; text-align:center;">
+        <!-- 1: performance this round -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
             <h4 style="margin-bottom:6px;">
                 Performance
                 <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
@@ -100,15 +143,27 @@
             </p>
         </div>
 
-        <!-- Right: accumulated competition earnings -->
-        <div style="flex:1; min-width:240px; max-width:320px; text-align:center;">
+        <!-- 2: earnings this round -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Earnings
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
+            </h4>
+            <canvas id="pgg-earningsThisRoundChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                ECs earned in round {{ round_number }}
+            </p>
+        </div>
+
+        <!-- 3: accumulated competition earnings -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
             <h4 style="margin-bottom:6px;">
                 Accumulated Earnings
                 <span style="font-weight:normal; color:#777; font-size:0.9em;">(all rounds so far)</span>
             </h4>
             <canvas id="pgg-earningsChart"></canvas>
             <p style="margin-top:6px; font-size:0.82em; color:#777;">
-                ECs earned from the competition stage
+                 ECs earned from all rounds so far 
             </p>
         </div>
 
@@ -177,7 +232,7 @@
              If you want, you can <strong> take out</strong> up to {{ pgg_max }} ECs from the pool, or <strong>add more</strong> ECs to it (up to {{ pgg_max }}).
         </p>
         <p>
-            Use the slider below to make your decision. Move it <strong>left</strong> to take ECs out, <strong>right</strong> to put more in.
+            Use the slider below to make your decision. <strong>Click the bar first to activate it</strong>, then move it <strong>left</strong> to take ECs out or <strong>right</strong> to put more in.
             <br><br>
             <strong>Remember:</strong> ECs invested in the pool grow by 50% and are shared equally among group members, 
             while ECs kept private only benefit their owner. 
@@ -212,14 +267,20 @@
         </div>
 
         <div class="pgg-slider-wrap">
-            <input
-                type="range"
-                id="pgg-slider"
-                min="{{ C.Pgg_lower_bound }}"
-                max="{{ C.Pgg_upper_bound }}"
-                value="{{ C.PGG_Commons }}"
-                step="1"
-            >
+            <div class="pgg-slider-container">
+                <div class="pgg-init-overlay" id="pgg-init-overlay">
+                    <span class="pgg-init-hint">Click here to activate the slider</span>
+                </div>
+                <input
+                    type="range"
+                    id="pgg-slider"
+                    min="{{ C.Pgg_lower_bound }}"
+                    max="{{ C.Pgg_upper_bound }}"
+                    value="{{ C.PGG_Commons }}"
+                    step="1"
+                    style="display:none;"
+                >
+            </div>
             <div class="pgg-labels">
                 <span>← take {{ pgg_max }} out</span>
                 <span>invest {{ pgg_max }} →</span>
@@ -235,11 +296,15 @@
         </div>
     </div>
 
+    <div id="pgg-error" style="display:none; margin-top:16px; padding:10px 16px; background:#fdecea; border-left:4px solid #c62828; border-radius:4px; color:#c62828; font-size:0.93em;">
+        &#9888; Please activate the slider and make your decision before continuing.
+    </div>
+
     <div class="buttons-container" style="margin-top:20px;">
         <div class="Instructions">
             <a onclick="open_modal(1)" class="btn btn-info">Group project instructions</a>
         </div>
-        <button id="NextButton" class="btn btn-primary">Confirm Decision</button>
+        <button id="NextButton" class="btn btn-primary" onclick="tryPggSubmit(event)">Confirm Decision</button>
     </div>
 </div>
 
@@ -262,8 +327,9 @@
     const BAR_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
     const MEMBERS    = ['You', 'Group member 2', 'Group member 3'];
 
-    const performances = {{ performances }};
-    const accumulated  = {{ accumulated }};
+    const performances      = {{ performances }};
+    const earningsThisRound = {{ earnings_this_round }};
+    const accumulated       = {{ accumulated }};
 
     function makeBarChart(canvasId, data, yLabel) {
         const ctx = document.getElementById(canvasId).getContext('2d');
@@ -300,8 +366,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        makeBarChart('pgg-performanceChart', performances, 'questions');
-        makeBarChart('pgg-earningsChart',    accumulated,  'ECs');
+        makeBarChart('pgg-performanceChart',       performances,      'questions');
+        makeBarChart('pgg-earningsThisRoundChart', earningsThisRound, 'ECs');
+        makeBarChart('pgg-earningsChart',          accumulated,       'ECs');
     });
 </script>
 
@@ -346,8 +413,30 @@
             if (hiddenInput) hiddenInput.value = x;
         }
 
-        sync(parseInt(slider.value));
+        // Overlay click: reveal slider at the neutral midpoint (PGG_COMMONS),
+        // then let the participant drag from there.
+        var touched = false;
+        const overlay = document.getElementById('pgg-init-overlay');
+        overlay.addEventListener('click', function () {
+            slider.value          = PGG_COMMONS;
+            overlay.style.display = 'none';
+            slider.style.display  = '';
+            touched = true;
+            document.getElementById('pgg-error').style.display = 'none';
+            sync(PGG_COMMONS);
+        });
+
         slider.addEventListener('input', function () { sync(parseInt(this.value)); });
+
+        window.tryPggSubmit = function (evt) {
+            if (!touched) {
+                evt.preventDefault();
+                document.getElementById('pgg-error').style.display = 'block';
+                return;
+            }
+            document.getElementById('pgg-error').style.display = 'none';
+            document.querySelector('form').submit();
+        };
     })();
 </script>
 

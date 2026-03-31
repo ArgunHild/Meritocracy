@@ -501,9 +501,10 @@ class Grouping_WaitPage(WaitPage):
 
             # Determine multipliers by treatment
             if treatment == 'Perfect_Meritocracy':
-                mult_high = CC.M_medium
-                mult_mid  = CC.M_medium
-                mult_low  = CC.M_medium
+                # No multipliers: score = raw performance
+                mult_high = 1
+                mult_mid  = 1
+                mult_low  = 1
 
             elif treatment == 'Excessive_Meritocracy':
                 mult_high = CC.M_high
@@ -511,10 +512,12 @@ class Grouping_WaitPage(WaitPage):
                 mult_low  = CC.M_low
 
             elif treatment == 'Welfare_State':
-                # Same multipliers as Perfect Meritocracy; compression via welfare_check
-                mult_high = CC.M_medium
-                mult_mid  = CC.M_medium
-                mult_low  = CC.M_medium
+                # No multipliers: score = raw performance + welfare_check
+                # Using mult=1 ensures welfare_check adds a true +50 floor,
+                # not a diluted +10 that would result from mult=5.
+                mult_high = 1
+                mult_mid  = 1
+                mult_low  = 1
 
             elif treatment == 'Aristocracy':
                 # Randomly shuffle the three multipliers among the three members

@@ -52,7 +52,7 @@
 .content-box {
   padding: 25px;
   margin: 30px auto;
-  max-width: 900px;
+  max-width: 1100px;
   border: 1px solid #ddd;  /* light neutral fallback */
   border-radius: 12px;
   background-color: var(--neutral);

@@ -13,7 +13,8 @@
     <hr class="section-divider">
 
 
-     <!-- ── Multiplier table ──────────────────────────────────────────── -->
+    <!-- ── Multiplier table (Excessive Meritocracy & Aristocracy only) ──── -->
+    {% if Treatment == 'Excessive_Meritocracy' or Treatment == 'Aristocracy' %}
     <div class="section-box box-neutral" style="margin-top:32px;">
         <div class="section-header">
             <div class="icon">✖️</div>
@@ -57,23 +58,29 @@
                 </tr>
             </tbody>
         </table>
-        {% if multiplier_reminder %}
         <p style="margin-top:14px; padding:10px 14px; background:#f0f7ff; border-left:3px solid #5B9BD5; border-radius:4px; font-size:0.92em; color:#333;">
             ℹ️ {{ multiplier_reminder|safe }}
         </p>
-        {% endif %}
     </div>
+    {% endif %}
+
+    <!-- ── Welfare note (Welfare State only) ─────────────────────────────── -->
+    {% if Treatment == 'Welfare_State' %}
+    <div style="margin-top:32px; padding:12px 16px; background:#f0f7ff; border-left:4px solid #5B9BD5; border-radius:6px; font-size:0.93em; color:#333;">
+        ℹ️ Remember: a flat bonus of <strong>+{{ C.Welfare_check }} points</strong> is added to every member's score before shares are calculated — guaranteeing everyone a meaningful base share of the pot.
+    </div>
+    {% endif %}
 
     <p style="text-align:center; color:#555;">
         Below you can see how your <strong>performance</strong> and <strong>accumulated earnings</strong>
         compare to the other members of your Economy.
     </p>
 
-    <!-- ── Two bar charts ────────────────────────────────────────────── -->
-    <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:24px;">
+    <!-- ── Three bar charts ──────────────────────────────────────────── -->
+    <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-top:24px;">
 
-        <!-- Left: performance this round -->
-        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+        <!-- 1: performance this round -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
             <h4 style="margin-bottom:6px;">
                 Performance
                 <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
@@ -84,15 +91,27 @@
             </p>
         </div>
 
-        <!-- Right: accumulated competition earnings -->
-        <div style="flex:1; min-width:240px; max-width:340px; text-align:center;">
+        <!-- 2: earnings this round -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
+            <h4 style="margin-bottom:6px;">
+                Earnings
+                <span style="font-weight:normal; color:#777; font-size:0.9em;">(this round)</span>
+            </h4>
+            <canvas id="earningsThisRoundChart"></canvas>
+            <p style="margin-top:6px; font-size:0.82em; color:#777;">
+                ECs earned in round {{ round_number }}
+            </p>
+        </div>
+
+        <!-- 3: accumulated competition earnings -->
+        <div style="flex:1; min-width:220px; max-width:300px; text-align:center;">
             <h4 style="margin-bottom:6px;">
                 Accumulated Earnings
                 <span style="font-weight:normal; color:#777; font-size:0.9em;">(all rounds so far)</span>
             </h4>
             <canvas id="earningsChart"></canvas>
             <p style="margin-top:6px; font-size:0.82em; color:#777;">
-                ECs earned from the competition stage
+                ECs earned from all rounds so far
             </p>
         </div>
 
@@ -127,8 +146,9 @@
     const BAR_BORDER = ['#388E3C',              '#2E75B6',               '#E8923A'];
     const MEMBERS    = ['You', 'Group member 2', 'Group member 3'];
 
-    const performances = {{ performances }};   // [you, m2, m3] — raw correct answers this round
-    const accumulated  = {{ accumulated }};    // [you, m2, m3] — cumulative competition ECs
+    const performances       = {{ performances }};         // [you, m2, m3] — raw correct answers this round
+    const earningsThisRound  = {{ earnings_this_round }};  // [you, m2, m3] — competition ECs this round
+    const accumulated        = {{ accumulated }};          // [you, m2, m3] — cumulative competition ECs
 
     function makeBarChart(canvasId, data, yLabel) {
         const ctx = document.getElementById(canvasId).getContext('2d');
@@ -165,8 +185,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        makeBarChart('performanceChart', performances, 'questions');
-        makeBarChart('earningsChart',    accumulated,  'ECs');
+        makeBarChart('performanceChart',      performances,      'questions');
+        makeBarChart('earningsThisRoundChart', earningsThisRound, 'ECs');
+        makeBarChart('earningsChart',          accumulated,       'ECs');
     });
 </script>
 

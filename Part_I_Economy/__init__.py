@@ -159,8 +159,12 @@ class Player(BasePlayer):
                              min=-(C.PGG_investible * C.Economy_num_rounds),
                              max=  C.PGG_investible * C.Economy_num_rounds)
     pgg_belief_bonus   = models.BooleanField(initial=False)
-    
-    
+
+    # ── Treatment & multiplier (copied from participant for easy export) ───
+    treatment  = models.StringField(initial='')
+    multiplier = models.IntegerField(initial=0)
+
+
     'Comprehension and attention checks'
     #whether the player got the comprehension questions rigt at the first try
     Comprehension_1 = models.BooleanField(initial=True) 
@@ -300,17 +304,22 @@ def _accumulated_payoff_shares(player, up_to_round):
 
 
 def _per_player_data(player, round_number):
-    """Return (performances, accumulated, multipliers) as 3-element lists.
+    """Return (performances, earnings_this_round, accumulated, multipliers) as 3-element lists.
     Index 0 = current player ("You"), indices 1 & 2 = the other two members.
-    - performances:  raw correct-answer count for this round only
-    - accumulated:   sum of competition-stage Pie_payoffs across rounds 1..round_number
-    - multipliers:   each player's score multiplier"""
+    - performances:        raw correct-answer count for this round only
+    - earnings_this_round: competition-stage Pie_payoff for this round only
+    - accumulated:         sum of competition-stage Pie_payoffs across rounds 1..round_number
+    - multipliers:         each player's score multiplier"""
     group_members = player.group.get_players()
     others  = [p for p in group_members if p.id_in_group != player.id_in_group]
     ordered = [player] + others          # You always first
 
     performances = [
         int(getattr(p, _round_field('Round_score', round_number)))
+        for p in ordered
+    ]
+    earnings_this_round = [
+        round(getattr(p, _round_field('Pie_payoff', round_number)), 1)
         for p in ordered
     ]
     accumulated = [
@@ -320,15 +329,15 @@ def _per_player_data(player, round_number):
     ]
     multipliers_list = [p.participant.multiplier for p in ordered]
 
-    return performances, accumulated, multipliers_list
+    return performances, earnings_this_round, accumulated, multipliers_list
 
 
 def _multiplier_reminder(treatment):
     """Return a short HTML reminder string shown below the multiplier table,
-    tailored to the treatment condition."""
+    tailored to the treatment condition. Returns '' for treatments that have
+    no multiplier table (Perfect_Meritocracy, Welfare_State)."""
     if treatment == 'Perfect_Meritocracy':
-        return ('Remember that everyone has the <strong>same multiplier</strong>, '
-                'which means your earnings are a direct reflection of your relative performance.')
+        return ''   # no multiplier table shown for this treatment
     elif treatment == 'Excessive_Meritocracy':
         return ('Remember that multipliers were assigned based on <strong>performance from the practice stage</strong>: '
                 'the best performer received &times;7 and the worst performer &times;3.')
@@ -337,10 +346,7 @@ def _multiplier_reminder(treatment):
                 'at the start of the experiment — they are therefore the result of '
                 '<strong>pure luck!</strong>')
     elif treatment == 'Welfare_State':
-        return ('Remember that everyone has the <strong>same multiplier (&times;5)</strong>. '
-                'Additionally, a flat bonus of <strong>+50 points</strong> is added to each '
-                'member\'s weighted score before the pie shares are calculated — '
-                'this guarantees every member a meaningful base share of the pot.')
+        return ''   # no multiplier table shown for this treatment
     return ''
 
 
@@ -378,22 +384,22 @@ def _score_formula_vars(treatment):
     Perfect Meritocracy and Welfare State omit multiplier language."""
     if treatment == 'Perfect_Meritocracy':
         return {
-            'score_formula_html':   '<strong>correct answers</strong>',
-            'pictogram_score_text': 'Score&nbsp;=&nbsp;correct&nbsp;answers',
+            'score_formula_html':   '<strong>Score = number of correct answers</strong>',
+            'pictogram_score_text': 'Score&nbsp;=&nbsp;&nbsp;#answers',
         }
     elif treatment == 'Welfare_State':
         return {
             'score_formula_html': (
-                '<strong>correct answers &times; 5</strong>'
+                '<strong>Score = number of correct answers </strong>'
                 '<br>&emsp;<strong>+ 50 points</strong>'
                 ' (flat bonus added to every member\'s score)'
             ),
-            'pictogram_score_text': 'Score&nbsp;=&nbsp;answers&nbsp;&times;&nbsp;5&nbsp;+&nbsp;50',
+            'pictogram_score_text': 'Score&nbsp;=&nbsp;#answers&nbsp;&nbsp;+&nbsp;50',
         }
     else:  # Excessive_Meritocracy, Aristocracy
         return {
-            'score_formula_html':   '<strong>correct answers &times; your multiplier</strong>',
-            'pictogram_score_text': 'Score&nbsp;=&nbsp;answers&nbsp;&times;&nbsp;multiplier',
+            'score_formula_html':   '<strong>Score = number of correct answers &times; your multiplier</strong>',
+            'pictogram_score_text': 'Score&nbsp;=&nbsp;#answers&nbsp;&times;&nbsp;multiplier',
         }
 
 
@@ -425,10 +431,12 @@ from common import MyBasePage
 # ── Group formation WaitPage (round 1 only) ────────────────────────────────────────
 class Grouping_WaitPage(WaitPage):
     """
-    Runs at the very start of Part_I_Economy, round 1 only.
-    Reads participant.group_id (set by Practice's Grouping_WaitPage) and
-    calls set_group_matrix so oTree knows which players belong together.
-    Rounds 2-4 reuse the same grouping via group_like_round(1).
+    Runs once at the very start of Part_I_Economy (round 1 only).
+    Reads participant.group_id (set by Practice's Grouping_WaitPage),
+    calls set_group_matrix for round 1, then immediately propagates the
+    same grouping to all subsequent rounds via group_like_round(1).
+    This avoids relying on after_all_players_arrive firing in rounds 2-10
+    when is_displayed=False, which is unreliable in oTree 5.
     """
     wait_for_all_groups = True
 
@@ -438,18 +446,28 @@ class Grouping_WaitPage(WaitPage):
 
     @staticmethod
     def after_all_players_arrive(subsession: Subsession):
-        if subsession.round_number == 1:
-            players = subsession.get_players()
-            group_map = {}
-            for p in players:
-                gid = getattr(p.participant, 'group_id', None)
-                if gid is None:
-                    continue
-                group_map.setdefault(gid, []).append(p)
-            matrix = list(group_map.values())
-            subsession.set_group_matrix(matrix)
-        else:
-            subsession.group_like_round(1)
+        players = subsession.get_players()
+        group_map = {}
+        for p in players:
+            gid = getattr(p.participant, 'group_id', None)
+            if gid is None:
+                continue
+            group_map.setdefault(gid, []).append(p)
+        matrix = list(group_map.values())
+        subsession.set_group_matrix(matrix)
+
+        # Propagate this grouping to all subsequent rounds immediately,
+        # so rounds 2-10 never rely on group_like_round firing from a
+        # skipped WaitPage.
+        for r in range(2, C.NUM_ROUNDS + 1):
+            subsession.in_round(r).group_like_round(1)
+
+        # Write treatment & multiplier onto the player row for every round
+        # so they appear directly in the oTree data export.
+        for r in range(1, C.NUM_ROUNDS + 1):
+            for p in subsession.in_round(r).get_players():
+                p.treatment  = getattr(p.participant, 'Treatment',  '')
+                p.multiplier = getattr(p.participant, 'multiplier', 0)
 
 
 # ── Round WaitPage (sync scores before feedback) ─────────────────────────────────
@@ -651,13 +669,14 @@ class Round_Feedback(MyBasePage):
     def vars_for_template(player: Player):
         variables = MyBasePage.vars_for_template(player)
         r = player.round_number
-        performances, accumulated, multipliers_list = _per_player_data(player, r)
+        performances, earnings_this_round, accumulated, multipliers_list = _per_player_data(player, r)
 
         variables['round_number']         = r
         variables['Treatment']            = player.participant.Treatment
-        variables['performances']         = performances       # [you, m2, m3]
-        variables['accumulated']          = accumulated        # [you, m2, m3]
-        variables['multipliers_list']     = multipliers_list  # [you, m2, m3]
+        variables['performances']         = performances           # [you, m2, m3]
+        variables['earnings_this_round']  = earnings_this_round   # [you, m2, m3]
+        variables['accumulated']          = accumulated            # [you, m2, m3]
+        variables['multipliers_list']     = multipliers_list       # [you, m2, m3]
         variables['multiplier_reminder']  = _multiplier_reminder(player.participant.Treatment)
         return variables
 
@@ -676,8 +695,7 @@ class Round_PublicGoods(MyBasePage):
         variables = MyBasePage.vars_for_template(player)
         r = player.round_number
 
-        performances, accumulated, multipliers_list = _per_player_data(player, r)
-
+        performances, earnings_this_round, accumulated, multipliers_list = _per_player_data(player, r)
 
 
         variables['round_number']       = r
@@ -688,8 +706,9 @@ class Round_PublicGoods(MyBasePage):
         variables['tokens_earned']      = round(getattr(player, _round_field('Pie_payoff', r)))
         variables['contribution_field'] = _round_field('PGG_contribution', r)
         variables['hidden_fields']      = [_round_field('PGG_contribution', r)]
-        variables['performances']        = performances       # [you, m2, m3]
-        variables['accumulated']         = accumulated        # [you, m2, m3]
+        variables['performances']        = performances           # [you, m2, m3]
+        variables['earnings_this_round'] = earnings_this_round   # [you, m2, m3]
+        variables['accumulated']         = accumulated            # [you, m2, m3]
         variables['multipliers_list']    = multipliers_list  # [you, m2, m3]
         variables['multiplier_reminder'] = _multiplier_reminder(player.participant.Treatment)
         return variables

@@ -74,9 +74,8 @@ class CommonConstants(BaseConstants):
     Explanation_Welfare_State = (
         '<p>You have been placed in a group with two other participants. The three of you form a <strong>Group</strong>.</p>'
         '<p>Each round, all three members compete over a pot of <strong>500 ECs</strong>. '
-        'Your share depends on your score and your multiplier.</p>'
-        '<p>All three members have the <strong>same multiplier of &times;5</strong>. '
-        'In addition, a flat <strong>bonus of 50 points</strong> is added to every member\'s score '
+        'Your share is determined purely by how many questions you answer correctly compared to the other two members.</p>'
+        '<p>In addition, a flat <strong>bonus of 50 points</strong> is added to every member\'s score '
         'before shares are calculated — so even a lower-scoring member still receives a meaningful share of the pot.</p>'
     )
 
