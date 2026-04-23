@@ -183,4 +183,5 @@ class MyBasePage(Page):
             'hidden_fields': [],
             'Instructions': player.session.config.get('Instructions_general_path'),
             'Instructions_part_II': player.session.config.get('Part_II_Instructions_template'),
+            'Treatment' : player.participant.Treatment
         }
